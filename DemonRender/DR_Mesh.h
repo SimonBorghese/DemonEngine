@@ -20,7 +20,7 @@ namespace DemonRender {
 
         void createMesh(Vertex *vertices, uint32_t vertexCount, uint32_t *indices = NULL, uint32_t indexCount = 0); // Assuming vertices/indices are triangulated
 
-        void renderMesh(DR_Shader *targetShader);
+        void renderMesh();
 
         void destroyMesh();
     private:

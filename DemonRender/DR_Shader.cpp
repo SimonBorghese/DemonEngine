@@ -72,12 +72,7 @@ namespace DemonRender {
 
     }
     void DR_Shader::useProgram(){
-        GLint id;
-        glGetIntegerv(GL_CURRENT_PROGRAM,&id);
-        //if ((GLuint) id != shaderProgram) {
-            glUseProgram(shaderProgram);
-        //}
-
+        glUseProgram(shaderProgram);
     }
 
     void DR_Shader::destroyProgram(){

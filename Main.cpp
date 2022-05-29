@@ -5,12 +5,14 @@
 #include <DemonRender/DR_RenderManager.h>
 #include <DemonRender/DR_Shader.h>
 #include <DemonRender/DR_Mesh.h>
+#include <DemonRender/DR_MeshRenderer.h>
 
 int main(void)
 {
     DemonRender::DR_RenderManager renderManager;
     DemonRender::DR_Mesh mainMesh;
     DemonRender::DR_Shader mainShader;
+    DemonRender::DR_MeshRenderer triangleRenderer;
     renderManager.createRenderer("OwO", 800, 600);
     mainShader.createProgram("DemonShaders/vertex_noAnim.glsl", "DemonShaders/frag_colourDebug.glsl");
 
@@ -30,8 +32,11 @@ int main(void)
 
     mainMesh.createMesh(&vertices[0], 3);
 
+    triangleRenderer.setShader(&mainShader);
+    triangleRenderer.addMesh(&mainMesh);
+
     renderManager.newFrame();
-    mainMesh.renderMesh(&mainShader);
+    triangleRenderer.renderMeshes();
     renderManager.render();
 
 

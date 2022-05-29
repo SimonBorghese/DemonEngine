@@ -30,15 +30,13 @@ namespace DemonRender {
 
     }
 
-    void DR_Mesh::renderMesh(DR_Shader *targetShader){
-        targetShader->useProgram();
+    void DR_Mesh::renderMesh(){
         glBindVertexArray(VAO);
 
         if (EBO != 0){
             glDrawElements(GL_TRIANGLES, _indexCount, GL_UNSIGNED_INT, 0);
         }
         else{
-
             glDrawArrays(GL_TRIANGLES, 0, _vertexCount);
         }
 
