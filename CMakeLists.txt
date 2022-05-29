@@ -4,9 +4,9 @@ project(DemonEngine VERSION 1.0)
 
 file(GLOB_RECURSE SOURCES ${CMAKE_SOURCE_DIR} *.cpp)
 
-add_executable(DemonEngine ${SOURCES})
+add_executable(DemonEngine ${SOURCES} GLAD/src/glad.c)
 
-#set(OpenGL_GL_PREFERENCE LEGACY)
+set(OpenGL_GL_PREFERENCE LEGACY)
 
 # Find all the packages we need
 find_package(SDL2 REQUIRED)
@@ -15,6 +15,8 @@ find_package(OpenGL REQUIRED)
 # Set their include directories or something
 target_include_directories(DemonEngine PUBLIC ${SDL2_INCLUDE_DIRS})
 target_include_directories(DemonEngine PUBLIC ${OPENGL_INCLUDE_DIR})
+target_include_directories(DemonEngine PUBLIC ${CMAKE_SOURCE_DIR} GLAD/include)
+
 
 
 # link the libraries

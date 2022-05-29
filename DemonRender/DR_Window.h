@@ -5,7 +5,6 @@
 #ifndef DEMONENGINE_DR_WINDOW_H
 #define DEMONENGINE_DR_WINDOW_H
 #include "DR_STD.h"
-#include <DemonLua/LuaHelper.h>
 
 #include <SDL2/SDL.h>
 #include <functional>
@@ -19,6 +18,8 @@ namespace DemonRender {
         void createWindow(const char *name, uint32_t width, uint32_t height);
 
         void destroyWindow();
+
+        void flip();
 
         // Lua Functions
         void moveWindow(int newX, int newY);

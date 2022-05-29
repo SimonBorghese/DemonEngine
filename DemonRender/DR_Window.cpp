@@ -19,14 +19,28 @@ namespace DemonRender {
 
         _context = SDL_GL_CreateContext(_window);
         SDL_GL_MakeCurrent(_window, _context);
+
+        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+
+        //SDL_ShowCursor(SDL_FALSE);
+        SDL_SetWindowGrab(_window, SDL_TRUE);
+        SDL_SetRelativeMouseMode(SDL_TRUE);
     }
 
     void DR_Window::destroyWindow(){
+        SDL_GL_DeleteContext(_context);
         SDL_DestroyWindow(_window);
+        SDL_Quit();
     }
 
     // Lua function defs
     void DR_Window::moveWindow(int newX, int newY){
         SDL_SetWindowPosition(_window, newX, newY);
+    }
+
+    void DR_Window::flip(){
+        SDL_GL_SwapWindow(_window);
+        SDL_UpdateWindowSurface(_window);
     }
 } // DemonRender
