@@ -73,9 +73,25 @@ namespace DemonRender {
     }
     void DR_Shader::useProgram(){
         glUseProgram(shaderProgram);
+        if (diffuseLocation == 0){
+            diffuseLocation = getUniformLocation("diffuse_texture");
+        }
     }
 
     void DR_Shader::destroyProgram(){
         glDeleteProgram(shaderProgram);
+    }
+
+    uint32_t DR_Shader::getUniformLocation(const char *uniform){
+        return glGetUniformLocation(shaderProgram, uniform);
+    }
+    void DR_Shader::bindMatrix4f(uint32_t location, glm::mat4 targetMat){
+        glUniformMatrix4fv(location, 1, GL_FALSE, &targetMat[0][0]);
+    }
+
+    void DR_Shader::bindDiffuseTexture(GLuint targetTexture) {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, targetTexture);
+        bindInt(diffuseLocation, 0);
     }
 } // DemonRender

@@ -18,8 +18,19 @@ namespace DemonRender {
 
         void destroyProgram();
 
+        uint32_t getUniformLocation(const char *uniform);
+        void bindMatrix4f(uint32_t location, glm::mat4 targetMat);
+
+        void bindInt(GLuint loc, int value) { glUniform1i(loc, value); }
+
+        void bindDiffuseTexture(GLuint targetTexture);
+
+
+
     private:
-        GLuint shaderProgram;
+        GLuint shaderProgram = 0;
+
+        GLuint diffuseLocation = 0;
 
     };
 

@@ -7,11 +7,16 @@
 #include <glm/glm.hpp>
 #include <glad/glad.h>
 #include "DR_Shader.h"
+#include <STB_IMAGE/stb_image.h>
+#include <fmt/core.h>
+#include <fmt/printf.h>
+
 
 namespace DemonRender {
 
-    typedef union{
+    typedef struct {
         glm::vec3 iPosition;
+        glm::vec2 iTextCord;
     } Vertex;
 
     class DR_Mesh {
@@ -23,10 +28,17 @@ namespace DemonRender {
         void renderMesh();
 
         void destroyMesh();
+
+        void createTextureFromSTB(const char *fileName, bool allowAlpha);
+
+        GLuint getTexture() { return TextureBuffer; }
+        GLuint* getTexturePTR() { return &TextureBuffer; }
     private:
         GLuint VAO = 0;
         GLuint VBO = 0;
         GLuint EBO = 0;
+
+        GLuint TextureBuffer = 0;
 
         uint32_t _vertexCount = 0;
         uint32_t _indexCount = 0;

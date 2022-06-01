@@ -10,7 +10,9 @@ set(OpenGL_GL_PREFERENCE LEGACY)
 
 # Find all the packages we need
 find_package(SDL2 REQUIRED)
+find_package(assimp REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(fmt REQUIRED)
 
 # Set their include directories or something
 target_include_directories(DemonEngine PUBLIC ${SDL2_INCLUDE_DIRS})
@@ -23,7 +25,9 @@ target_include_directories(DemonEngine PUBLIC ${CMAKE_SOURCE_DIR} GLAD/include)
 target_link_libraries(DemonEngine ${SDL2_LIBRARIES})
 target_link_libraries(DemonEngine ${OPENGL_LIBRARIES})
 target_link_libraries(DemonEngine ${CMAKE_DL_LIBS})
-target_link_libraries(DemonEngine lua)
+target_link_libraries(DemonEngine ${ASSIMP_LIBRARIES})
+target_link_libraries(DemonEngine fmt)
+
 
 include_directories("/usr/include")
 include_directories(${CMAKE_SOURCE_DIR})

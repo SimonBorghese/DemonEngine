@@ -2,6 +2,7 @@
 // Created by simon on 5/28/22.
 //
 
+#define STB_IMAGE_IMPLEMENTATION
 #include "DR_Mesh.h"
 
 namespace DemonRender {
@@ -22,8 +23,10 @@ namespace DemonRender {
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(uint32_t), indices, GL_STATIC_DRAW);
         }
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void *) 0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (sizeof(float)*3));
         glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
 
         _vertexCount = vertexCount;
         _indexCount = indexCount;
@@ -44,7 +47,54 @@ namespace DemonRender {
 
     }
 
+    void DR_Mesh::createTextureFromSTB(const char *fileName, bool allowAlpha) {
+        glGenTextures(1, &TextureBuffer);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, TextureBuffer);
+
+
+        stbi_set_flip_vertically_on_load(1);
+
+        int width, height, nrChannels;
+        fmt::print("Found file: {}\n", fileName);
+        void* data = stbi_load(fileName, &width, &height, &nrChannels, 0);
+
+        GLenum targetFormat = GL_RGB;
+        if (allowAlpha){
+            switch (nrChannels){
+                case 3:
+                    targetFormat = GL_RGB;
+                    break;
+                case 4:
+                    targetFormat = GL_RGBA;
+                    break;
+                default:
+                    targetFormat = GL_RGB;
+                    break;
+            }
+        }
+
+
+        if (!data){
+            (fmt::print("Failed to load image: {}\n", fileName));
+            data = stbi_load("data/missing.png", &width, &height, &nrChannels, 3);
+            if (!data) {
+                fmt::print("CRITICAL ERROR: UN-ABLE TO LOAD ESSENTIAL FILE\n");
+            }
+        }
+        glTexImage2D(GL_TEXTURE_2D, 0, targetFormat, width, height, 0, targetFormat, GL_UNSIGNED_BYTE, data);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glGenerateMipmap(GL_TEXTURE_2D);
+        stbi_image_free(data);
+    }
+
     void DR_Mesh::destroyMesh(){
+        if (TextureBuffer != 0){
+            glDeleteTextures(1, &TextureBuffer);
+        }
         glDeleteBuffers(1, &VBO);
         glDeleteBuffers(1, &EBO);
         glDeleteVertexArrays(1, &VAO);

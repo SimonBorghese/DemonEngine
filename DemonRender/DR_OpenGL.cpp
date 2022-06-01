@@ -62,7 +62,7 @@ namespace DemonRender {
         gladLoadGLLoader((GLADloadproc) SDL_GL_GetProcAddress);
 
         glViewport(0,0, viewportX,viewportY);
-        SDL_GL_SetSwapInterval(0);
+        //SDL_GL_SetSwapInterval(0);
         /*
 
         glEnable(GL_MULTISAMPLE);
