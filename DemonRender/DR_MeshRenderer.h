@@ -6,6 +6,7 @@
 #define DEMONENGINE_DR_MESHRENDERER_H
 #include "DR_Mesh.h"
 #include "DR_Shader.h"
+#include <DemonWorld/DW_Transform.h>
 #include <vector>
 #include <assimp/IOSystem.hpp>
 #include <assimp/Importer.hpp>
@@ -26,12 +27,19 @@ namespace DemonRender {
         void loadMeshFromFile(const char *file);
         void setShader(DR_Shader *targetShader);
 
+        void bindTransform(DemonWorld::DW_Transform *targetTransform){
+            _currentTransform = targetTransform;
+        }
+
         void destroyMeshes();
 
         void renderMeshes();
     private:
         std::vector<DR_Mesh*> _targetMeshes;
         DR_Shader *_targetShader;
+
+        DemonWorld::DW_Transform *_currentTransform = nullptr;
+        GLuint modelLocation = 0;
     };
 
 } // DemonRender

@@ -26,6 +26,7 @@ namespace DemonGame {
         int getMouseYOffset();
 
         int getCloseState();
+
     private:
         SDL_Event e;
 

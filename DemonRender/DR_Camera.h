@@ -41,6 +41,7 @@ namespace DemonRender {
 
         glm::vec3 getCameraFront() { return cameraFront;}
         glm::vec3 getPosition() { return cameraPos; }
+        glm::vec3 getCameraUp() { return cameraUp; }
 
     private:
         DR_Shader *_targetShader;

@@ -13,6 +13,12 @@ namespace DemonRender {
 
     void DR_MeshRenderer::renderMeshes(){
         _targetShader->useProgram();
+        if (modelLocation == 0){
+            modelLocation = _targetShader->getUniformLocation("model");
+        }
+        if (_currentTransform != nullptr){
+            _targetShader->bindMatrix4f(modelLocation, _currentTransform->getModel());
+        }
         for (unsigned int m = 0; m < _targetMeshes.size(); m++){
             _targetShader->bindDiffuseTexture(_targetMeshes.at(m)->getTexture());
             _targetMeshes.at(m)->renderMesh();
