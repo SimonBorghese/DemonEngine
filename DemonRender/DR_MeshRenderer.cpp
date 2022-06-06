@@ -35,7 +35,6 @@ namespace DemonRender {
         }
 
         for (unsigned int m = 0; m < oScene->mNumMeshes; m++) {
-            DR_Mesh *targetMesh = new DR_Mesh;
             unsigned int numVertices = oScene->mMeshes[m]->mNumVertices;
             // Stack allocations go brrrrr....
             Vertex m_vertices[numVertices];
@@ -66,7 +65,9 @@ namespace DemonRender {
 
             }
 
-            targetMesh->createMesh((&m_vertices[0]), numVertices, m_indices.data(), m_indices.size());
+            DR_Mesh *targetMesh = new DR_Mesh((&m_vertices[0]), numVertices, m_indices.data(), m_indices.size());
+            goodMesh = new DemonPhysics::DP_RigidMesh(&(m_vertices[0]), numVertices);
+            //targetMesh->createMesh((&m_vertices[0]), numVertices, m_indices.data(), m_indices.size());
             addMesh(targetMesh);
 
             uint32_t mIndex = oScene->mMeshes[m]->mMaterialIndex;

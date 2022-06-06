@@ -6,6 +6,36 @@
 #include "DR_Mesh.h"
 
 namespace DemonRender {
+
+    DR_Mesh::DR_Mesh(Vertex *vertices, unsigned int vertexLen, unsigned int *indices, unsigned int indexLen) : DemonBase::b_Mesh(vertices, vertexLen, indices, indexLen) {
+        //DemonBase::b_Mesh(vertices, vertexLen, indices, indexLen);
+        assert( !((indexLen == 0 && vertexLen % 3 != 0) || (indexLen != 0 && indexLen % 3 != 0)) ); // Not Triangulated
+
+        glCreateVertexArrays(1, &VAO);
+        glGenBuffers(1, &VBO);
+
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+        glBufferData(GL_ARRAY_BUFFER, vertexLen * sizeof(Vertex), vertices, GL_STATIC_DRAW);
+
+        if (indexLen != 0) {
+            glGenBuffers(1, &EBO);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexLen * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+        }
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (sizeof(float)*3));
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+
+        _vertexCount = vertexLen;
+        _indexCount = indexLen;
+
+
+    }
+    /*
     void DR_Mesh::createMesh(Vertex *vertices, uint32_t vertexCount, uint32_t *indices, uint32_t indexCount){
         assert( !((indexCount == 0 && vertexCount % 3 != 0) || (indexCount != 0 && indexCount % 3 != 0)) ); // Not Triangulated
 
@@ -32,6 +62,7 @@ namespace DemonRender {
         _indexCount = indexCount;
 
     }
+    */
 
     void DR_Mesh::renderMesh(){
         glBindVertexArray(VAO);

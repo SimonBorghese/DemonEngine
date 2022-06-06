@@ -7,6 +7,9 @@
 #include "DR_Mesh.h"
 #include "DR_Shader.h"
 #include <DemonWorld/DW_Transform.h>
+
+#include <DemonPhysics/DP_RigidMesh.h>
+
 #include <vector>
 #include <assimp/IOSystem.hpp>
 #include <assimp/Importer.hpp>
@@ -34,6 +37,8 @@ namespace DemonRender {
         void destroyMeshes();
 
         void renderMeshes();
+
+        DemonPhysics::DP_RigidMesh *goodMesh;
     private:
         std::vector<DR_Mesh*> _targetMeshes;
         DR_Shader *_targetShader;

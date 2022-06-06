@@ -10,12 +10,15 @@
 namespace DemonWorld {
     class DW_Transform {
     public:
-        DW_Transform(glm::vec3 startPos = glm::vec3(0.0f),
+        DW_Transform() {}
+
+        void createTransform(glm::vec3 startPos = glm::vec3(0.0f),
                      glm::vec3 startRot = glm::vec3(0.0f),
-                     glm::vec3 startScale = glm::vec3(1.0f)) :
-                    position(startPos),
-                     rotation(startRot),
-                     _scale(startScale) {}
+                     glm::vec3 startScale = glm::vec3(1.0f)){
+            position = startPos;
+            rotation = startRot;
+            _scale = startScale;
+        }
         //virtual ~DW_Transform();
 
         void setPosition(glm::vec3 newPos) { position = newPos; }
@@ -40,7 +43,7 @@ namespace DemonWorld {
             return currentModel;
         }
 
-    private:
+    protected:
         glm::vec3 position = glm::vec3(0.0f);
         glm::vec3 rotation = glm::vec3( 0.0f, 0.0f, 0.0f);
         glm::vec3 _scale = glm::vec3(1.0f);

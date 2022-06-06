@@ -10,10 +10,11 @@ namespace DemonGame {
                               glm::vec3 pos,
                               glm::vec3 rotation,
                               glm::vec3 scale){
-        mainTransform = new DemonWorld::DW_Transform(pos, rotation, scale);
+        createTransform(pos, rotation, scale);
+        //mainTransform = new DemonWorld::DW_Transform(pos, rotation, scale);
         mainMeshRenderer = new DemonRender::DR_MeshRenderer();
         mainMeshRenderer->setShader(meshShader);
-        mainMeshRenderer->bindTransform(mainTransform);
+        mainMeshRenderer->bindTransform(this);
         mainMeshRenderer->loadMeshFromFile(meshFile);
 
         renderManager->addMeshGroup(mainMeshRenderer);
@@ -21,7 +22,7 @@ namespace DemonGame {
 
     void DG_Entity::destroyEntity(){
         mainMeshRenderer->destroyMeshes();
-        delete mainTransform;
+        //delete mainTransform;
         delete mainMeshRenderer;
     }
 } // DemonGame

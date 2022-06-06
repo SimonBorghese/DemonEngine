@@ -10,20 +10,17 @@
 #include <STB_IMAGE/stb_image.h>
 #include <fmt/core.h>
 #include <fmt/printf.h>
+#include <DemonBase/b_Mesh.h>
 
 
 namespace DemonRender {
 
-    typedef struct {
-        glm::vec3 iPosition;
-        glm::vec2 iTextCord;
-    } Vertex;
 
-    class DR_Mesh {
+class DR_Mesh: public DemonBase::b_Mesh {
     public:
-        DR_Mesh() {}
+        DR_Mesh(Vertex *vertices, unsigned int vertexLen, unsigned int *indices = nullptr, unsigned int indexLen = 0);
 
-        void createMesh(Vertex *vertices, uint32_t vertexCount, uint32_t *indices = NULL, uint32_t indexCount = 0); // Assuming vertices/indices are triangulated
+        //void createMesh(Vertex *vertices, uint32_t vertexCount, uint32_t *indices = NULL, uint32_t indexCount = 0); // Assuming vertices/indices are triangulated
 
         void renderMesh();
 
