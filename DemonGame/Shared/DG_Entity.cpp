@@ -15,7 +15,11 @@ namespace DemonGame {
         mainMeshRenderer = new DemonRender::DR_MeshRenderer();
         mainMeshRenderer->setShader(meshShader);
         mainMeshRenderer->bindTransform(this);
-        mainMeshRenderer->loadMeshFromFile(meshFile);
+
+        unsigned int outLen;
+        DemonBase::b_Mesh **normalMesh = DemonIO::DI_SceneLoader::loadMeshesFromFile(meshFile, &outLen);
+
+        mainMeshRenderer->loadExistingMeshes(normalMesh, outLen);
 
         renderManager->addMeshGroup(mainMeshRenderer);
     }

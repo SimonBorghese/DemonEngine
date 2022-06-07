@@ -35,6 +35,42 @@ namespace DemonRender {
 
 
     }
+
+    DR_Mesh::DR_Mesh(DemonBase::b_Mesh *targetMesh) :
+    DemonBase::b_Mesh(targetMesh->getVerticesVector().data(),
+                      targetMesh->getVerticesVector().size(),
+                      targetMesh->getIndicesVector().data(),
+                      targetMesh->getIndicesVector().size()){
+        unsigned int indexLen = targetMesh->getIndicesVector().size();
+        unsigned int vertexLen = targetMesh->getVerticesVector().size();
+        Vertex *vertices = targetMesh->getVerticesVector().data();
+        unsigned int *indices = targetMesh->getIndicesVector().data();
+        setMaterial(targetMesh->getMaterial());
+        setTextureDiffuse(targetMesh->getTextureDiffuse());
+        assert( !((indexLen == 0 && vertexLen % 3 != 0) || (indexLen != 0 && indexLen % 3 != 0)) ); // Not Triangulated
+
+        glCreateVertexArrays(1, &VAO);
+        glGenBuffers(1, &VBO);
+
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+        glBufferData(GL_ARRAY_BUFFER, vertexLen * sizeof(Vertex), vertices, GL_STATIC_DRAW);
+
+        if (indexLen != 0) {
+            glGenBuffers(1, &EBO);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexLen * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+        }
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (sizeof(float)*3));
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+
+        _vertexCount = vertexLen;
+        _indexCount = indexLen;
+    }
     /*
     void DR_Mesh::createMesh(Vertex *vertices, uint32_t vertexCount, uint32_t *indices, uint32_t indexCount){
         assert( !((indexCount == 0 && vertexCount % 3 != 0) || (indexCount != 0 && indexCount % 3 != 0)) ); // Not Triangulated

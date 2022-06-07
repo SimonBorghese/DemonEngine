@@ -7,7 +7,7 @@
 #include "DR_Mesh.h"
 #include "DR_Shader.h"
 #include <DemonWorld/DW_Transform.h>
-
+#include <DemonBase/b_Mesh.h>
 #include <DemonPhysics/DP_RigidMesh.h>
 
 #include <vector>
@@ -28,6 +28,7 @@ namespace DemonRender {
 
         void addMesh(DR_Mesh *targetMesh);
         void loadMeshFromFile(const char *file);
+        void loadExistingMeshes(DemonBase::b_Mesh **meshes, unsigned int numMeshes);
         void setShader(DR_Shader *targetShader);
 
         void bindTransform(DemonWorld::DW_Transform *targetTransform){
@@ -37,8 +38,6 @@ namespace DemonRender {
         void destroyMeshes();
 
         void renderMeshes();
-
-        DemonPhysics::DP_RigidMesh *goodMesh;
     private:
         std::vector<DR_Mesh*> _targetMeshes;
         DR_Shader *_targetShader;

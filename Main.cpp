@@ -14,6 +14,7 @@
 #include <DemonGame/Shared/DG_Entity.h>
 #include <DemonWorld/DW_Transform.h>
 #include <DemonPhysics/DP_PhysicsManager.h>
+#include <DemonIO/DI_SceneLoader.h>
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -41,7 +42,7 @@ int main(void)
     DemonPhysics::DP_PhysicsManager physics;
     physics.createPhysics(glm::vec3(0.0f, -9.81f, 0.0f));
 
-    physics.createRigidMesh(scp173.getMeshRenderer()->goodMesh);
+    //physics.createRigidMesh(scp173.getMeshRenderer()->goodMesh);
 
 
 

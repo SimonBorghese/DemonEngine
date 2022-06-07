@@ -9,6 +9,7 @@
 #include <DemonRender/DR_MeshRenderer.h>
 #include <DemonRender/DR_Shader.h>
 #include <DemonWorld/DW_Transform.h>
+#include <DemonIO/DI_SceneLoader.h>
 
 namespace DemonGame {
     class DG_Entity: public DemonWorld::DW_Transform {

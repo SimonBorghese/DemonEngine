@@ -66,7 +66,6 @@ namespace DemonRender {
             }
 
             DR_Mesh *targetMesh = new DR_Mesh((&m_vertices[0]), numVertices, m_indices.data(), m_indices.size());
-            goodMesh = new DemonPhysics::DP_RigidMesh(&(m_vertices[0]), numVertices);
             //targetMesh->createMesh((&m_vertices[0]), numVertices, m_indices.data(), m_indices.size());
             addMesh(targetMesh);
 
@@ -82,7 +81,23 @@ namespace DemonRender {
             }
         }
         delete oModelLoader;
+    }
 
+    void DR_MeshRenderer::loadExistingMeshes(DemonBase::b_Mesh **meshes, unsigned int numMeshes){
+        for (unsigned int m = 0; m < numMeshes; m++){
+            DR_Mesh *targetMesh = new DR_Mesh(meshes[m]);
+            //targetMesh->createMesh((&m_vertices[0]), numVertices, m_indices.data(), m_indices.size());
+            addMesh(targetMesh);
+
+            //if (targetMesh->getTextureDiffuse().length != 0){
+                aiString tex_loc = targetMesh->getTextureDiffuse();
+                std::string base_filename = tex_loc.C_Str();
+                base_filename = base_filename.substr(base_filename.find_last_of("/\\") + 1);
+
+                targetMesh->createTextureFromSTB(base_filename.c_str(), false);
+            //}
+
+        }
     }
 
     void DR_MeshRenderer::destroyMeshes(){

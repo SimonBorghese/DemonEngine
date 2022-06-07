@@ -19,6 +19,7 @@ namespace DemonRender {
 class DR_Mesh: public DemonBase::b_Mesh {
     public:
         DR_Mesh(Vertex *vertices, unsigned int vertexLen, unsigned int *indices = nullptr, unsigned int indexLen = 0);
+        DR_Mesh(DemonBase::b_Mesh *targetMesh);
 
         //void createMesh(Vertex *vertices, uint32_t vertexCount, uint32_t *indices = NULL, uint32_t indexCount = 0); // Assuming vertices/indices are triangulated
 
