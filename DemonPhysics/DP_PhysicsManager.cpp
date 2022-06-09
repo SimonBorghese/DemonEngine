@@ -84,7 +84,7 @@ namespace DemonPhysics {
     }
 
     void DP_PhysicsManager::createRigidMesh(DP_RigidMesh *target){
-        target->createMesh(pCooking, pPhysics->getPhysicsInsertionCallback());
+        target->createMesh(pPhysics, pCooking);
     }
 
     void DP_PhysicsManager::closePhysics(){

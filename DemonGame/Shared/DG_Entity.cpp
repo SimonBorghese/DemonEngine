@@ -24,6 +24,8 @@ namespace DemonGame {
         renderManager->addMeshGroup(mainMeshRenderer);
     }
 
+
+
     void DG_Entity::destroyEntity(){
         mainMeshRenderer->destroyMeshes();
         //delete mainTransform;

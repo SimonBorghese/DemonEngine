@@ -5,6 +5,8 @@
 #define DEMONENGINE_DP_PHYSICSMANAGER_H
 #include <glm/glm.hpp>
 #include "DP_RigidMesh.h"
+#include "DP_RigidActor.h"
+#include <DemonBase/b_RigidActor.h>
 #include <PhysX/PxPhysicsAPI.h>
 #include <PhysX/extensions/PxTriangleMeshExt.h>
 #include <PhysX/extensions/PxDefaultErrorCallback.h>
@@ -30,6 +32,14 @@ namespace DemonPhysics {
         void createRigidMesh(DP_RigidMesh *target);
 
         void closePhysics();
+
+        void addActor(DemonBase::b_RigidActor *actor) { pScene->addActor(*actor->getActor()); }
+        void removeActor(DemonBase::b_RigidActor *actor) { pScene->removeActor(*actor->getActor()); }
+
+
+        physx::PxPhysics* getPhysics() { return pPhysics; }
+        physx::PxCooking* getCooking() { return pCooking; }
+        physx::PxScene* getScene() { return pScene; }
     private:
         physx::PxDefaultErrorCallback pError;
         physx::PxDefaultAllocator pAllocate;

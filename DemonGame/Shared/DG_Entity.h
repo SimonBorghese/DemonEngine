@@ -10,9 +10,10 @@
 #include <DemonRender/DR_Shader.h>
 #include <DemonWorld/DW_Transform.h>
 #include <DemonIO/DI_SceneLoader.h>
+#include <DemonBase/b_GameObject.h>
 
 namespace DemonGame {
-    class DG_Entity: public DemonWorld::DW_Transform {
+class DG_Entity: public DemonWorld::DW_Transform {
     public:
         DG_Entity(DemonRender::DR_RenderManager *targetRender, DemonRender::DR_Shader *targetShader) :
         renderManager(targetRender),
@@ -27,6 +28,7 @@ namespace DemonGame {
         DemonRender::DR_MeshRenderer* getMeshRenderer() { return mainMeshRenderer; }
 
         void destroyEntity();
+
 
         //DemonWorld::DW_Transform *getTransform() { return mainTransform; }
     private:

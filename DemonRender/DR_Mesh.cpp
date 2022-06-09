@@ -55,7 +55,7 @@ namespace DemonRender {
         glBindVertexArray(VAO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-        glBufferData(GL_ARRAY_BUFFER, vertexLen * sizeof(Vertex), vertices, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, (vertexLen) * sizeof(Vertex), vertices, GL_STATIC_DRAW);
 
         if (indexLen != 0) {
             glGenBuffers(1, &EBO);

@@ -8,6 +8,9 @@
 #include <glm/glm.hpp>
 #include <assimp/material.h>
 
+#include <iostream>
+#include <chrono>
+#include <math.h>
 
 typedef struct {
     glm::vec3 iPosition;
@@ -23,14 +26,33 @@ namespace DemonBase {
             if (indexLen > 0) {
                 std::copy(&indices[0], &indices[indexLen], std::back_inserter(_indices));
             }
+
+            // Make the raw vertices
+            // Copy 3 floats, then skip 2
+            uint8_t *vertexEs = (uint8_t *) vertices;
+            //float good[vertexLen * 3];
+            _rawVerticesPTR = (float*) malloc(sizeof(float) * (vertexLen * 3));
+
+            for (unsigned int v = 0; v < vertexLen; v++){
+                memcpy(&_rawVerticesPTR[v*3], vertexEs+(v*sizeof(Vertex)), sizeof(float) * 3 );
+            }
+
+
+            _rawVertices.insert(_rawVertices.end(), _rawVerticesPTR, _rawVerticesPTR+(vertexLen*3));
         }
 
         std::vector<Vertex> getVerticesVector() { return _vertices; }
+        std::vector<float> getRawVerticesVector() { return _rawVertices; }
         std::vector<unsigned int> getIndicesVector() { return _indices; }
 
         Vertex* getVertices(unsigned int *outputLen) {
             *outputLen = _vertices.size();
             return _vertices.data();
+        }
+
+        float* getRawVertices(unsigned int *outputLen){
+            *outputLen = _rawVertices.size();
+            return _rawVerticesPTR;
         }
         unsigned int* getIndices(unsigned int *outputLen) {
             *outputLen = _indices.size();
@@ -43,6 +65,8 @@ namespace DemonBase {
 
     protected:
         std::vector<Vertex> _vertices;
+        std::vector<float> _rawVertices;
+        float *_rawVerticesPTR;
         std::vector<unsigned int> _indices;
         aiMaterial *_material;
         aiString diffuse_fileName;
