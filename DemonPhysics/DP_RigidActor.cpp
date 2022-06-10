@@ -27,6 +27,6 @@ namespace DemonPhysics {
     void DP_RigidActor::destroyActor(){
         _mainActor->detachShape(*_mainShape);
         _mainActor->release();
-        _mainShape->release();
+        //_mainShape->release();
     }
 } // DemonPhysics

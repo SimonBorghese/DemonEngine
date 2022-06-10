@@ -7,6 +7,8 @@
 #include "DP_RigidMesh.h"
 #include "DP_RigidActor.h"
 #include <DemonBase/b_RigidActor.h>
+#include "DP_RigidMesh.h"
+#include "DP_PhysicsMaterial.h"
 #include <PhysX/PxPhysicsAPI.h>
 #include <PhysX/extensions/PxTriangleMeshExt.h>
 #include <PhysX/extensions/PxDefaultErrorCallback.h>
@@ -29,12 +31,14 @@ namespace DemonPhysics {
             pScene->fetchResults(true);
         }
 
-        void createRigidMesh(DP_RigidMesh *target);
-
         void closePhysics();
 
         void addActor(DemonBase::b_RigidActor *actor) { pScene->addActor(*actor->getActor()); }
         void removeActor(DemonBase::b_RigidActor *actor) { pScene->removeActor(*actor->getActor()); }
+
+        void cookMesh(DP_RigidMesh *targetMesh) { targetMesh->createMesh(pPhysics, pCooking); }
+        void cookActor(DP_RigidActor *targetActor, DP_PhysicsMaterial *mat) { targetActor->createActor(pPhysics, mat->getMaterial()); }
+        void cookMaterial(DP_PhysicsMaterial *targetMat) { targetMat->createMaterial(pPhysics); }
 
 
         physx::PxPhysics* getPhysics() { return pPhysics; }

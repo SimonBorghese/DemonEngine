@@ -8,7 +8,8 @@ namespace DemonGame {
     void DG_BasicCameraController::updateCamera(){
         xRotate += eventHandler->getMouseXOffset() * camSensitivity;
         yRotate -= eventHandler->getMouseYOffset() * camSensitivity;
-        yRotate = std::clamp(yRotate, -89.0f, 89.0f);
+        yRotate = glm::clamp(yRotate, -89.0f, 89.0f);
+
         targetCamera->setEularAngles(xRotate, yRotate);
 
 

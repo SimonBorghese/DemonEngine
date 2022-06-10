@@ -13,11 +13,11 @@
 #include <DemonBase/b_GameObject.h>
 
 namespace DemonGame {
-class DG_Entity: public DemonWorld::DW_Transform {
+class DG_Entity : public DemonBase::b_GameObject{
     public:
         DG_Entity(DemonRender::DR_RenderManager *targetRender, DemonRender::DR_Shader *targetShader) :
         renderManager(targetRender),
-        meshShader(targetShader) {}
+        meshShader(targetShader) { mainTransform.createTransform(); }
 
 
         void createEntityFromMesh(const char *meshFile,
@@ -29,10 +29,13 @@ class DG_Entity: public DemonWorld::DW_Transform {
 
         void destroyEntity();
 
+        // The entity only renders a mesh, that is to be managed by the render manager, thus update is useless
+        void update() {}
 
-        //DemonWorld::DW_Transform *getTransform() { return mainTransform; }
-    private:
-        //DemonWorld::DW_Transform *mainTransform;
+
+        DemonWorld::DW_Transform *getTransform() { return &mainTransform; }
+    protected:
+        DemonWorld::DW_Transform mainTransform;
         DemonRender::DR_MeshRenderer *mainMeshRenderer;
 
         DemonRender::DR_RenderManager *renderManager;

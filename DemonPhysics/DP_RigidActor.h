@@ -8,6 +8,8 @@
 #include <PhysX/PxRigidActor.h>
 #include "DP_RigidMesh.h"
 #include <DemonBase/b_RigidActor.h>
+#include <DemonBase/b_GameObject.h>
+#include <glm/glm.hpp>
 
 namespace DemonPhysics {
 
@@ -19,7 +21,7 @@ namespace DemonPhysics {
 
         void destroyActor();
 
-    private:
+    protected:
         DP_RigidMesh *targetMesh;
     };
 

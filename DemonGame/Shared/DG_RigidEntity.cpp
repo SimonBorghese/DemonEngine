@@ -5,4 +5,5 @@
 #include "DG_RigidEntity.h"
 
 namespace DemonGame {
+
 } // DemonGame

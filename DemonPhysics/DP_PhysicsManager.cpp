@@ -83,10 +83,6 @@ namespace DemonPhysics {
         }
     }
 
-    void DP_PhysicsManager::createRigidMesh(DP_RigidMesh *target){
-        target->createMesh(pPhysics, pCooking);
-    }
-
     void DP_PhysicsManager::closePhysics(){
         pControlManager->release();
         pScene->release();

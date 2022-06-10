@@ -41,6 +41,10 @@ namespace DemonBase {
             _rawVertices.insert(_rawVertices.end(), _rawVerticesPTR, _rawVerticesPTR+(vertexLen*3));
         }
 
+        ~b_Mesh(){
+            free(_rawVerticesPTR);
+        }
+
         std::vector<Vertex> getVerticesVector() { return _vertices; }
         std::vector<float> getRawVerticesVector() { return _rawVertices; }
         std::vector<unsigned int> getIndicesVector() { return _indices; }

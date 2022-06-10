@@ -7,6 +7,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
+#ifndef NOPHYSX
+#include <PhysX/foundation/PxVec3.h>
+#endif
+
 namespace DemonWorld {
     class DW_Transform {
     public:
@@ -23,6 +27,7 @@ namespace DemonWorld {
 
         void setPosition(glm::vec3 newPos) { position = newPos; }
         void setRotation(glm::vec3 newRot) { rotation = newRot; }
+        void setRotation(glm::quat newRot) { rotation = glm::vec3(pitch(newRot), yaw(newRot), roll(newRot)); }
         void setScale(glm::vec3 newScale) { _scale = newScale;}
 
         void translate(glm::vec3 offset) { position += offset; }
@@ -42,6 +47,16 @@ namespace DemonWorld {
             currentModel = glm::scale(currentModel, _scale);
             return currentModel;
         }
+
+#ifndef NOPHYSX
+        static physx::PxVec3 glmToPhys(glm::vec3 target){
+            return physx::PxVec3(target.x, target.y, target.z);
+        }
+
+        static glm::vec3 PhysToGlm(physx::PxVec3 target){
+            return glm::vec3(target.x, target.y, target.z);
+        }
+#endif
 
     protected:
         glm::vec3 position = glm::vec3(0.0f);

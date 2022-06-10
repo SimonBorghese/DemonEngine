@@ -17,16 +17,13 @@
 #include <DemonPhysics/DP_RigidActor.h>
 #include <DemonPhysics/DP_PhysicsMaterial.h>
 #include <DemonPhysics/DP_RigidMesh.h>
+#include <DemonPhysics/DP_RigidPhysicsActor.h>
 #include <DemonIO/DI_SceneLoader.h>
 
 #define WIDTH 800
 #define HEIGHT 600
 int main(void)
 {
-    //int *good = (int*) 0x01;
-    //*good = 4834534;
-    //char owo[3];
-    //scanf("%s", &owo[0]);
 
     DemonRender::DR_RenderManager renderManager;
     renderManager.createRenderer("OwO", WIDTH, HEIGHT);
@@ -52,70 +49,46 @@ int main(void)
 
 
     DemonPhysics::DP_RigidMesh rigidMesh(normalMesh[0]);
-    physicsManager.createRigidMesh(&rigidMesh);
-
-    DemonPhysics::DP_RigidActor rigidActor(&rigidMesh);
-
+    DemonPhysics::DP_RigidPhysicsActor rigidActor(&rigidMesh);
     DemonPhysics::DP_PhysicsMaterial matgood;
-    matgood.createMaterial(physicsManager.getPhysics());
 
+    physicsManager.cookMesh(&rigidMesh);
+    physicsManager.cookMaterial(&matgood);
+    physicsManager.cookActor(&rigidActor, &matgood);
 
-    rigidActor.createActor(physicsManager.getPhysics(), matgood.getMaterial());
 
     physicsManager.addActor(&rigidActor);
-    //copied.data() = normalMesh[0]->getVerticesVector().data();
-
-
-    /*
-    for (unsigned int v = 0; v < normalMesh[0]->getVerticesVector().size(); v++){
-        copied.push_back(normalMesh[0]->getVerticesVector().at(v).iPosition.x);
-        copied.push_back(normalMesh[0]->getVerticesVector().at(v).iPosition.y);
-        copied.push_back(normalMesh[0]->getVerticesVector().at(v).iPosition.z);
-    }
-     */
-
-    //physics.addPhysicsObject(&goodrigid);
-
-
 
     renderManager.setCamera(&mainCamera);
 
     mainEvents.pollEvents();
 
-    //rigidActor.getActor()->setGlobalPose(physx::PxTransform(physx::PxVec3(0.0f, -10.0f, 0.0f)));
     while (!mainEvents.getCloseState()) {
-        //glm::vec3 good(0.0f, -10.0f, 0.0f);
-        //goodrigid.setVelocity((float*)&good, 10.0f);
+
         renderManager.newFrame();
         mainEvents.pollEvents();
 
         basicCameraController.updateCamera();
-        //scp173.rotate(glm::vec3(0.0f, 0.1f, 0.0f));
-        //float poop[3];
-        //goodrigid.getPosition(&poop[0]);
-        /*
-        printf("Found pos: %f %f %f\n",
-               poop[0],
-               poop[1],
-               poop[2]);
-               */
-        //glm::vec3 posFound;
-        //goodrigid.getPosition((float*) &posFound);
-        //printf("G: %f %f %f\n", posFound.x, posFound.y, posFound.z);
-        physx::PxVec3 goodPos = rigidActor.getActor()->getGlobalPose().p;
+
+
+        glm::vec3 goodPos = rigidActor.getTransform()->getPosition();
+        glm::quat goodRot = rigidActor.getTransform()->getRotation();
+        scp173.getTransform()->setPosition(goodPos);
+        scp173.getTransform()->setRotation(goodRot);
         printf("Pos: %f %f %f\n", goodPos.x, goodPos.y, goodPos.z);
 
         renderManager.render();
         physicsManager.simulate(1.0f/60.0f);
+        rigidActor.updateActor();
     }
 
 
     mainShader.destroyProgram();
     scp173.destroyEntity();
-    rigidMesh.destroyMesh();
     physicsManager.removeActor(&rigidActor);
-    rigidActor.destroyActor();
+    rigidMesh.destroyMesh();
     matgood.destroyMaterial();
+    rigidActor.destroyActor();
     physicsManager.closePhysics();
     renderManager.destroyRenderer();
 
