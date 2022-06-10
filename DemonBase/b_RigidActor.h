@@ -22,6 +22,15 @@ namespace DemonBase {
 
         DemonWorld::DW_Transform* getTransform() { return &_mainTransform; }
 
+        void setTransform(DemonWorld::DW_Transform transform) {
+            _mainTransform = transform;
+            physx::PxTransform targetTransform;
+            targetTransform.p = DemonWorld::DW_Transform::glmToPhys(_mainTransform.getPosition());
+            glm::quat tq = _mainTransform.getRotation();
+            targetTransform.q = physx::PxQuat(tq.x, tq.y, tq.z, tq.w);
+            _mainActor->setGlobalPose(targetTransform);
+        }
+
         void updateActor(){
             physx::PxTransform targetTransform;
             targetTransform.p = DemonWorld::DW_Transform::glmToPhys(_mainTransform.getPosition());
@@ -34,7 +43,6 @@ namespace DemonBase {
             glm::quat quat = glm::quat(_mainActor->getGlobalPose().q.w, _mainActor->getGlobalPose().q.x, _mainActor->getGlobalPose().q.y, _mainActor->getGlobalPose().q.z);
 
             //_mainTransform.createTransform(DemonWorld::DW_Transform::PhysToGlm(pos), )
-            _mainActor->setGlobalPose(targetTransform);
             _mainTransform.setPosition(pos);
             _mainTransform.setRotation(quat);
         }

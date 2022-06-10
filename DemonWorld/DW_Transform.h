@@ -27,11 +27,11 @@ namespace DemonWorld {
 
         void setPosition(glm::vec3 newPos) { position = newPos; }
         void setRotation(glm::vec3 newRot) { rotation = newRot; }
-        void setRotation(glm::quat newRot) { rotation = glm::vec3(pitch(newRot), yaw(newRot), roll(newRot)); }
+        void setRotation(glm::quat newRot) { rotation = newRot; }
         void setScale(glm::vec3 newScale) { _scale = newScale;}
 
         void translate(glm::vec3 offset) { position += offset; }
-        void rotate(glm::vec3 offset) { rotation += offset; }
+        void rotate(glm::quat offset) { rotation += offset; }
         void scale(glm::vec3 offset) { _scale += offset; }
 
         glm::vec3 getPosition() { return position; }
@@ -41,9 +41,14 @@ namespace DemonWorld {
         glm::mat4 getModel() {
             currentModel = glm::mat4(1.0f);
             currentModel = glm::translate(currentModel, position);
+            /*
             currentModel = glm::rotate(currentModel, rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
             currentModel = glm::rotate(currentModel, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
             currentModel = glm::rotate(currentModel, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+             */
+            if (rotation != glm::quat(0.0f, 0.0f, 0.0f, 0.0f)){
+                currentModel = glm::rotate(currentModel, glm::angle(rotation), glm::axis(rotation));
+            }
             currentModel = glm::scale(currentModel, _scale);
             return currentModel;
         }
@@ -60,7 +65,7 @@ namespace DemonWorld {
 
     protected:
         glm::vec3 position = glm::vec3(0.0f);
-        glm::vec3 rotation = glm::vec3( 0.0f, 0.0f, 0.0f);
+        glm::quat rotation = glm::quat(0.0f, 0.0f, 0.0f, 0.0f);
         glm::vec3 _scale = glm::vec3(1.0f);
 
         glm::mat4 currentModel = glm::mat4(1.0f);

@@ -1,11 +1,11 @@
 //
-// Created by simon on 6/7/22.
+// Created by simon on 6/10/22.
 //
 
-#include "DG_RigidEntity.h"
+#include "DG_PhysicsObject.h"
 
 namespace DemonGame {
-    void DG_RigidEntity::createEntityFromMesh(const char *meshFile,
+    void DG_PhysicsObject::createEntityFromMesh(const char *meshFile,
                                               glm::vec3 pos,
                                               glm::vec3 rotation,
                                               glm::vec3 scale){
@@ -23,7 +23,7 @@ namespace DemonGame {
         renderManager->addMeshGroup(mainMeshRenderer);
 
         rigidMesh = new DemonPhysics::DP_RigidMesh(normalMesh[0]);
-        rigidActor = new DemonPhysics::DP_RigidActor(rigidMesh);
+        rigidActor = new DemonPhysics::DP_RigidPhysicsActor(rigidMesh);
         DemonPhysics::DP_PhysicsMaterial matgood;
         physicsManager->cookMesh(rigidMesh);
         physicsManager->cookMaterial(&matgood);
@@ -34,7 +34,7 @@ namespace DemonGame {
         mainMeshRenderer->bindTransform(&mainTransform);
     }
 
-    void DG_RigidEntity::destroyEntity(){
+    void DG_PhysicsObject::destroyEntity(){
         mainMaterial->destroyMaterial();
         rigidMesh->destroyMesh();
         physicsManager->removeActor(rigidActor);
@@ -44,7 +44,7 @@ namespace DemonGame {
         delete mainMeshRenderer;
     }
 
-    void DG_RigidEntity::update(){
+    void DG_PhysicsObject::update(){
         //rigidActor->setTransform(mainTransform);
         //printf("P: %f %f %f\n", rigidActor->getTransform()->getPosition().x, rigidActor->getTransform()->getPosition().y, rigidActor->getTransform()->getPosition().z);
 

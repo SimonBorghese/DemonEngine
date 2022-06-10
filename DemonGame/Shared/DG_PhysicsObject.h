@@ -1,9 +1,9 @@
 //
-// Created by simon on 6/7/22.
+// Created by simon on 6/10/22.
 //
 
-#ifndef DEMONENGINE_DG_RIGIDENTITY_H
-#define DEMONENGINE_DG_RIGIDENTITY_H
+#ifndef DEMONENGINE_DG_PHYSICSOBJECT_H
+#define DEMONENGINE_DG_PHYSICSOBJECT_H
 #include "DG_Entity.h"
 #include <DemonPhysics/DP_RigidActor.h>
 #include <DemonPhysics/DP_RigidPhysicsActor.h>
@@ -12,13 +12,14 @@
 
 namespace DemonGame {
 
-    class DG_RigidEntity : public DG_Entity{
+    class DG_PhysicsObject : public DG_Entity {
     public:
-        DG_RigidEntity(DemonRender::DR_RenderManager *targetRender,
-                       DemonRender::DR_Shader *targetShader,
-                       DemonPhysics::DP_PhysicsManager *targetManager) : DG_Entity(targetRender, targetShader),
-                       physicsManager(targetManager) {
-            //rigidActor = new DemonPhysics::DP_RigidActor(rigidMesh);
+        DG_PhysicsObject(DemonRender::DR_RenderManager *targetRender,
+        DemonRender::DR_Shader *targetShader,
+        DemonPhysics::DP_PhysicsManager *targetManager) :
+        DG_Entity(targetRender, targetShader),
+        physicsManager(targetManager) {
+                //rigidActor = new DemonPhysics::DP_RigidActor(rigidMesh);
         }
 
         void createEntityFromMesh(const char *meshFile,
@@ -30,15 +31,14 @@ namespace DemonGame {
 
         void update();
 
-        DemonPhysics::DP_RigidActor* getActor() { return rigidActor; }
+        DemonPhysics::DP_RigidActor *getActor() { return rigidActor; }
 
     protected:
         DemonPhysics::DP_PhysicsManager *physicsManager;
-        DemonPhysics::DP_RigidActor *rigidActor;
+        DemonPhysics::DP_RigidPhysicsActor *rigidActor;
         DemonPhysics::DP_RigidMesh *rigidMesh;
         DemonPhysics::DP_PhysicsMaterial *mainMaterial;
     };
-
 } // DemonGame
 
-#endif //DEMONENGINE_DG_RIGIDENTITY_H
+#endif //DEMONENGINE_DG_PHYSICSOBJECT_H
