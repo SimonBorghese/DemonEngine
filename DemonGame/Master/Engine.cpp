@@ -33,7 +33,7 @@ namespace DemonEngine {
 
         return _mainEvents->getCloseState();
     }
-    
+
 
     void Engine::destroyEngine(){
         delete _mainPlayer;
