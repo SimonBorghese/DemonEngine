@@ -25,7 +25,6 @@ namespace DemonPhysics {
     }
 
     void DP_RigidMesh::createMesh(physx::PxPhysics *physx, physx::PxCooking *cooking){
-        printf("Cooking mesh...\n");
         physx::PxDefaultMemoryOutputStream buf;
         physx::PxConvexMeshCookingResult::Enum result;
         if(!cooking->cookConvexMesh(convexDesc, buf, &result)){
@@ -33,7 +32,6 @@ namespace DemonPhysics {
         }
         physx::PxDefaultMemoryInputData input(buf.getData(), buf.getSize());
         _mesh = physx->createConvexMesh(input);
-        printf("Mesh is now not null and fuckable: %d %d\n", _mesh != nullptr, _mesh->isReleasable());
     }
 
     void DP_RigidMesh::destroyMesh(){

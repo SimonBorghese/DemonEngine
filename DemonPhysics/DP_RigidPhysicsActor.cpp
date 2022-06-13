@@ -23,9 +23,9 @@ namespace DemonPhysics {
             return;
         }
         //((physx::PxRigidDynamic*) _mainActor)
-        getRealActor()->setMass(1.0f);
-        getRealActor()->setMassSpaceInertiaTensor(physx::PxVec3(1.0f));
-        physx::PxRigidBodyExt::updateMassAndInertia(*getRealActor(), 5.0f);
+        getRealActor()->setMass(10.0f);
+        getRealActor()->setMassSpaceInertiaTensor(physx::PxVec3(10.0f));
+        physx::PxRigidBodyExt::updateMassAndInertia(*getRealActor(), 50.0f);
 
     }
 } // DemonPhysics

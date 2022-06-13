@@ -22,56 +22,28 @@
 #include <DemonGame/Shared/DG_RigidEntity.h>
 #include <DemonGame/Shared/DG_PhysicsObject.h>
 
+#include <DemonGame/Master/Engine.h>
+
 #define WIDTH 800
 #define HEIGHT 600
 int main(void)
 {
+    DemonEngine::Engine engine(WIDTH,HEIGHT);
+    engine.createEngine();
 
-    DemonRender::DR_RenderManager renderManager;
-    renderManager.createRenderer("OwO", WIDTH, HEIGHT);
-    DemonRender::DR_Shader mainShader;
-    mainShader.createProgram("DemonShaders/vertex_noAnim.glsl", "DemonShaders/frag_colourDebug.glsl");
-    DemonRender::DR_Camera mainCamera(&mainShader);
-    mainCamera.configureProjection(70.0f, (float)WIDTH/(float)HEIGHT , 0.1f, 10000.0f);
-    DemonGame::DG_Event mainEvents;
-    DemonGame::DG_BasicCameraController basicCameraController(&mainEvents, &mainCamera, 0.5f);
+    DemonGame::DG_RigidEntity goodSCP(engine.getRenderingManager(), engine.getObjectShader(), engine.getPhysicsManager());
+    goodSCP.createEntityFromMesh("bloque.obj", glm::vec3(0.0f, -20.0f, 0.0f));
 
-
-    DemonPhysics::DP_PhysicsManager physicsManager;
-    physicsManager.createPhysics(glm::vec3(0.0f, -9.81f, 0.0f));
-
-
-    DemonGame::DG_RigidEntity goodSCP(&renderManager, &mainShader, &physicsManager);
-    goodSCP.createEntityFromMesh("173.fbx", glm::vec3(0.0f, -20.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f));
-
-    DemonGame::DG_PhysicsObject goodSCP2(&renderManager, &mainShader, &physicsManager);
+    DemonGame::DG_PhysicsObject goodSCP2(engine.getRenderingManager(), engine.getObjectShader(), engine.getPhysicsManager());
     goodSCP2.createEntityFromMesh("173.fbx", glm::vec3(0.0f, 0.0f, 0.0f));
 
-    renderManager.setCamera(&mainCamera);
 
-    mainEvents.pollEvents();
-
-    while (!mainEvents.getCloseState()) {
-
-        renderManager.newFrame();
-        mainEvents.pollEvents();
-
-        basicCameraController.updateCamera();
-
-        renderManager.render();
-        physicsManager.simulate(1.0f/60.0f);
+    while (!engine.gameLoop()){
         goodSCP.update();
         goodSCP2.update();
-        //rigidActor.updateActor();
     }
 
-
-    mainShader.destroyProgram();
-    goodSCP.destroyEntity();
-    goodSCP2.destroyEntity();
-
-    physicsManager.closePhysics();
-    renderManager.destroyRenderer();
+    engine.destroyEngine();
 
 
 

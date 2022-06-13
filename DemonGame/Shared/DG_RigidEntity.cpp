@@ -51,6 +51,7 @@ namespace DemonGame {
         mainTransform.setPosition(rigidActor->getTransform()->getPosition());
         mainTransform.setRotation(rigidActor->getTransform()->getRotation());
         rigidActor->updateActor();
+
         //mainTransform = *rigidActor->getTransform();
         //mainTransform = *rigidActor->getTransform();
 
