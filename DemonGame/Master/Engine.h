@@ -16,6 +16,7 @@
 #include <DemonGame/Shared/DG_BasicCameraController.h>
 #include <DemonGame/Shared/DG_RigidEntity.h>
 #include <DemonGame/Shared/DG_PhysicsObject.h>
+#include "World.h"
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <vector>
@@ -35,6 +36,8 @@ namespace DemonEngine {
             _mainPhysicsManager = new DemonPhysics::DP_PhysicsManager;
 
             _mainPlayer = new DemonGame::DG_BasicCameraController(_mainEvents, _mainCamera, 0.5f);
+
+            _world = new World;
         }
 
         // Engine state functions
@@ -43,7 +46,8 @@ namespace DemonEngine {
         void destroyEngine();
 
         // Some basic crap
-        DemonGame::DG_RigidEntity* createWorldEntity();
+        DemonGame::DG_RigidEntity* createWorldObject();
+        DemonGame::DG_PhysicsObject* createWorldEntity();
 
 
         // All the delicious getter functions
@@ -53,6 +57,8 @@ namespace DemonEngine {
         DemonGame::DG_Event* getEvent() { return _mainEvents; }
         DemonPhysics::DP_PhysicsManager* getPhysicsManager() { return _mainPhysicsManager; }
         DemonGame::DG_BasicCameraController* getCameraController() { return _mainPlayer; }
+
+        World* getWorld() { return _world; }
     private:
         // Some fundimental variables
         unsigned int _width, _height, _fov, _zFar;
@@ -64,6 +70,9 @@ namespace DemonEngine {
         DemonGame::DG_Event *_mainEvents;
         DemonPhysics::DP_PhysicsManager *_mainPhysicsManager;
         DemonGame::DG_BasicCameraController *_mainPlayer;
+
+        // T h e   g a m e
+        World *_world;
 
     };
 

@@ -30,6 +30,7 @@ namespace DemonEngine {
         _renderingManager->newFrame();
         _mainEvents->pollEvents();
         _mainPlayer->updateCamera();
+        _world->updateAll();
 
         return _mainEvents->getCloseState();
     }
@@ -50,5 +51,16 @@ namespace DemonEngine {
 
         _renderingManager->destroyRenderer();
         delete _renderingManager;
+    }
+
+    DemonGame::DG_RigidEntity* Engine::createWorldObject(){
+        DemonGame::DG_RigidEntity *goodEnt = new DemonGame::DG_RigidEntity(_renderingManager, _shaderObject, _mainPhysicsManager);
+        _world->addWorldObject(goodEnt);
+        return goodEnt;
+    }
+    DemonGame::DG_PhysicsObject* Engine::createWorldEntity(){
+        DemonGame::DG_PhysicsObject *goodEnt = new DemonGame::DG_PhysicsObject(_renderingManager, _shaderObject, _mainPhysicsManager);
+        _world->addWorldEntity(goodEnt);
+        return goodEnt;
     }
 } // DemonEngine
