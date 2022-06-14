@@ -44,6 +44,7 @@ namespace DemonPhysics {
         physx::PxPhysics* getPhysics() { return pPhysics; }
         physx::PxCooking* getCooking() { return pCooking; }
         physx::PxScene* getScene() { return pScene; }
+        physx::PxControllerManager* getControllerManager() { return pControlManager; }
     private:
         physx::PxDefaultErrorCallback pError;
         physx::PxDefaultAllocator pAllocate;
