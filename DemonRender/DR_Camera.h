@@ -40,6 +40,7 @@ namespace DemonRender {
         }
 
         glm::vec3 getCameraFront() { return cameraFront;}
+        glm::vec3 getFPSFront() { return glm::vec3(cameraFront.x, 0.0f, cameraFront.z); }
         glm::vec3 getPosition() { return cameraPos; }
         glm::vec3 getCameraUp() { return cameraUp; }
 

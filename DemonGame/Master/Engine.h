@@ -26,7 +26,7 @@ namespace DemonEngine {
     class Engine {
     public:
         // Create all the objects needed
-        Engine(unsigned int width, unsigned int height, unsigned int fov = 70, unsigned int zFar = 100) : _width(width),
+        Engine(unsigned int width, unsigned int height, unsigned int fov = 70, unsigned int zFar = 1000) : _width(width),
         _height(height), _fov(fov), _zFar(zFar) {
             _renderingManager = new DemonRender::DR_RenderManager;
             _shaderObject = new DemonRender::DR_Shader;
@@ -48,6 +48,8 @@ namespace DemonEngine {
         // Some basic crap
         DemonGame::DG_RigidEntity* createWorldObject();
         DemonGame::DG_PhysicsObject* createWorldEntity();
+
+        DemonPhysics::DP_CharacterController* createFPSController(glm::vec3 startPos, float height, float radius);
 
 
         // All the delicious getter functions

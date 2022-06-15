@@ -6,6 +6,7 @@
 #define DEMONENGINE_DG_BASICCAMERACONTROLLER_H
 #include "DG_Event.h"
 #include <DemonRender/DR_Camera.h>
+#include <DemonPhysics/DP_CharacterController.h>
 #include <iostream>
 #include <algorithm>
 
@@ -20,12 +21,14 @@ namespace DemonGame {
 
         void setSensitivity(float newSens) { camSensitivity = newSens; }
         void setSpeed(float newSpeed) { camSpeed = newSpeed; }
+        void setController(DemonPhysics::DP_CharacterController *target) { targetController = target;}
 
         void updateCamera();
 
     private:
         DG_Event *eventHandler;
         DemonRender::DR_Camera *targetCamera;
+        DemonPhysics::DP_CharacterController *targetController = nullptr;
         float camSensitivity = 0.0f;
         float camSpeed = 0.0f;
         float xRotate = 0.0f;

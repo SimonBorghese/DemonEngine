@@ -24,7 +24,7 @@ namespace DemonGame {
 
         rigidMesh = new DemonPhysics::DP_RigidMesh(normalMesh[0]);
         rigidActor = new DemonPhysics::DP_RigidActor(rigidMesh);
-        DemonPhysics::DP_PhysicsMaterial matgood;
+        DemonPhysics::DP_PhysicsMaterial matgood(1.0f, 1.0f, 0.0f);
         physicsManager->cookMesh(rigidMesh);
         physicsManager->cookMaterial(&matgood);
         //physicsManager->cookActor(rigidActor, &matgood);

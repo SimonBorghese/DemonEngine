@@ -17,6 +17,7 @@ namespace DemonPhysics{
 
         void createMaterial(physx::PxPhysics *phys){
             mat = phys->createMaterial(staticFriction, dynamicFriction, intertia);
+            mat->setFlags(physx::PxMaterialFlag::eIMPROVED_PATCH_FRICTION);
         }
         void destroyMaterial(){
             mat->release();

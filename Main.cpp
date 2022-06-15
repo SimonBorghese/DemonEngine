@@ -7,7 +7,7 @@
 
 #include <DemonGame/Master/Engine.h>
 #include <DemonPhysics/DP_CharacterController.h>
-
+#include <math.h>
 #define WIDTH 800
 #define HEIGHT 600
 int main(void)
@@ -18,16 +18,38 @@ int main(void)
     auto *goodSCP2 = engine.createWorldObject();
     goodSCP->createEntityFromMesh("173.fbx");
     goodSCP2->createEntityFromMesh("bloque.obj", glm::vec3(0.0f, -20.0f, 0.0f));
-    DemonPhysics::DP_PhysicsMaterial mat;
-    mat.createMaterial(engine.getPhysicsManager()->getPhysics());
-    DemonPhysics::DP_CharacterController controller(glm::vec3(0.0f), mat.getMaterial(), 1.5f, 1.0f, engine.getPhysicsManager()->getControllerManager());
+    DemonPhysics::DP_CharacterController *controller = engine.createFPSController(glm::vec3(0.0f), 5.0f, 1.0f);
+
 
     while (!engine.gameLoop()){
-        glm::vec3 goody = glm::vec3(0.0f);
-        controller.getPosition(&goody);
-        printf("%f %f %f\n", goody.x, goody.y, goody.z);
+        if (engine.getEvent()->getKeyDown(SDL_SCANCODE_E)) {
+            auto *goodSCP4 = engine.createWorldEntity();
+            goodSCP4->createEntityFromMesh("block.obj", glm::vec3(0.0f));
+        }
 
-        controller.move(glm::vec3(0.0f, -0.0981f, 0.0f));
+        glm::vec3 FPSFront = engine.getCamera()->getCameraFront();
+        if (!engine.getEvent()->getKey(SDL_SCANCODE_SPACE)) {
+            FPSFront.y = 0.0f;
+        }
+
+        if (engine.getEvent()->getKey(SDL_SCANCODE_W)){
+            controller->move(FPSFront);
+        }
+        if (engine.getEvent()->getKey(SDL_SCANCODE_S)){
+            controller->move(-FPSFront);
+        }
+        if (engine.getEvent()->getKey(SDL_SCANCODE_A)){
+            controller->move(-(glm::normalize(
+                    glm::cross(FPSFront, engine.getCamera()->getCameraUp())) * 2.0f));
+        }
+        if (engine.getEvent()->getKey(SDL_SCANCODE_D)){
+            controller->move((glm::normalize(
+                    glm::cross(FPSFront, engine.getCamera()->getCameraUp())) * 2.0f));
+        }
+
+        if (!engine.getEvent()->getKey(SDL_SCANCODE_SPACE)) {
+            controller->move(glm::vec3(0.0f, -9.18f * (1.0f / 60.0f), 0.0f));
+        }
 
     }
 

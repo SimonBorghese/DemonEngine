@@ -63,4 +63,12 @@ namespace DemonEngine {
         _world->addWorldEntity(goodEnt);
         return goodEnt;
     }
+
+    DemonPhysics::DP_CharacterController* Engine::createFPSController(glm::vec3 startPos, float height, float radius){
+        DemonPhysics::DP_PhysicsMaterial mat;
+        mat.createMaterial(getPhysicsManager()->getPhysics());
+        DemonPhysics::DP_CharacterController *controller = new DemonPhysics::DP_CharacterController(glm::vec3(startPos), mat.getMaterial(),  height, radius, getPhysicsManager()->getControllerManager());
+        getCameraController()->setController(controller);
+        return controller;
+    }
 } // DemonEngine

@@ -12,18 +12,45 @@ namespace DemonGame {
 
         targetCamera->setEularAngles(xRotate, yRotate);
 
+        if (targetController != nullptr) {
+            glm::vec3 currentControllerPos = glm::vec3(0.0f);
+            targetController->getPosition(&currentControllerPos);
+            targetCamera->setPosition(currentControllerPos);
+            /*
 
-        if (eventHandler->getKey(SDL_SCANCODE_W)){
-            targetCamera->setPosition((targetCamera->getPosition() + (targetCamera->getCameraFront() * camSpeed)));
+            if (eventHandler->getKey(SDL_SCANCODE_W)) {
+                targetController->move((targetCamera->getFPSFront() * camSpeed));
+            }
+            if (eventHandler->getKey(SDL_SCANCODE_S)) {
+                targetController->move( -(targetCamera->getFPSFront() * camSpeed));
+            }
+            if (eventHandler->getKey(SDL_SCANCODE_A)) {
+                targetController->move(-(glm::normalize(
+                        glm::cross(targetCamera->getFPSFront(), targetCamera->getCameraUp())) * camSpeed));
+            }
+            if (eventHandler->getKey(SDL_SCANCODE_D)) {
+                targetController->move((glm::normalize(
+                        glm::cross(targetCamera->getFPSFront(), targetCamera->getCameraUp())) * camSpeed));
+            }
+             */
         }
-        if (eventHandler->getKey(SDL_SCANCODE_S)){
-            targetCamera->setPosition((targetCamera->getPosition() - (targetCamera->getCameraFront() * camSpeed)));
-        }
-        if (eventHandler->getKey(SDL_SCANCODE_A)){
-            targetCamera->setPosition(targetCamera->getPosition() - (glm::normalize(glm::cross(targetCamera->getCameraFront(), targetCamera->getCameraUp())) * camSpeed));
-        }
-        if (eventHandler->getKey(SDL_SCANCODE_D)){
-            targetCamera->setPosition(targetCamera->getPosition() + (glm::normalize(glm::cross(targetCamera->getCameraFront(), targetCamera->getCameraUp())) * camSpeed));
+        else{
+            /*
+            if (eventHandler->getKey(SDL_SCANCODE_W)) {
+                targetCamera->setPosition((targetCamera->getPosition() + (targetCamera->getCameraFront() * camSpeed)));
+            }
+            if (eventHandler->getKey(SDL_SCANCODE_S)) {
+                targetCamera->setPosition((targetCamera->getPosition() - (targetCamera->getCameraFront() * camSpeed)));
+            }
+            if (eventHandler->getKey(SDL_SCANCODE_A)) {
+                targetCamera->setPosition(targetCamera->getPosition() - (glm::normalize(
+                        glm::cross(targetCamera->getCameraFront(), targetCamera->getCameraUp())) * camSpeed));
+            }
+            if (eventHandler->getKey(SDL_SCANCODE_D)) {
+                targetCamera->setPosition(targetCamera->getPosition() + (glm::normalize(
+                        glm::cross(targetCamera->getCameraFront(), targetCamera->getCameraUp())) * camSpeed));
+            }
+             */
         }
     }
 } // DemonGame
