@@ -27,6 +27,17 @@ namespace DemonIO {
                 m_vertices[v].iPosition.y = oScene->mMeshes[m]->mVertices[v].y;
                 m_vertices[v].iPosition.z = oScene->mMeshes[m]->mVertices[v].z;
 
+                if (oScene->mMeshes[m]->HasNormals()){
+                    m_vertices[v].iNormal.x = oScene->mMeshes[m]->mNormals[v].x;
+                    m_vertices[v].iNormal.y = oScene->mMeshes[m]->mNormals[v].y;
+                    m_vertices[v].iNormal.z = oScene->mMeshes[m]->mNormals[v].z;
+                }
+                else {
+                    m_vertices[v].iNormal.x = 0.0f;
+                    m_vertices[v].iNormal.y = 0.0f;
+                    m_vertices[v].iNormal.z = 0.0f;
+                }
+
                 for (int t = 0; t < AI_MAX_NUMBER_OF_TEXTURECOORDS; t++) {
                     if (oScene->mMeshes[m]->mTextureCoords[t]) {
                         m_vertices[v].iTextCord.x = (oScene->mMeshes[m]->mTextureCoords[t][v]).x;

@@ -14,6 +14,7 @@
 
 typedef struct {
     glm::vec3 iPosition;
+    glm::vec3 iNormal;
     glm::vec2 iTextCord;
 } Vertex;
 

@@ -89,6 +89,10 @@ namespace DemonRender {
         glUniformMatrix4fv(location, 1, GL_FALSE, &targetMat[0][0]);
     }
 
+    void DR_Shader::bindVector3(uint32_t location, glm::vec3 targetVec){
+        glUniform3fv(location, 1, &targetVec[0]);
+    }
+
     void DR_Shader::bindDiffuseTexture(GLuint targetTexture) {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, targetTexture);

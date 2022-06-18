@@ -21,6 +21,7 @@ namespace DemonRender {
             projectionMat = glm::perspective(glm::radians(FOV), twitterRatio, zClose, zFar);
             viewLocation = _targetShader->getUniformLocation("view");
             projectionLocation = _targetShader->getUniformLocation("projection");
+            viewPosLocation = _targetShader->getUniformLocation("viewPos");
         }
 
         void setPosition(glm::vec3 position) { cameraPos = position;    }
@@ -37,6 +38,7 @@ namespace DemonRender {
             viewMat = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
             _targetShader->bindMatrix4f(viewLocation, viewMat);
             _targetShader->bindMatrix4f(projectionLocation, projectionMat);
+            _targetShader->bindVector3(viewPosLocation, cameraPos);
         }
 
         glm::vec3 getCameraFront() { return cameraFront;}
@@ -48,6 +50,7 @@ namespace DemonRender {
         DR_Shader *_targetShader;
         GLuint viewLocation = 0;
         GLuint projectionLocation = 0;
+        GLuint viewPosLocation = 0;
         glm::mat4 viewMat = glm::mat4(1.0f);
         glm::mat4 projectionMat = glm::mat4(1.0f);
         glm::vec3 cameraPos = glm::vec3(0.0f);

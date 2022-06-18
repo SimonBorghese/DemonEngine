@@ -43,6 +43,10 @@ namespace DemonRender {
                 m_vertices[v].iPosition.y = oScene->mMeshes[m]->mVertices[v].y;
                 m_vertices[v].iPosition.z = oScene->mMeshes[m]->mVertices[v].z;
 
+                m_vertices->iNormal.x = 0.0f;
+                m_vertices->iNormal.y = 0.0f;
+                m_vertices->iNormal.z = 0.0f;
+
                 for (int t = 0; t < AI_MAX_NUMBER_OF_TEXTURECOORDS; t++) {
                     if (oScene->mMeshes[m]->mTextureCoords[t]) {
                         m_vertices[v].iTextCord.x = (oScene->mMeshes[m]->mTextureCoords[t][v]).x;
