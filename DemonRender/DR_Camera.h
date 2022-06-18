@@ -4,8 +4,11 @@
 
 #ifndef DEMONENGINE_DR_CAMERA_H
 #define DEMONENGINE_DR_CAMERA_H
+
 #include <glm/glm.hpp>
+
 #define GLM_ENABLE_EXPERIMENTAL
+
 #include <glm/ext.hpp>
 
 #include <glad/glad.h>
@@ -17,33 +20,40 @@ namespace DemonRender {
     public:
         DR_Camera(DR_Shader *tShader) : _targetShader(tShader) {}
 
-        void configureProjection(float FOV, float twitterRatio, float zClose, float zFar){
+        void configureProjection(float FOV, float twitterRatio, float zClose, float zFar) {
             projectionMat = glm::perspective(glm::radians(FOV), twitterRatio, zClose, zFar);
             viewLocation = _targetShader->getUniformLocation("view");
             projectionLocation = _targetShader->getUniformLocation("projection");
             viewPosLocation = _targetShader->getUniformLocation("viewPos");
         }
 
-        void setPosition(glm::vec3 position) { cameraPos = position;    }
-        void setPosition(float x, float y, float z) { cameraPos = glm::vec3(x,y,z); }
+        void setPosition(glm::vec3 position) { cameraPos = position; }
+
+        void setPosition(float x, float y, float z) { cameraPos = glm::vec3(x, y, z); }
 
         void setEularAngles(glm::vec3 angles) { setEularAngles(angles.x, angles.y); }
-        void setEularAngles(float x, float y) { cameraFront = glm::vec3(0.0f);
+
+        void setEularAngles(float x, float y) {
+            cameraFront = glm::vec3(0.0f);
             cameraFront.x = cos(glm::radians(x)) * cos(glm::radians(y));
             cameraFront.y = sin(glm::radians(y));
             cameraFront.z = sin(glm::radians(x)) * cos(glm::radians(y));
-        cameraFront = glm::normalize(cameraFront); }
+            cameraFront = glm::normalize(cameraFront);
+        }
 
-        void setMatrix(){
+        void setMatrix() {
             viewMat = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
             _targetShader->bindMatrix4f(viewLocation, viewMat);
             _targetShader->bindMatrix4f(projectionLocation, projectionMat);
             _targetShader->bindVector3(viewPosLocation, cameraPos);
         }
 
-        glm::vec3 getCameraFront() { return cameraFront;}
+        glm::vec3 getCameraFront() { return cameraFront; }
+
         glm::vec3 getFPSFront() { return glm::vec3(cameraFront.x, 0.0f, cameraFront.z); }
+
         glm::vec3 getPosition() { return cameraPos; }
+
         glm::vec3 getCameraUp() { return cameraUp; }
 
     private:

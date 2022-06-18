@@ -4,6 +4,7 @@
 
 #ifndef DEMONENGINE_DG_ENTITY_H
 #define DEMONENGINE_DG_ENTITY_H
+
 #include <string>
 #include <DemonRender/DR_RenderManager.h>
 #include <DemonRender/DR_MeshRenderer.h>
@@ -13,11 +14,11 @@
 #include <DemonBase/b_GameObject.h>
 
 namespace DemonGame {
-class DG_Entity : public DemonBase::b_GameObject{
+    class DG_Entity : public DemonBase::b_GameObject {
     public:
         DG_Entity(DemonRender::DR_RenderManager *targetRender, DemonRender::DR_Shader *targetShader) :
-        renderManager(targetRender),
-        meshShader(targetShader) { mainTransform.createTransform(); }
+                renderManager(targetRender),
+                meshShader(targetShader) { mainTransform.createTransform(); }
 
 
         void createEntityFromMesh(const char *meshFile,
@@ -25,7 +26,7 @@ class DG_Entity : public DemonBase::b_GameObject{
                                   glm::vec3 rotation = glm::vec3(0.0f),
                                   glm::vec3 scale = glm::vec3(1.0f));
 
-        DemonRender::DR_MeshRenderer* getMeshRenderer() { return mainMeshRenderer; }
+        DemonRender::DR_MeshRenderer *getMeshRenderer() { return mainMeshRenderer; }
 
         void destroyEntity();
 
@@ -34,6 +35,7 @@ class DG_Entity : public DemonBase::b_GameObject{
 
 
         DemonWorld::DW_Transform *getTransform() { return &mainTransform; }
+
     protected:
         DemonWorld::DW_Transform mainTransform;
         DemonRender::DR_MeshRenderer *mainMeshRenderer;

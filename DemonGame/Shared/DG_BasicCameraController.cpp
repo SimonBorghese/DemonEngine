@@ -5,7 +5,7 @@
 #include "DG_BasicCameraController.h"
 
 namespace DemonGame {
-    void DG_BasicCameraController::updateCamera(){
+    void DG_BasicCameraController::updateCamera() {
         xRotate += eventHandler->getMouseXOffset() * camSensitivity;
         yRotate -= eventHandler->getMouseYOffset() * camSensitivity;
         yRotate = glm::clamp(yRotate, -89.0f, 89.0f);
@@ -33,8 +33,7 @@ namespace DemonGame {
                         glm::cross(targetCamera->getFPSFront(), targetCamera->getCameraUp())) * camSpeed));
             }
              */
-        }
-        else{
+        } else {
             /*
             if (eventHandler->getKey(SDL_SCANCODE_W)) {
                 targetCamera->setPosition((targetCamera->getPosition() + (targetCamera->getCameraFront() * camSpeed)));

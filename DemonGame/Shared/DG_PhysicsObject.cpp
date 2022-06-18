@@ -6,9 +6,9 @@
 
 namespace DemonGame {
     void DG_PhysicsObject::createEntityFromMesh(const char *meshFile,
-                                              glm::vec3 pos,
-                                              glm::vec3 rotation,
-                                              glm::vec3 scale){
+                                                glm::vec3 pos,
+                                                glm::vec3 rotation,
+                                                glm::vec3 scale) {
         mainTransform.createTransform(pos, rotation, scale);
         //mainTransform = new DemonWorld::DW_Transform(pos, rotation, scale);
         mainMeshRenderer = new DemonRender::DR_MeshRenderer();
@@ -34,7 +34,7 @@ namespace DemonGame {
         mainMeshRenderer->bindTransform(&mainTransform);
     }
 
-    void DG_PhysicsObject::destroyEntity(){
+    void DG_PhysicsObject::destroyEntity() {
         mainMaterial->destroyMaterial();
         rigidMesh->destroyMesh();
         physicsManager->removeActor(rigidActor);
@@ -44,7 +44,7 @@ namespace DemonGame {
         delete mainMeshRenderer;
     }
 
-    void DG_PhysicsObject::update(){
+    void DG_PhysicsObject::update() {
         //rigidActor->setTransform(mainTransform);
         //printf("P: %f %f %f\n", rigidActor->getTransform()->getPosition().x, rigidActor->getTransform()->getPosition().y, rigidActor->getTransform()->getPosition().z);
 

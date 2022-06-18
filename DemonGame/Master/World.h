@@ -4,6 +4,7 @@
 
 #ifndef DEMONENGINE_WORLD_H
 #define DEMONENGINE_WORLD_H
+
 #include <vector>
 #include <DemonGame/Shared/DG_Entity.h>
 #include <DemonGame/Shared/DG_RigidEntity.h>
@@ -16,19 +17,25 @@ namespace DemonEngine {
         World() {}
 
         int addWorldGeneric(DemonGame::DG_Entity *ent);
+
         int addWorldObject(DemonGame::DG_RigidEntity *ent);
+
         int addWorldEntity(DemonGame::DG_PhysicsObject *ent);
 
         void updateAll();
+
         void clearAll();
 
-        DemonGame::DG_Entity* removeWorldGeneric(unsigned int pointer);
-        DemonGame::DG_RigidEntity* removeWorldObject(unsigned int pointer);
-        DemonGame::DG_PhysicsObject* removeWorldEntity(unsigned int pointer);
+        DemonGame::DG_Entity *removeWorldGeneric(unsigned int pointer);
+
+        DemonGame::DG_RigidEntity *removeWorldObject(unsigned int pointer);
+
+        DemonGame::DG_PhysicsObject *removeWorldEntity(unsigned int pointer);
+
     private:
-        std::vector<DemonGame::DG_Entity*> _genericEntites;
-        std::vector<DemonGame::DG_RigidEntity*> _worldObjects;
-        std::vector<DemonGame::DG_PhysicsObject*> _worldEntites;
+        std::vector<DemonGame::DG_Entity *> _genericEntites;
+        std::vector<DemonGame::DG_RigidEntity *> _worldObjects;
+        std::vector<DemonGame::DG_PhysicsObject *> _worldEntites;
 
     };
 

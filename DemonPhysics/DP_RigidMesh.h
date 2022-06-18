@@ -4,18 +4,20 @@
 
 #ifndef DEMONENGINE_DP_RIGIDMESH_H
 #define DEMONENGINE_DP_RIGIDMESH_H
+
 #include <DemonBase/b_Mesh.h>
 #include <PhysX/PxPhysicsAPI.h>
 #include <PhysX/PxShape.h>
 
 namespace DemonPhysics {
 
-    class DP_RigidMesh: public DemonBase::b_Mesh {
+    class DP_RigidMesh : public DemonBase::b_Mesh {
     public:
         DP_RigidMesh(Vertex *vertices, unsigned int vertexLen);
+
         DP_RigidMesh(DemonBase::b_Mesh *bMesh);
 
-        physx::PxConvexMesh* getConvexMesh() { return _mesh; }
+        physx::PxConvexMesh *getConvexMesh() { return _mesh; }
 
         void createMesh(physx::PxPhysics *physx, physx::PxCooking *cooking);
 

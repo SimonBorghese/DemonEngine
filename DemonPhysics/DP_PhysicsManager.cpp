@@ -5,9 +5,9 @@
 #include "DP_PhysicsManager.h"
 
 namespace DemonPhysics {
-    void DP_PhysicsManager::createPhysics(glm::vec3 gravity){
+    void DP_PhysicsManager::createPhysics(glm::vec3 gravity) {
         pFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, pAllocate, pError);
-        if (!pFoundation){
+        if (!pFoundation) {
             printf("Error: PxCreateFoundation Failed, Line: %d\n", __LINE__);
             return;
         }
@@ -29,7 +29,7 @@ namespace DemonPhysics {
         // Create the physics
         // Add PVD to end for PVD
         pPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *pFoundation, physx::PxTolerancesScale(), true);
-        if (pPhysics == NULL){
+        if (pPhysics == NULL) {
             printf("Failed to Create Physics, Line: %d\n", __LINE__);
             return;
         }
@@ -39,13 +39,13 @@ namespace DemonPhysics {
 
 
         pCooking = PxCreateCooking(PX_PHYSICS_VERSION, *pFoundation, physx::PxCookingParams(scale_px));
-        if (!pCooking){
+        if (!pCooking) {
             printf("PxCreateCooking failed!\n");
             return;
         }
 
         // Initalize extensions
-        if (!PxInitExtensions(*pPhysics, NULL)){
+        if (!PxInitExtensions(*pPhysics, NULL)) {
             printf("Failed to initalize extensions\n");
             return;
         }
@@ -55,35 +55,34 @@ namespace DemonPhysics {
         // Assign gravity to our assigned one
         pPhysDec->gravity = physx::PxVec3(gravity.x, gravity.y, gravity.z);
 
-        if(!pPhysDec->cpuDispatcher)
-        {
+        if (!pPhysDec->cpuDispatcher) {
             // Create CPU dispatcher with 2 threads (for now)
             pCpuDispatcher = physx::PxDefaultCpuDispatcherCreate(2);
-            if(!pCpuDispatcher)
+            if (!pCpuDispatcher)
                 printf("PxDefaultCpuDispatcherCreate failed!\n");
-            pPhysDec->cpuDispatcher    = pCpuDispatcher;
+            pPhysDec->cpuDispatcher = pCpuDispatcher;
 
         }
-        if(!pPhysDec->filterShader)
-            pPhysDec->filterShader    = physx::PxDefaultSimulationFilterShader;
+        if (!pPhysDec->filterShader)
+            pPhysDec->filterShader = physx::PxDefaultSimulationFilterShader;
 
 
         // Create our scene
         pScene = pPhysics->createScene(*pPhysDec);
-        if (pScene == NULL){
+        if (pScene == NULL) {
             printf("Failed to create scene\n");
             return;
         }
 
         // Make our character controller manager
         pControlManager = PxCreateControllerManager(*pScene);
-        if (!pControlManager){
+        if (!pControlManager) {
             printf("Error: PxCreateControllerManager failed, Line: %d\n", __LINE__);
             return;
         }
     }
 
-    void DP_PhysicsManager::closePhysics(){
+    void DP_PhysicsManager::closePhysics() {
         pControlManager->release();
         pScene->release();
         pCpuDispatcher->release();

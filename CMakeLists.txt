@@ -23,7 +23,6 @@ target_include_directories(DemonEngine PUBLIC ${CMAKE_SOURCE_DIR} PhysX)
 target_link_directories(DemonEngine PUBLIC "Libs")
 
 
-
 # link the libraries
 target_link_libraries(DemonEngine ${SDL2_LIBRARIES})
 target_link_libraries(DemonEngine ${OPENGL_LIBRARIES})
@@ -35,7 +34,6 @@ target_link_libraries(DemonEngine PhysX_static_64 PhysXCharacterKinematic_static
 
 include_directories("/usr/include")
 include_directories(${CMAKE_SOURCE_DIR})
-
 
 
 set(CMAKE_CXX_STANDARD 20)

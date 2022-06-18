@@ -4,6 +4,7 @@
 
 #ifndef DEMONENGINE_DG_RIGIDENTITY_H
 #define DEMONENGINE_DG_RIGIDENTITY_H
+
 #include "DG_Entity.h"
 #include <DemonPhysics/DP_RigidActor.h>
 #include <DemonPhysics/DP_RigidPhysicsActor.h>
@@ -12,12 +13,12 @@
 
 namespace DemonGame {
 
-    class DG_RigidEntity : public DG_Entity{
+    class DG_RigidEntity : public DG_Entity {
     public:
         DG_RigidEntity(DemonRender::DR_RenderManager *targetRender,
                        DemonRender::DR_Shader *targetShader,
                        DemonPhysics::DP_PhysicsManager *targetManager) : DG_Entity(targetRender, targetShader),
-                       physicsManager(targetManager) {
+                                                                         physicsManager(targetManager) {
             //rigidActor = new DemonPhysics::DP_RigidActor(rigidMesh);
         }
 
@@ -30,7 +31,7 @@ namespace DemonGame {
 
         void update();
 
-        DemonPhysics::DP_RigidActor* getActor() { return rigidActor; }
+        DemonPhysics::DP_RigidActor *getActor() { return rigidActor; }
 
     protected:
         DemonPhysics::DP_PhysicsManager *physicsManager;

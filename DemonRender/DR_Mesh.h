@@ -4,6 +4,7 @@
 
 #ifndef DEMONENGINE_DR_MESH_H
 #define DEMONENGINE_DR_MESH_H
+
 #include <glm/glm.hpp>
 #include <glad/glad.h>
 #include "DR_Shader.h"
@@ -16,9 +17,10 @@
 namespace DemonRender {
 
 
-class DR_Mesh: public DemonBase::b_Mesh {
+    class DR_Mesh : public DemonBase::b_Mesh {
     public:
         DR_Mesh(Vertex *vertices, unsigned int vertexLen, unsigned int *indices = nullptr, unsigned int indexLen = 0);
+
         DR_Mesh(DemonBase::b_Mesh *targetMesh);
 
         //void createMesh(Vertex *vertices, uint32_t vertexCount, uint32_t *indices = NULL, uint32_t indexCount = 0); // Assuming vertices/indices are triangulated
@@ -30,7 +32,9 @@ class DR_Mesh: public DemonBase::b_Mesh {
         void createTextureFromSTB(const char *fileName, bool allowAlpha);
 
         GLuint getTexture() { return TextureBuffer; }
-        GLuint* getTexturePTR() { return &TextureBuffer; }
+
+        GLuint *getTexturePTR() { return &TextureBuffer; }
+
     private:
         GLuint VAO = 0;
         GLuint VBO = 0;

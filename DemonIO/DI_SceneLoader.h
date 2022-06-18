@@ -4,6 +4,7 @@
 
 #ifndef DEMONENGINE_DI_SCENELOADER_H
 #define DEMONENGINE_DI_SCENELOADER_H
+
 #include <DemonBase/b_Mesh.h>
 #include <assimp/IOSystem.hpp>
 #include <assimp/Importer.hpp>
@@ -20,9 +21,11 @@ namespace DemonIO {
     class DI_SceneLoader {
     public:
         DI_SceneLoader();
+
         virtual ~DI_SceneLoader();
 
-        static DemonBase::b_Mesh** loadMeshesFromFile(const char *fileName, unsigned int *meshCountOut);
+        static DemonBase::b_Mesh **loadMeshesFromFile(const char *fileName, unsigned int *meshCountOut);
+
     private:
 
     };

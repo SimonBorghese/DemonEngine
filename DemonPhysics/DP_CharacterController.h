@@ -4,25 +4,26 @@
 
 #ifndef DEMONENGINE_DP_CHARACTERCONTROLLER_H
 #define DEMONENGINE_DP_CHARACTERCONTROLLER_H
+
 #include <PhysX/characterkinematic/PxController.h>
 #include <PhysX/characterkinematic/PxCapsuleController.h>
 #include <DemonBase/b_Controller.h>
 
 namespace DemonPhysics {
 
-    class DP_CharacterController : public DemonBase::b_Controller{
+    class DP_CharacterController : public DemonBase::b_Controller {
     public:
         DP_CharacterController(glm::vec3 position, physx::PxMaterial *targetMaterial,
                                float height, float radius, physx::PxControllerManager *controllerManager,
                                float stepOffset = 1.0f, float scaleCoeff = 1.0f, float volumeGrowth = 1.0f,
                                float density = 2.0f, float slopeLimit = 90.0f) :
-                               _characterHeight(height),
-                               _characterRadius(radius),
-                               _stepOffset(stepOffset),
-                               _scaleCoeff(scaleCoeff),
-                               _volumeGrowth(volumeGrowth),
-                               _density(density),
-                               _slopeLimit(slopeLimit){
+                _characterHeight(height),
+                _characterRadius(radius),
+                _stepOffset(stepOffset),
+                _scaleCoeff(scaleCoeff),
+                _volumeGrowth(volumeGrowth),
+                _density(density),
+                _slopeLimit(slopeLimit) {
             pMainMat = targetMaterial;
             physx::PxCapsuleControllerDesc desc;
             desc.height = _characterHeight;

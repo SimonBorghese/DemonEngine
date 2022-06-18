@@ -4,6 +4,7 @@
 
 #ifndef DEMONENGINE_DP_RIGIDACTOR_H
 #define DEMONENGINE_DP_RIGIDACTOR_H
+
 #include <PhysX/PxPhysicsAPI.h>
 #include <PhysX/PxRigidActor.h>
 #include "DP_RigidMesh.h"
@@ -13,7 +14,7 @@
 
 namespace DemonPhysics {
 
-    class DP_RigidActor : public DemonBase::b_RigidActor{
+    class DP_RigidActor : public DemonBase::b_RigidActor {
     public:
         DP_RigidActor(DP_RigidMesh *mesh) : targetMesh(mesh) {}
 

@@ -12,6 +12,7 @@
 #include <SDL2/SDL.h>
 
 #include <glm/glm.hpp>
+
 namespace DemonBase {
     class b_Controller {
     public:

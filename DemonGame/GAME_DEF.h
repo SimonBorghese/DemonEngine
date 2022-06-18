@@ -7,7 +7,7 @@
 
 // No MacOS
 // Because I said so (and no OpenGL support)
-enum PLATFORMS{
+enum PLATFORMS {
     WINDOWS,
     LINUX
 };

@@ -3,6 +3,7 @@
 //
 #ifndef DEMONENGINE_DP_PHYSICSMANAGER_H
 #define DEMONENGINE_DP_PHYSICSMANAGER_H
+
 #include <glm/glm.hpp>
 #include "DP_RigidMesh.h"
 #include "DP_RigidActor.h"
@@ -26,7 +27,7 @@ namespace DemonPhysics {
         void createPhysics(glm::vec3 gravity = glm::vec3(0.0f));
 
         //void beginSimulationTiming();
-        void simulate(float simulationTime){
+        void simulate(float simulationTime) {
             pScene->simulate(simulationTime);
             pScene->fetchResults(true);
         }
@@ -34,17 +35,26 @@ namespace DemonPhysics {
         void closePhysics();
 
         void addActor(DemonBase::b_RigidActor *actor) { pScene->addActor(*actor->getActor()); }
+
         void removeActor(DemonBase::b_RigidActor *actor) { pScene->removeActor(*actor->getActor()); }
 
         void cookMesh(DP_RigidMesh *targetMesh) { targetMesh->createMesh(pPhysics, pCooking); }
-        void cookActor(DP_RigidActor *targetActor, DP_PhysicsMaterial *mat) { targetActor->createActor(pPhysics, mat->getMaterial()); }
+
+        void cookActor(DP_RigidActor *targetActor, DP_PhysicsMaterial *mat) {
+            targetActor->createActor(pPhysics, mat->getMaterial());
+        }
+
         void cookMaterial(DP_PhysicsMaterial *targetMat) { targetMat->createMaterial(pPhysics); }
 
 
-        physx::PxPhysics* getPhysics() { return pPhysics; }
-        physx::PxCooking* getCooking() { return pCooking; }
-        physx::PxScene* getScene() { return pScene; }
-        physx::PxControllerManager* getControllerManager() { return pControlManager; }
+        physx::PxPhysics *getPhysics() { return pPhysics; }
+
+        physx::PxCooking *getCooking() { return pCooking; }
+
+        physx::PxScene *getScene() { return pScene; }
+
+        physx::PxControllerManager *getControllerManager() { return pControlManager; }
+
     private:
         physx::PxDefaultErrorCallback pError;
         physx::PxDefaultAllocator pAllocate;

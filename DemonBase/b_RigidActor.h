@@ -4,6 +4,7 @@
 
 #ifndef DEMONENGINE_B_RIGIDACTOR_H
 #define DEMONENGINE_B_RIGIDACTOR_H
+
 #include <PhysX/PxRigidActor.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -17,10 +18,11 @@ namespace DemonBase {
 
         b_RigidActor() { _mainTransform.createTransform(); }
 
-        physx::PxRigidActor* getActor() { return _mainActor; }
-        physx::PxShape* getShape() { return _mainShape; }
+        physx::PxRigidActor *getActor() { return _mainActor; }
 
-        DemonWorld::DW_Transform* getTransform() { return &_mainTransform; }
+        physx::PxShape *getShape() { return _mainShape; }
+
+        DemonWorld::DW_Transform *getTransform() { return &_mainTransform; }
 
         void setTransform(DemonWorld::DW_Transform transform) {
             _mainTransform = transform;
@@ -31,7 +33,7 @@ namespace DemonBase {
             _mainActor->setGlobalPose(targetTransform);
         }
 
-        void updateActor(){
+        void updateActor() {
             physx::PxTransform targetTransform;
             targetTransform.p = DemonWorld::DW_Transform::glmToPhys(_mainTransform.getPosition());
             glm::quat tq = _mainTransform.getRotation();
@@ -40,7 +42,8 @@ namespace DemonBase {
             //_mainActor->setGlobalPose()
 
             glm::vec3 pos = DemonWorld::DW_Transform::PhysToGlm(_mainActor->getGlobalPose().p);
-            glm::quat quat = glm::quat(_mainActor->getGlobalPose().q.w, _mainActor->getGlobalPose().q.x, _mainActor->getGlobalPose().q.y, _mainActor->getGlobalPose().q.z);
+            glm::quat quat = glm::quat(_mainActor->getGlobalPose().q.w, _mainActor->getGlobalPose().q.x,
+                                       _mainActor->getGlobalPose().q.y, _mainActor->getGlobalPose().q.z);
 
             //_mainTransform.createTransform(DemonWorld::DW_Transform::PhysToGlm(pos), )
             _mainTransform.setPosition(pos);

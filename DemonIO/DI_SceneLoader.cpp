@@ -5,18 +5,18 @@
 #include "DI_SceneLoader.h"
 
 namespace DemonIO {
-    DemonBase::b_Mesh** DI_SceneLoader::loadMeshesFromFile(const char *fileName, unsigned int *meshCountOut){
+    DemonBase::b_Mesh **DI_SceneLoader::loadMeshesFromFile(const char *fileName, unsigned int *meshCountOut) {
         std::vector<DemonBase::b_Mesh> newMeshes;
 
         Assimp::Importer *oModelLoader = new Assimp::Importer;
-        const aiScene *oScene = oModelLoader->ReadFile(fileName, aiProcess_Triangulate | aiProcess_GenUVCoords | aiProcess_FindInvalidData | aiProcess_OptimizeMeshes);
-        if (strcmp("", oModelLoader->GetErrorString()) != 0)
-        {
+        const aiScene *oScene = oModelLoader->ReadFile(fileName, aiProcess_Triangulate | aiProcess_GenUVCoords |
+                                                                 aiProcess_FindInvalidData | aiProcess_OptimizeMeshes);
+        if (strcmp("", oModelLoader->GetErrorString()) != 0) {
             (fmt::print("Failed to load: {}, Error: {}\n", fileName, oModelLoader->GetErrorString()));
         }
 
         // Allocate our meshes
-        DemonBase::b_Mesh **meshes = (DemonBase::b_Mesh**) malloc(sizeof(DemonBase::b_Mesh*) * oScene->mNumMeshes);
+        DemonBase::b_Mesh **meshes = (DemonBase::b_Mesh **) malloc(sizeof(DemonBase::b_Mesh *) * oScene->mNumMeshes);
 
         for (unsigned int m = 0; m < oScene->mNumMeshes; m++) {
             unsigned int numVertices = oScene->mMeshes[m]->mNumVertices;
@@ -27,12 +27,11 @@ namespace DemonIO {
                 m_vertices[v].iPosition.y = oScene->mMeshes[m]->mVertices[v].y;
                 m_vertices[v].iPosition.z = oScene->mMeshes[m]->mVertices[v].z;
 
-                if (oScene->mMeshes[m]->HasNormals()){
+                if (oScene->mMeshes[m]->HasNormals()) {
                     m_vertices[v].iNormal.x = oScene->mMeshes[m]->mNormals[v].x;
                     m_vertices[v].iNormal.y = oScene->mMeshes[m]->mNormals[v].y;
                     m_vertices[v].iNormal.z = oScene->mMeshes[m]->mNormals[v].z;
-                }
-                else {
+                } else {
                     m_vertices[v].iNormal.x = 0.0f;
                     m_vertices[v].iNormal.y = 0.0f;
                     m_vertices[v].iNormal.z = 0.0f;
@@ -62,7 +61,7 @@ namespace DemonIO {
             meshes[m] = new DemonBase::b_Mesh(&m_vertices[0], numVertices, m_indices.data(), m_indices.size());
             aiMaterial *matSafe = oScene->mMaterials[oScene->mMeshes[m]->mMaterialIndex];
 
-            if (matSafe != NULL){
+            if (matSafe != NULL) {
                 aiString tex_loc;
                 matSafe->GetTexture(aiTextureType_DIFFUSE, 0, &tex_loc);
                 meshes[m]->setTextureDiffuse(tex_loc);

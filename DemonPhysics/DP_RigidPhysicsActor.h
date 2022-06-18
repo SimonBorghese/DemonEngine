@@ -4,6 +4,7 @@
 
 #ifndef DEMONENGINE_DP_RIGIDPHYSICSACTOR_H
 #define DEMONENGINE_DP_RIGIDPHYSICSACTOR_H
+
 #include "DP_RigidActor.h"
 
 namespace DemonPhysics {
@@ -13,7 +14,9 @@ namespace DemonPhysics {
         DP_RigidPhysicsActor(DP_RigidMesh *mesh) : DP_RigidActor(mesh) {}
 
         void createActor(physx::PxPhysics *physx, physx::PxMaterial *mat);
-        physx::PxRigidDynamic* getRealActor() { return (physx::PxRigidDynamic*)_mainActor; }
+
+        physx::PxRigidDynamic *getRealActor() { return (physx::PxRigidDynamic *) _mainActor; }
+
     private:
 
 

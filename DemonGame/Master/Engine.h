@@ -26,8 +26,11 @@ namespace DemonEngine {
     class Engine {
     public:
         // Create all the objects needed
-        Engine(unsigned int width, unsigned int height, unsigned int fov = 70, unsigned int zFar = 1000) : _width(width),
-        _height(height), _fov(fov), _zFar(zFar) {
+        Engine(unsigned int width, unsigned int height, unsigned int fov = 70, unsigned int zFar = 1000) : _width(
+                width),
+                                                                                                           _height(height),
+                                                                                                           _fov(fov),
+                                                                                                           _zFar(zFar) {
             _renderingManager = new DemonRender::DR_RenderManager;
             _shaderObject = new DemonRender::DR_Shader;
             _mainCamera = new DemonRender::DR_Camera(_shaderObject);
@@ -42,25 +45,34 @@ namespace DemonEngine {
 
         // Engine state functions
         void createEngine();
+
         int gameLoop();
+
         void destroyEngine();
 
         // Some basic crap
-        DemonGame::DG_RigidEntity* createWorldObject();
-        DemonGame::DG_PhysicsObject* createWorldEntity();
+        DemonGame::DG_RigidEntity *createWorldObject();
 
-        DemonPhysics::DP_CharacterController* createFPSController(glm::vec3 startPos, float height, float radius);
+        DemonGame::DG_PhysicsObject *createWorldEntity();
+
+        DemonPhysics::DP_CharacterController *createFPSController(glm::vec3 startPos, float height, float radius);
 
 
         // All the delicious getter functions
-        DemonRender::DR_RenderManager* getRenderingManager() { return _renderingManager; }
-        DemonRender::DR_Shader* getObjectShader() { return _shaderObject; }
-        DemonRender::DR_Camera* getCamera() { return _mainCamera; }
-        DemonGame::DG_Event* getEvent() { return _mainEvents; }
-        DemonPhysics::DP_PhysicsManager* getPhysicsManager() { return _mainPhysicsManager; }
-        DemonGame::DG_BasicCameraController* getCameraController() { return _mainPlayer; }
+        DemonRender::DR_RenderManager *getRenderingManager() { return _renderingManager; }
 
-        World* getWorld() { return _world; }
+        DemonRender::DR_Shader *getObjectShader() { return _shaderObject; }
+
+        DemonRender::DR_Camera *getCamera() { return _mainCamera; }
+
+        DemonGame::DG_Event *getEvent() { return _mainEvents; }
+
+        DemonPhysics::DP_PhysicsManager *getPhysicsManager() { return _mainPhysicsManager; }
+
+        DemonGame::DG_BasicCameraController *getCameraController() { return _mainPlayer; }
+
+        World *getWorld() { return _world; }
+
     private:
         // Some fundimental variables
         unsigned int _width, _height, _fov, _zFar;
