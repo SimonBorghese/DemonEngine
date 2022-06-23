@@ -9,6 +9,7 @@
 #include <DemonGame/Shared/DG_Entity.h>
 #include <DemonGame/Shared/DG_RigidEntity.h>
 #include <DemonGame/Shared/DG_PhysicsObject.h>
+#include <DemonRender/DemonLights/DR_DL_BasicLight.h>
 
 namespace DemonEngine {
 

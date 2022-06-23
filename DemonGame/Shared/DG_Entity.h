@@ -33,11 +33,7 @@ namespace DemonGame {
         // The entity only renders a mesh, that is to be managed by the render manager, thus update is useless
         void update() {}
 
-
-        DemonWorld::DW_Transform *getTransform() { return &mainTransform; }
-
     protected:
-        DemonWorld::DW_Transform mainTransform;
         DemonRender::DR_MeshRenderer *mainMeshRenderer;
 
         DemonRender::DR_RenderManager *renderManager;

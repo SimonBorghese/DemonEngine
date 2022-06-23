@@ -6,6 +6,7 @@ struct lightValues{
     vec3 position;
     vec3 direction;
     float cutOff;
+    float outerCutOff;
 
     float distance;
 
@@ -36,6 +37,7 @@ void main(){
         vec3 norm = normalize(iNormal);
 
         vec3 lightDir = vec3(0.0f);
+        float intensity = 1.0f;
         float attenuation = 1.0f;
         if (Lights[l].position != vec3(0.0f) && Lights[l].cutOff == 0.0f){
            lightDir = normalize(Lights[l].position - iFragPos);
@@ -52,12 +54,23 @@ void main(){
         else if (Lights[l].position != vec3(0.0f) && Lights[l].cutOff != 0.0f){
             lightDir = normalize(Lights[l].position - iFragPos);
             float theta = dot(lightDir, normalize(-Lights[l].direction));
+
+
+            float outerCutOff = Lights[l].outerCutOff;
+            if (outerCutOff == 0.0f){
+                outerCutOff = Lights[l].cutOff;
+            }
+
+            float epsilon   = outerCutOff - Lights[l].cutOff;
+            intensity = clamp((theta - outerCutOff) / epsilon, 0.0, 1.0);
+
             if (theta > Lights[l].cutOff){
                 float distance = length(Lights[l].position - iFragPos);
                 float aConst = 1.0f;
                 float aLinear = 4.5f / Lights[l].distance;
                 float aQuadratic = 75.0f / (Lights[l].distance * Lights[l].distance);
                 attenuation = 1.0 / (aConst + aLinear * distance + aQuadratic * (distance * distance));
+                //attenuation *= intensity;
 
             }
             else{
@@ -74,13 +87,13 @@ void main(){
 
 
         float diff = max(dot(norm, lightDir), 0.0);
-        diffuse += diff * Lights[l].colour * attenuation;
+        diffuse += diff * Lights[l].colour * attenuation * intensity;
 
         vec3 viewDir = normalize(viewPos - iFragPos);
         vec3 reflectDir = reflect(-lightDir, norm);
 
         float spec = pow(max(dot(viewDir, reflectDir), 0.0), Lights[l].specValue);
-        specular += Lights[l].specularStrength * spec * Lights[l].colour * attenuation;
+        specular += Lights[l].specularStrength * spec * Lights[l].colour * attenuation * intensity;
 
 
     }

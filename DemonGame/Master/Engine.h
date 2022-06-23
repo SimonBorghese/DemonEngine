@@ -16,6 +16,7 @@
 #include <DemonGame/Shared/DG_BasicCameraController.h>
 #include <DemonGame/Shared/DG_RigidEntity.h>
 #include <DemonGame/Shared/DG_PhysicsObject.h>
+#include <DemonRender/DemonLights/DR_DL_BasicLight.h>
 #include "World.h"
 #include <fmt/core.h>
 #include <fmt/format.h>
@@ -54,6 +55,29 @@ namespace DemonEngine {
         DemonGame::DG_RigidEntity *createWorldObject();
 
         DemonGame::DG_PhysicsObject *createWorldEntity();
+
+        // Lighting objects
+        typedef struct{
+            glm::vec3 position;
+            float distance;
+            float ambientStrength;
+            float specularStrength;
+            unsigned int specularAccuracy;
+            glm::vec3 colour;
+        } POINT_LIGHT_INFO;
+
+        typedef struct{
+            glm::vec3 direction;
+            float ambientStrength;
+            float specularStrength;
+            unsigned int specularAccuracy;
+            glm::vec3 colour;
+        } DIRECTIONAL_LIGHT_INFO;
+
+
+        DemonRender::DemonLight::DR_DL_BasicLight* createPointLight(POINT_LIGHT_INFO info);
+
+
 
         DemonPhysics::DP_CharacterController *createFPSController(glm::vec3 startPos, float height, float radius);
 

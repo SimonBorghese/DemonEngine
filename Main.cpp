@@ -24,9 +24,11 @@ int main(void) {
     goodSCP->createEntityFromMesh("173.fbx");
     goodSCP2->createEntityFromMesh("bloque.obj", glm::vec3(0.0f, -10.0f, 0.0f));
     DemonPhysics::DP_CharacterController *controller = engine.createFPSController(glm::vec3(0.0f), 5.0f, 1.0f);
+
+    
     DemonRender::DemonLight::DR_DL_BasicLight_CREATE_INFO  lightCreateInfo;
     lightCreateInfo.position = glm::vec3(-10.0f, 5.0f, -10.0f);
-    lightCreateInfo.distance = 20.0f;
+    lightCreateInfo.distance = 70.0f;
     lightCreateInfo.colour = glm::vec3(1.0f);
     lightCreateInfo.specularStrength = 0.4f;
     lightCreateInfo.specularAccuracy = 32;
@@ -35,14 +37,17 @@ int main(void) {
     DemonRender::DemonLight::DR_DL_BasicLight goodLight(engine.getObjectShader());
     goodLight.initLight(lightCreateInfo);
 
-    lightCreateInfo.position = glm::vec3(10.0f, 5.0f, 10.0f);
+    lightCreateInfo.position = glm::vec3(0.0f, 5.0f, 0.0f);
+    lightCreateInfo.direction = glm::vec3(0.0f, -10.0f, 0.0f);
+    lightCreateInfo.cutOffDegree = 45.5f;
+    lightCreateInfo.outerCutOffDegree = 47.5f;
     DemonRender::DemonLight::DR_DL_BasicLight goodLight2(engine.getObjectShader());
     goodLight2.initLight(lightCreateInfo);
 
-    goodLight.renderLight();
-    goodLight2.renderLight();
+    //goodLight.renderLight();
+    //goodLight2.renderLight();
     while (!engine.gameLoop()) {
-        goodLight.renderLight();
+        //goodLight.renderLight();
         goodLight2.renderLight();
         if (engine.getEvent()->getKeyDown(SDL_SCANCODE_E)) {
             auto *goodSCP4 = engine.createWorldEntity();
