@@ -16,7 +16,7 @@ struct lightValues{
     int  specValue;
 };
 
-uniform lightValues Lights[255];
+uniform lightValues Lights[100];
 uniform int LightCount;
 uniform vec3 viewPos;
 

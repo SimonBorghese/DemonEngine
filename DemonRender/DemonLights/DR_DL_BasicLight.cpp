@@ -32,12 +32,24 @@ namespace DemonRender {
             if (_lightInfo.position != glm::vec3(0.0f)) {
                 _targetLightShader->bindVector3(lightPosLocation, _lightInfo.position);
             }
+            else{
+                _targetLightShader->bindVector3(lightPosLocation, glm::vec3(0.0f));
+            }
+
             if (_lightInfo.direction != glm::vec3(0.0f)) {
                 _targetLightShader->bindVector3(lightDirLocation, _lightInfo.direction);
             }
+            else{
+                _targetLightShader->bindVector3(lightDirLocation, glm::vec3(0.0f));
+            }
+
             if (_lightInfo.cutOffDegree != 0.0f) {
                 _targetLightShader->bindFloat(lightCutoffLocation, glm::radians(_lightInfo.cutOffDegree));
                 _targetLightShader->bindFloat(lightOuterCutOffLocation, glm::radians(_lightInfo.outerCutOffDegree));
+            }
+            else{
+                _targetLightShader->bindFloat(lightCutoffLocation, 0.0f);
+                _targetLightShader->bindFloat(lightOuterCutOffLocation, 0.0f);
             }
             _targetLightShader->bindInt(lightSpecValueLoc, _lightInfo.specularAccuracy);
             _targetLightShader->bindFloat(lightSpecStrLoc, _lightInfo.specularStrength);

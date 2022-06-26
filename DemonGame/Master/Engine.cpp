@@ -33,7 +33,7 @@ namespace DemonEngine {
         _mainPlayer->updateCamera();
         _world->updateAll();
 
-        return _mainEvents->getCloseState();
+        return _mainEvents->getCloseState() || _mainEvents->getKeyDown(SDL_SCANCODE_ESCAPE);
     }
 
 

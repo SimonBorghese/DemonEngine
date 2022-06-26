@@ -47,7 +47,7 @@ int main(void) {
     //goodLight.renderLight();
     //goodLight2.renderLight();
     while (!engine.gameLoop()) {
-        //goodLight.renderLight();
+        goodLight.renderLight();
         goodLight2.renderLight();
         if (engine.getEvent()->getKeyDown(SDL_SCANCODE_E)) {
             auto *goodSCP4 = engine.createWorldEntity();
