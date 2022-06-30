@@ -56,6 +56,7 @@ namespace DemonRender {
         glAttachShader(shaderProgram, fragmentShader);
 
         glLinkProgram(shaderProgram);
+        glUseProgram(shaderProgram);
 
         glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
         if (!success) {

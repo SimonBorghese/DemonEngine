@@ -68,6 +68,87 @@ namespace DemonEngine {
         return goodEnt;
     }
 
+    DemonRender::DemonLight::DR_DL_BasicLight* Engine::createPointLight(POINT_LIGHT_INFO info){
+        DemonRender::DemonLight::DR_DL_BasicLight_CREATE_INFO  lightCreateInfo;
+        lightCreateInfo.distance = info.distance;
+        lightCreateInfo.colour = info.colour;
+        lightCreateInfo.specularStrength = info.specularStrength;
+        lightCreateInfo.specularAccuracy = info.specularAccuracy;
+        lightCreateInfo.ambientStrength = info.ambientStrength;
+        lightCreateInfo.position = info.position;
+
+        DemonRender::DemonLight::DR_DL_BasicLight *goodLight =
+                new DemonRender::DemonLight::DR_DL_BasicLight(getObjectShader());
+        goodLight->initLight(lightCreateInfo);
+        _world->addLightEntity(goodLight);
+        return goodLight;
+    }
+    DemonRender::DemonLight::DR_DL_BasicLight* Engine::createSpotLight(SPOT_LIGHT_INFO info){
+        DemonRender::DemonLight::DR_DL_BasicLight_CREATE_INFO  lightCreateInfo;
+        lightCreateInfo.distance = info.distance;
+        lightCreateInfo.colour = info.colour;
+        lightCreateInfo.specularStrength = info.specularStrength;
+        lightCreateInfo.specularAccuracy = info.specularAccuracy;
+        lightCreateInfo.ambientStrength = info.ambientStrength;
+        lightCreateInfo.position = info.position;
+        lightCreateInfo.direction = info.direction;
+        lightCreateInfo.cutOffDegree = info.cutOffDegree;
+        lightCreateInfo.outerCutOffDegree = info.outerCutOffDegree;
+
+        DemonRender::DemonLight::DR_DL_BasicLight *goodLight =
+                new DemonRender::DemonLight::DR_DL_BasicLight(getObjectShader());
+        goodLight->initLight(lightCreateInfo);
+        _world->addLightEntity(goodLight);
+        return goodLight;
+    }
+    DemonRender::DemonLight::DR_DL_BasicLight* Engine::createDirectionalLight(DIRECTIONAL_LIGHT_INFO info){
+        DemonRender::DemonLight::DR_DL_BasicLight_CREATE_INFO  lightCreateInfo;
+        lightCreateInfo.colour = info.colour;
+        lightCreateInfo.specularStrength = info.specularStrength;
+        lightCreateInfo.specularAccuracy = info.specularAccuracy;
+        lightCreateInfo.ambientStrength = info.ambientStrength;
+        lightCreateInfo.direction = info.direction;
+
+        DemonRender::DemonLight::DR_DL_BasicLight *goodLight =
+                new DemonRender::DemonLight::DR_DL_BasicLight(getObjectShader());
+        goodLight->initLight(lightCreateInfo);
+        _world->addLightEntity(goodLight);
+        return goodLight;
+    }
+
+    DemonRender::DemonLight::DR_DL_BasicLight* Engine::createEasyPointLight(glm::vec3 position, float distance, float strength, glm::vec3 colour){
+        POINT_LIGHT_INFO hardInfo; // :flushed:
+        hardInfo.position = position;
+        hardInfo.distance = distance;
+        hardInfo.colour = colour;
+        hardInfo.specularAccuracy = 32;
+        hardInfo.specularStrength = strength;
+        hardInfo.ambientStrength = strength;
+        return createPointLight(hardInfo); // Create a HARD point light :flushed:
+    }
+    DemonRender::DemonLight::DR_DL_BasicLight* Engine::createEasySpotLight(glm::vec3 position, glm::vec3 direction, float angle, float distance, float strength, glm::vec3 colour){
+        SPOT_LIGHT_INFO hardInfo;
+        hardInfo.position = position;
+        hardInfo.direction = direction;
+        hardInfo.cutOffDegree = angle;
+        hardInfo.outerCutOffDegree = angle+2.0f;
+        hardInfo.distance = distance;
+        hardInfo.ambientStrength = strength;
+        hardInfo.specularStrength = strength;
+        hardInfo.specularAccuracy = 32;
+        hardInfo.colour = colour;
+        return createSpotLight(hardInfo);
+    }
+    DemonRender::DemonLight::DR_DL_BasicLight* Engine::createEasyDirectionalLight(glm::vec3 direction, float strength, glm::vec3 colour){
+        DIRECTIONAL_LIGHT_INFO hardInfo;
+        hardInfo.direction = direction;
+        hardInfo.specularStrength = strength;
+        hardInfo.ambientStrength = strength;
+        hardInfo.specularAccuracy = 32;
+        hardInfo.colour = colour;
+        return createDirectionalLight(hardInfo);
+    }
+
     DemonPhysics::DP_CharacterController *Engine::createFPSController(glm::vec3 startPos, float height, float radius) {
         DemonPhysics::DP_PhysicsMaterial mat;
         mat.createMaterial(getPhysicsManager()->getPhysics());

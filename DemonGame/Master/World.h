@@ -9,7 +9,7 @@
 #include <DemonGame/Shared/DG_Entity.h>
 #include <DemonGame/Shared/DG_RigidEntity.h>
 #include <DemonGame/Shared/DG_PhysicsObject.h>
-#include <DemonRender/DemonLights/DR_DL_BasicLight.h>
+#include <DemonBase/b_Light.h>
 
 namespace DemonEngine {
 
@@ -23,6 +23,8 @@ namespace DemonEngine {
 
         int addWorldEntity(DemonGame::DG_PhysicsObject *ent);
 
+        int addLightEntity(DemonBase::b_Light *light);
+
         void updateAll();
 
         void clearAll();
@@ -33,10 +35,13 @@ namespace DemonEngine {
 
         DemonGame::DG_PhysicsObject *removeWorldEntity(unsigned int pointer);
 
+        DemonBase::b_Light *removeLightEntity(unsigned int pointer);
+
     private:
         std::vector<DemonGame::DG_Entity *> _genericEntites;
         std::vector<DemonGame::DG_RigidEntity *> _worldObjects;
         std::vector<DemonGame::DG_PhysicsObject *> _worldEntites;
+        std::vector<DemonBase::b_Light*> _lightEntites;
 
     };
 

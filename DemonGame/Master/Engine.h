@@ -67,6 +67,18 @@ namespace DemonEngine {
         } POINT_LIGHT_INFO;
 
         typedef struct{
+            glm::vec3 position;
+            glm::vec3 direction;
+            float distance;
+            float ambientStrength;
+            float specularStrength;
+            unsigned int specularAccuracy;
+            float cutOffDegree;
+            float outerCutOffDegree;
+            glm::vec3 colour;
+        } SPOT_LIGHT_INFO;
+
+        typedef struct{
             glm::vec3 direction;
             float ambientStrength;
             float specularStrength;
@@ -76,6 +88,12 @@ namespace DemonEngine {
 
 
         DemonRender::DemonLight::DR_DL_BasicLight* createPointLight(POINT_LIGHT_INFO info);
+        DemonRender::DemonLight::DR_DL_BasicLight* createSpotLight(SPOT_LIGHT_INFO info);
+        DemonRender::DemonLight::DR_DL_BasicLight* createDirectionalLight(DIRECTIONAL_LIGHT_INFO info);
+
+        DemonRender::DemonLight::DR_DL_BasicLight* createEasyPointLight(glm::vec3 position, float distance, float strength, glm::vec3 colour = glm::vec3(1.0f));
+        DemonRender::DemonLight::DR_DL_BasicLight* createEasySpotLight(glm::vec3 position, glm::vec3 direction, float angle, float distance, float strength, glm::vec3 colour = glm::vec3(1.0f));
+        DemonRender::DemonLight::DR_DL_BasicLight* createEasyDirectionalLight(glm::vec3 direction, float strength, glm::vec3 colour = glm::vec3(1.0f));
 
 
 

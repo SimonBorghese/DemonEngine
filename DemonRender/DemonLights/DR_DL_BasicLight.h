@@ -10,6 +10,7 @@
 #include <SDL2/SDL.h>
 #include <math.h>
 #include <fmt/format.h>
+#include <DemonBase/b_Light.h>
 //uniform vec3 lightPos;
 
 namespace DemonRender {
@@ -27,7 +28,7 @@ namespace DemonRender {
             float distance;
         } DR_DL_BasicLight_CREATE_INFO;
 
-        class DR_DL_BasicLight {
+        class DR_DL_BasicLight: public DemonBase::b_Light {
         public:
             static unsigned int lightCountLocation;
             static unsigned int lightCount;

@@ -7,6 +7,7 @@
 
 #include <SDL2/SDL.h>
 #include <array>
+#include <functional>
 
 #define INPUT_KEYS_LEN 255
 
@@ -35,6 +36,10 @@ namespace DemonGame {
 
         int getCloseState();
 
+        void setKeyUpCallback( std::function<void(int)> target) { _keyUpFunc = target; }
+        void setKeyDownCallback( std::function<void(int)> target) { _keyDownFunc = target; }
+        void setKeyCallback( std::function<void(int)> target) { _keyFunc = target; }
+
     private:
         SDL_Event e;
 
@@ -48,6 +53,10 @@ namespace DemonGame {
         int mouseY = 0;
         int offsetMouseX = 0;
         int offsetMouseY = 0;
+
+        std::function<void(int)> _keyUpFunc = nullptr;
+        std::function<void(int)> _keyDownFunc = nullptr;
+        std::function<void(int)> _keyFunc = nullptr;
     };
 
 } // DemonGame

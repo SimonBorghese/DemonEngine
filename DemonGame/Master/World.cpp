@@ -21,7 +21,17 @@ namespace DemonEngine {
         return _worldEntites.size() - 1;
     }
 
+    int World::addLightEntity(DemonBase::b_Light *light){
+        _lightEntites.push_back(light);
+        return _lightEntites.size() - 1;
+    }
+
     void World::updateAll() {
+        // Update Lights
+        for (unsigned int l = 0; l < _lightEntites.size(); l++){
+            _lightEntites.at(l)->renderLight();
+        }
+
         // Update Generics
         for (unsigned int g = 0; g < _genericEntites.size(); g++) {
             _genericEntites.at(g)->update();
@@ -44,22 +54,25 @@ namespace DemonEngine {
 
     DemonGame::DG_Entity *World::removeWorldGeneric(unsigned int pointer) {
         DemonGame::DG_Entity *target = _genericEntites.at(pointer);
-        //std::remove(_genericEntites.begin(), _genericEntites.end(), _genericEntites.cbegin() + pointer);
         _genericEntites.erase(_genericEntites.cbegin() + pointer);
         return target;
     }
 
     DemonGame::DG_RigidEntity *World::removeWorldObject(unsigned int pointer) {
         DemonGame::DG_RigidEntity *target = _worldObjects.at(pointer);
-        //std::remove(_genericEntites.begin(), _genericEntites.end(), _genericEntites.cbegin() + pointer);
         _worldObjects.erase(_worldObjects.cbegin() + pointer);
         return target;
     }
 
     DemonGame::DG_PhysicsObject *World::removeWorldEntity(unsigned int pointer) {
         DemonGame::DG_PhysicsObject *target = _worldEntites.at(pointer);
-        //std::remove(_genericEntites.begin(), _genericEntites.end(), _genericEntites.cbegin() + pointer);
         _worldEntites.erase(_worldEntites.cbegin() + pointer);
+        return target;
+    }
+
+    DemonBase::b_Light *World::removeLightEntity(unsigned int pointer){
+        DemonBase::b_Light *target = _lightEntites.at(pointer);
+        _lightEntites.erase(_lightEntites.cbegin() + pointer);
         return target;
     }
 } // DemonEngine

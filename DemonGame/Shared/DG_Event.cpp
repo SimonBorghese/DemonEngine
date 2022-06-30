@@ -34,8 +34,14 @@ namespace DemonGame {
                 case SDL_KEYUP:
                     keysActive[e.key.keysym.scancode] = 0;
                     keysUp[e.key.keysym.scancode] = 1;
+                    if (_keyUpFunc) {
+                        _keyUpFunc(e.key.keysym.scancode);
+                    }
                     break;
                 case SDL_KEYDOWN:
+                    if (_keyDownFunc && !keysActive[e.key.keysym.scancode]) {
+                        _keyDownFunc(e.key.keysym.scancode);
+                    }
                     keysActive[e.key.keysym.scancode] = 1;
                     keysDown[e.key.keysym.scancode] = 1;
                     break;
@@ -43,6 +49,15 @@ namespace DemonGame {
                     break;
             }
         }
+
+        if (_keyFunc) {
+            for (int k = 0; k < INPUT_KEYS_LEN; k++) {
+                if (keysActive[k]) {
+                    _keyFunc(k);
+                }
+            }
+        }
+
     }
 
     int DG_Event::getKeyDown(uint32_t scancode) {
