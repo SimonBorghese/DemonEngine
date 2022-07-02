@@ -10,6 +10,7 @@
 #include <DemonGame/Master/Engine.h>
 #include <DemonPhysics/DP_CharacterController.h>
 #include <DemonRender/DemonLights/DR_DL_BasicLight.h>
+#include <DemonGame/Shared/External/DG_EXT_PhysicsCallback.h>
 
 #include <math.h>
 
@@ -53,23 +54,39 @@ void keyCalback(int scancode){
     }
 }
 
+void SCPCollideCallback(DemonGame::DG_PhysicsObject* other){
+    printf("173 just touched: %s\n", other->getName().c_str());
+    other->getActor()->setPosition(glm::vec3(0.0f, 20.0f, 0.0f));
+}
+
 int main(void) {
     // Initialize the engine
     engine = new DemonEngine::Engine(WIDTH, HEIGHT);
     // Create the engine elements
     engine->createEngine();
+
     // Create a physics object (world entity) & static object (world object)
-    engine->createWorldEntity()->createEntityFromMesh("173.fbx");
+    auto scpthing = engine->createWorldEntity();
+    scpthing->createEntityFromMesh("173.fbx");
+    // Set the name of the object
+    scpthing->setName("173");
+    // Set the collision callback function
+    scpthing->setContactCallback(SCPCollideCallback);
+
+    // Create a world static object
     engine->createWorldObject()->createEntityFromMesh("bloque.obj", glm::vec3(0.0f, -10.0f, 0.0f));
+
     // Create the FPS controller
     controller = engine->createFPSController(glm::vec3(0.0f), 5.0f, 1.0f);
 
-    // Create a spotlight
-    engine->createEasySpotLight(glm::vec3(0.0f, 5.0f, 0.0f),
-                               glm::vec3(0.0f, -10.0f, 0.0f), 45.0f, 70.0f, 0.5f);
+    // Create a light
+    engine->createEasyPointLight(glm::vec3(0.0f, -2.0f, 0.0f), 20.0f, 1.0f);
+
     // Set the key callback functions
     engine->getEvent()->setKeyDownCallback(keyDownCallback);
     engine->getEvent()->setKeyCallback(keyCalback);
+
+    engine->getPhysicsManager()->getScene()->setSimulationEventCallback(new DemonGame::DG_EXT_PhysicsCallback);
 
     // Main game loop
     while (!engine->gameLoop()) {

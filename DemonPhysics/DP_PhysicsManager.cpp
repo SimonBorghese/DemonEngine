@@ -5,6 +5,25 @@
 #include "DP_PhysicsManager.h"
 
 namespace DemonPhysics {
+
+    PxFilterFlags NotifyAllFilterShader(
+            PxFilterObjectAttributes attributes0, PxFilterData,
+            PxFilterObjectAttributes attributes1, PxFilterData,
+            PxPairFlags& pairFlags, const void*, PxU32)
+    {
+        if(PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
+        {
+            pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
+            return PxFilterFlag::eDEFAULT;
+        }
+
+        // Until it becomes a problem, lets notify all contacts
+        pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND;
+
+        return PxFilterFlag::eDEFAULT;
+    }
+
+
     void DP_PhysicsManager::createPhysics(glm::vec3 gravity) {
         pFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, pAllocate, pError);
         if (!pFoundation) {
@@ -64,7 +83,8 @@ namespace DemonPhysics {
 
         }
         if (!pPhysDec->filterShader)
-            pPhysDec->filterShader = physx::PxDefaultSimulationFilterShader;
+            pPhysDec->filterShader = NotifyAllFilterShader;
+
 
 
         // Create our scene

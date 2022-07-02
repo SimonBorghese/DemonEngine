@@ -48,9 +48,9 @@ namespace DemonGame {
         //rigidActor->setTransform(mainTransform);
         //printf("P: %f %f %f\n", rigidActor->getTransform()->getPosition().x, rigidActor->getTransform()->getPosition().y, rigidActor->getTransform()->getPosition().z);
 
+        rigidActor->updateActor();
         mainTransform.setPosition(rigidActor->getTransform()->getPosition());
         mainTransform.setRotation(rigidActor->getTransform()->getRotation());
-        rigidActor->updateActor();
 
         //mainTransform = *rigidActor->getTransform();
         //mainTransform = *rigidActor->getTransform();

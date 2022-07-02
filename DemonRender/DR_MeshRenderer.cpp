@@ -32,7 +32,7 @@ namespace DemonRender {
         const aiScene *oScene = oModelLoader->ReadFile(file, aiProcess_Triangulate | aiProcess_GenUVCoords |
                                                              aiProcess_FindInvalidData | aiProcess_OptimizeMeshes);
         if (strcmp("", oModelLoader->GetErrorString()) != 0) {
-            (fmt::print("Failed to load: {}, Error: {}\n", file, oModelLoader->GetErrorString()));
+            //(fmt::print("Failed to load: {}, Error: {}\n", file, oModelLoader->GetErrorString()));
         }
 
         for (unsigned int m = 0; m < oScene->mNumMeshes; m++) {

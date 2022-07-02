@@ -50,6 +50,37 @@ namespace DemonBase {
             _mainTransform.setRotation(quat);
         }
 
+        void setEmbedData(void *data){
+            _mainActor->userData = data;
+        }
+
+        void* getEmbedData(){
+            return _mainActor->userData;
+        }
+
+        glm::vec3 getPosition() {
+            return glm::vec3(_mainActor->getGlobalPose().p.x,
+                             _mainActor->getGlobalPose().p.y,
+                             _mainActor->getGlobalPose().p.z);
+        }
+
+        glm::quat getRotation(){
+            return glm::quat(_mainActor->getGlobalPose().q.w,
+                             _mainActor->getGlobalPose().q.x,
+                             _mainActor->getGlobalPose().q.y,
+                             _mainActor->getGlobalPose().q.z);
+        }
+        void setPosition(glm::vec3 position) {
+            //printf("Setting 0 %f %f %f\n", target[0], target[1], target[2]);
+            _mainActor->setGlobalPose(physx::PxTransform(physx::PxVec3(position.x, position.y, position.z), _mainActor->getGlobalPose().q));
+        }
+
+        void setRotation(glm::quat rotation) {
+            //printf("Setting 0 %f %f %f\n", target[0], target[1], target[2]);
+            _mainActor->setGlobalPose(physx::PxTransform(_mainActor->getGlobalPose().p, physx::PxQuat( rotation.x, rotation.y, rotation.z, rotation.w )));
+
+        }
+
     protected:
         physx::PxRigidActor *_mainActor;
         physx::PxShape *_mainShape;

@@ -32,6 +32,9 @@ namespace DemonGame {
         physicsManager->addActor(rigidActor);
         rigidActor->setTransform(mainTransform);
         mainMeshRenderer->bindTransform(&mainTransform);
+
+
+        rigidActor->setEmbedData(&objDesc);
     }
 
     void DG_PhysicsObject::destroyEntity() {
@@ -48,9 +51,10 @@ namespace DemonGame {
         //rigidActor->setTransform(mainTransform);
         //printf("P: %f %f %f\n", rigidActor->getTransform()->getPosition().x, rigidActor->getTransform()->getPosition().y, rigidActor->getTransform()->getPosition().z);
 
+        //rigidActor->setTransform(*this);
+        rigidActor->updateActor();
         mainTransform.setPosition(rigidActor->getTransform()->getPosition());
         mainTransform.setRotation(rigidActor->getTransform()->getRotation());
-        rigidActor->updateActor();
         //mainTransform = *rigidActor->getTransform();
         //mainTransform = *rigidActor->getTransform();
 

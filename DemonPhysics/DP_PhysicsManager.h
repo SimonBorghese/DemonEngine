@@ -18,6 +18,8 @@
 #include <PhysX/extensions/PxDefaultCpuDispatcher.h>
 #include <PhysX/characterkinematic/PxController.h>
 
+using namespace physx;
+
 namespace DemonPhysics {
 
     class DP_PhysicsManager {
