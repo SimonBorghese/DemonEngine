@@ -115,6 +115,10 @@ namespace DemonEngine {
 
         World *getWorld() { return _world; }
 
+        double getDeltaTime() {
+            return (double) ((SDL_GetTicks() - _currentTicks)) / 1000;
+        }
+
     private:
         // Some fundimental variables
         unsigned int _width, _height, _fov, _zFar;
@@ -129,6 +133,9 @@ namespace DemonEngine {
 
         // T h e   g a m e
         World *_world;
+
+        // delta time stuff
+        unsigned int _currentTicks;
 
     };
 

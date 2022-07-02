@@ -25,6 +25,7 @@ namespace DemonEngine {
     }
 
     int Engine::gameLoop() {
+        _currentTicks = SDL_GetTicks();
         _renderingManager->render();
         _mainPhysicsManager->simulate(1.0f / 60.0f);
 

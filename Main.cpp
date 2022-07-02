@@ -16,6 +16,10 @@
 
 #define WIDTH 800
 #define HEIGHT 600
+#define SPEED 30
+#define JUMP_HEIGHT 0.4f
+#define DEFAULT_GRAVITY -9.81f
+float gravity = -9.81f;
 
 DemonEngine::Engine *engine;
 DemonPhysics::DP_CharacterController *controller;
@@ -25,6 +29,11 @@ void keyDownCallback(int scancode){
     switch (scancode){
         case SDL_SCANCODE_E:
             engine->createWorldEntity()->createEntityFromMesh("block.obj", glm::vec3(0.0f));
+            break;
+        case SDL_SCANCODE_SPACE:
+            if (controller->onGround()){
+                gravity = DEFAULT_GRAVITY * -JUMP_HEIGHT;
+            }
             break;
         default:
             break;
@@ -36,18 +45,18 @@ void keyCalback(int scancode){
     FPSFront.y = 0.0f;
     switch (scancode){
         case SDL_SCANCODE_W:
-            controller->move(FPSFront);
+            controller->move(FPSFront * engine->getDeltaTime() * SPEED);
             break;
         case SDL_SCANCODE_S:
-            controller->move(-FPSFront);
+            controller->move(-FPSFront * engine->getDeltaTime() * SPEED);
             break;
         case SDL_SCANCODE_A:
             controller->move(-(glm::normalize(
-                    glm::cross(FPSFront, engine->getCamera()->getCameraUp())) * 2.0f));
+                    glm::cross(FPSFront, engine->getCamera()->getCameraUp())) * 2.0f) * engine->getDeltaTime() * SPEED);
             break;
         case SDL_SCANCODE_D:
             controller->move((glm::normalize(
-                    glm::cross(FPSFront, engine->getCamera()->getCameraUp())) * 2.0f));
+                    glm::cross(FPSFront, engine->getCamera()->getCameraUp())) * 2.0f) * engine->getDeltaTime() * SPEED);
             break;
         default:
             break;
@@ -90,7 +99,14 @@ int main(void) {
 
     // Main game loop
     while (!engine->gameLoop()) {
-        controller->move(glm::vec3(0.0f, -9.18f * (1.0f / 60.0f), 0.0f));
+        printf("Gravity: %f\n", gravity);
+        controller->move(glm::vec3(0.0f, gravity * engine->getDeltaTime(), 0.0f));
+        if (controller->onGround() && gravity != DEFAULT_GRAVITY){
+            gravity = DEFAULT_GRAVITY;
+        }
+        else if (gravity > DEFAULT_GRAVITY){
+            gravity += DEFAULT_GRAVITY * engine->getDeltaTime();
+        }
     }
 
     engine->destroyEngine();
