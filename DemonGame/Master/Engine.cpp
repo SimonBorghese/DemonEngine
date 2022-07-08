@@ -19,6 +19,7 @@ namespace DemonEngine {
         _renderingManager->setCamera(_mainCamera);
 
         _mainPhysicsManager->createPhysics(glm::vec3(0.0f, -9.81f, 0.0f));
+        _mainPhysicsManager->getScene()->setSimulationEventCallback(new DemonGame::DG_EXT_PhysicsCallback);
 
         _renderingManager->newFrame();
         _mainEvents->pollEvents();
@@ -27,7 +28,7 @@ namespace DemonEngine {
     int Engine::gameLoop() {
         _currentTicks = SDL_GetTicks();
         _renderingManager->render();
-        _mainPhysicsManager->simulate(1.0f / 60.0f);
+        _mainPhysicsManager->simulate(getDeltaTime());
 
         _renderingManager->newFrame();
         _mainEvents->pollEvents();
@@ -66,6 +67,12 @@ namespace DemonEngine {
         DemonGame::DG_PhysicsObject *goodEnt = new DemonGame::DG_PhysicsObject(_renderingManager, _shaderObject,
                                                                                _mainPhysicsManager);
         _world->addWorldEntity(goodEnt);
+        return goodEnt;
+    }
+
+    DemonGame::DG_Entity *Engine::createVisualEntity(){
+        DemonGame::DG_Entity *goodEnt = new DemonGame::DG_Entity(_renderingManager, _shaderObject);
+        _world->addWorldGeneric(goodEnt);
         return goodEnt;
     }
 

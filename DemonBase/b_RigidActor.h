@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <DemonWorld/DW_Transform.h>
+#include <vector>
 
 
 namespace DemonBase {
@@ -20,7 +21,7 @@ namespace DemonBase {
 
         physx::PxRigidActor *getActor() { return _mainActor; }
 
-        physx::PxShape *getShape() { return _mainShape; }
+        std::vector<physx::PxShape*>* getShape() { return &_mainShapes; }
 
         DemonWorld::DW_Transform *getTransform() { return &_mainTransform; }
 
@@ -83,7 +84,7 @@ namespace DemonBase {
 
     protected:
         physx::PxRigidActor *_mainActor;
-        physx::PxShape *_mainShape;
+        std::vector<physx::PxShape*> _mainShapes;
         DemonWorld::DW_Transform _mainTransform;
     };
 

@@ -64,6 +64,9 @@ namespace DemonPhysics {
         physx::PxPhysics *pPhysics;
         physx::PxFoundation *pFoundation;
 
+        physx::PxPvd *pPvd;
+        physx::PxPvdTransport *pTransport;
+
         physx::PxCooking *pCooking;
 
         physx::PxDefaultCpuDispatcher *pCpuDispatcher;

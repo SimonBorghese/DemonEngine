@@ -25,8 +25,8 @@ namespace DemonRender {
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
         //SDL_ShowCursor(SDL_FALSE);
-        //SDL_SetWindowGrab(_window, SDL_TRUE);
-        //SDL_SetRelativeMouseMode(SDL_TRUE);
+        SDL_SetWindowGrab(_window, SDL_TRUE);
+        SDL_SetRelativeMouseMode(SDL_TRUE);
     }
 
     void DR_Window::destroyWindow() {

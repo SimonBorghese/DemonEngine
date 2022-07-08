@@ -9,23 +9,28 @@ namespace DemonGame {
                                               glm::vec3 pos,
                                               glm::vec3 rotation,
                                               glm::vec3 scale) {
-        mainTransform.createTransform(pos, rotation, scale);
+        mainTransform.createTransform(pos, rotation, glm::vec3(1.0f));
         //mainTransform = new DemonWorld::DW_Transform(pos, rotation, scale);
         mainMeshRenderer = new DemonRender::DR_MeshRenderer();
         mainMeshRenderer->setShader(meshShader);
 
 
         unsigned int outLen;
-        DemonBase::b_Mesh **normalMesh = DemonIO::DI_SceneLoader::loadMeshesFromFile(meshFile, &outLen);
+        DemonBase::b_Mesh **normalMesh = DemonIO::DI_SceneLoader::loadMeshesFromFile(meshFile, &outLen, scale);
 
         mainMeshRenderer->loadExistingMeshes(normalMesh, outLen);
 
         renderManager->addMeshGroup(mainMeshRenderer);
 
-        rigidMesh = new DemonPhysics::DP_RigidMesh(normalMesh[0]);
-        rigidActor = new DemonPhysics::DP_RigidActor(rigidMesh);
+        std::vector<DemonPhysics::DP_RigidMesh*> meshes;
+        for (unsigned int m = 0; m < outLen; m++) {
+             meshes.push_back(new DemonPhysics::DP_RigidMesh(normalMesh[m]));
+            physicsManager->cookMesh(meshes.at(meshes.size()-1));
+        }
+
+        rigidActor = new DemonPhysics::DP_RigidActor(meshes);
+
         DemonPhysics::DP_PhysicsMaterial matgood(1.0f, 1.0f, 0.0f);
-        physicsManager->cookMesh(rigidMesh);
         physicsManager->cookMaterial(&matgood);
         //physicsManager->cookActor(rigidActor, &matgood);
         rigidActor->createActor(physicsManager->getPhysics(), matgood.getMaterial());

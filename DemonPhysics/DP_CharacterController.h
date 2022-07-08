@@ -41,7 +41,20 @@ namespace DemonPhysics {
             desc.position = physx::PxExtendedVec3(position.x, position.y, position.z);
 
             pMainController = controllerManager->createController(desc);
+        }
 
+        void setHeight(float height){
+            ((physx::PxCapsuleController*)pMainController)->setHeight(height);
+        }
+        float getHeight() {
+            return ((physx::PxCapsuleController*)pMainController)->getHeight();
+        }
+
+        void setRadius(float height){
+            ((physx::PxCapsuleController*)pMainController)->setRadius(height);
+        }
+        float getRadius() {
+            return ((physx::PxCapsuleController*)pMainController)->getRadius();
         }
 
     private:

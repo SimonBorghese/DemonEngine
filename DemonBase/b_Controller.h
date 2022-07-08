@@ -24,8 +24,11 @@ namespace DemonBase {
             *target = glm::vec3(pMainController->getPosition().x,
                                 pMainController->getPosition().y,
                                 pMainController->getPosition().z);
-
-
+        }
+        glm::vec3 getPosition(){
+            return glm::vec3(pMainController->getPosition().x,
+                             pMainController->getPosition().y,
+                             pMainController->getPosition().z);
         }
 
         void setController(physx::PxController *newController) { pMainController = newController; }

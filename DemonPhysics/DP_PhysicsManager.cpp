@@ -31,7 +31,7 @@ namespace DemonPhysics {
             return;
         }
 
-        /*
+
         pPvd = physx::PxCreatePvd(*pFoundation);
         if (!pPvd){
             printf("Error: PxCreatePvd Failed, Line: %d\n", __LINE__);
@@ -43,11 +43,11 @@ namespace DemonPhysics {
             return;
         }
         pPvd->connect(*pTransport, physx::PxPvdInstrumentationFlag::eALL);
-        */
+
 
         // Create the physics
         // Add PVD to end for PVD
-        pPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *pFoundation, physx::PxTolerancesScale(), true);
+        pPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *pFoundation, physx::PxTolerancesScale(), true, pPvd);
         if (pPhysics == NULL) {
             printf("Failed to Create Physics, Line: %d\n", __LINE__);
             return;

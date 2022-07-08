@@ -9,23 +9,34 @@ namespace DemonPhysics {
         _mainActor = (physx::PxRigidStatic *) physx->createRigidStatic(physx::PxTransform(physx::PxVec3(0.0f)));
         physx::PxTransform relativePose(physx::PxQuat(1, physx::PxVec3(0.0f, 0.0f, 0.0f)));
 
-
-        _mainShape = physx::PxRigidActorExt::createExclusiveShape(*_mainActor,
-                                                                  physx::PxConvexMeshGeometry(
-                                                                          targetMesh->getConvexMesh()),
-                                                                  *mat);
-
-        // END MESH GEN
-        if (_mainShape != NULL) {
-            _mainShape->setLocalPose(relativePose);
-        } else {
-            _mainActor = NULL;
-            return;
+        if (_targetMeshes.size() < 1) {
+            _mainShapes.push_back(physx::PxRigidActorExt::createExclusiveShape(*_mainActor,
+                                                                               physx::PxConvexMeshGeometry(
+                                                                                       targetMesh->getConvexMesh()),
+                                                                               *mat));
+        }
+        else{
+            for (unsigned  int m = 0; m < _targetMeshes.size(); m++){
+                _mainShapes.push_back(physx::PxRigidActorExt::createExclusiveShape(*_mainActor,
+                                                                                   physx::PxConvexMeshGeometry(
+                                                                                           _targetMeshes.at(m)->getConvexMesh()),
+                                                                                   *mat));
+                _mainActor->attachShape(*_mainShapes.at(_mainShapes.size()-1));
+                // END MESH GEN
+                if (_mainShapes.at(_mainShapes.size()-1) != NULL) {
+                    _mainShapes.at(_mainShapes.size()-1)->setLocalPose(relativePose);
+                } else {
+                    _mainActor = NULL;
+                    return;
+                }
+            }
         }
     }
 
     void DP_RigidActor::destroyActor() {
-        _mainActor->detachShape(*_mainShape);
+        for (unsigned  int m = 0; m < _mainShapes.size(); m++) {
+            _mainActor->detachShape(*_mainShapes.at(m));
+        }
         _mainActor->release();
         //_mainShape->release();
     }

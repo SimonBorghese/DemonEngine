@@ -5,7 +5,7 @@
 #include "DI_SceneLoader.h"
 
 namespace DemonIO {
-    DemonBase::b_Mesh **DI_SceneLoader::loadMeshesFromFile(const char *fileName, unsigned int *meshCountOut) {
+    DemonBase::b_Mesh **DI_SceneLoader::loadMeshesFromFile(const char *fileName, unsigned int *meshCountOut, glm::vec3 scale) {
         std::vector<DemonBase::b_Mesh> newMeshes;
 
         Assimp::Importer *oModelLoader = new Assimp::Importer;
@@ -23,14 +23,14 @@ namespace DemonIO {
             // Stack allocations go brrrrr....
             Vertex m_vertices[numVertices];
             for (unsigned int v = 0; v < numVertices; v++) {
-                m_vertices[v].iPosition.x = oScene->mMeshes[m]->mVertices[v].x;
-                m_vertices[v].iPosition.y = oScene->mMeshes[m]->mVertices[v].y;
-                m_vertices[v].iPosition.z = oScene->mMeshes[m]->mVertices[v].z;
+                m_vertices[v].iPosition.x = oScene->mMeshes[m]->mVertices[v].x * scale.x;
+                m_vertices[v].iPosition.y = oScene->mMeshes[m]->mVertices[v].y * scale.y;
+                m_vertices[v].iPosition.z = oScene->mMeshes[m]->mVertices[v].z * scale.z;
 
                 if (oScene->mMeshes[m]->HasNormals()) {
-                    m_vertices[v].iNormal.x = oScene->mMeshes[m]->mNormals[v].x;
-                    m_vertices[v].iNormal.y = oScene->mMeshes[m]->mNormals[v].y;
-                    m_vertices[v].iNormal.z = oScene->mMeshes[m]->mNormals[v].z;
+                    m_vertices[v].iNormal.x = oScene->mMeshes[m]->mNormals[v].x * scale.x;
+                    m_vertices[v].iNormal.y = oScene->mMeshes[m]->mNormals[v].y * scale.y;
+                    m_vertices[v].iNormal.z = oScene->mMeshes[m]->mNormals[v].z * scale.z;
                 } else {
                     m_vertices[v].iNormal.x = 0.0f;
                     m_vertices[v].iNormal.y = 0.0f;
@@ -57,6 +57,12 @@ namespace DemonIO {
                     m_indices.push_back(face.mIndices[i]);
                 }
             }
+            /*
+            Vertex m_REALvertices[m_indices.size()];
+            for (unsigned int i = 0; i < m_indices.size(); i++){
+                m_REALvertices[i] = m_vertices[m_indices.at(i)];
+            }
+             */
             // Make it a heap allocation so we don't lose it
             meshes[m] = new DemonBase::b_Mesh(&m_vertices[0], numVertices, m_indices.data(), m_indices.size());
             aiMaterial *matSafe = oScene->mMaterials[oScene->mMeshes[m]->mMaterialIndex];

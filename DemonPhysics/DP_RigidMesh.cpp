@@ -18,7 +18,7 @@ namespace DemonPhysics {
                               bMesh->getVerticesVector().size(),
                               bMesh->getIndicesVector().data(),
                               bMesh->getIndicesVector().size()) {
-        convexDesc.points.count = (_vertices.size() / 3);
+        convexDesc.points.count = (_vertices.size());
         convexDesc.points.stride = sizeof(Vertex);
         convexDesc.points.data = &(_vertices.data()[0]);
         convexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX;
@@ -33,6 +33,7 @@ namespace DemonPhysics {
         }
         physx::PxDefaultMemoryInputData input(buf.getData(), buf.getSize());
         _mesh = physx->createConvexMesh(input);
+
     }
 
     void DP_RigidMesh::destroyMesh() {

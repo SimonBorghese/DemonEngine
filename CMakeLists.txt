@@ -19,6 +19,8 @@ target_include_directories(DemonEngine PUBLIC ${SDL2_INCLUDE_DIRS})
 target_include_directories(DemonEngine PUBLIC ${OPENGL_INCLUDE_DIR})
 target_include_directories(DemonEngine PUBLIC ${CMAKE_SOURCE_DIR} GLAD/include)
 target_include_directories(DemonEngine PUBLIC ${CMAKE_SOURCE_DIR} PhysX)
+target_include_directories(DemonEngine PUBLIC ${CMAKE_SOURCE_DIR})
+
 
 target_link_directories(DemonEngine PUBLIC "Libs")
 

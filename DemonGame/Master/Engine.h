@@ -21,6 +21,7 @@
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <vector>
+#include <DemonGame/Shared/External/DG_EXT_PhysicsCallback.h>
 
 namespace DemonEngine {
 
@@ -55,6 +56,8 @@ namespace DemonEngine {
         DemonGame::DG_RigidEntity *createWorldObject();
 
         DemonGame::DG_PhysicsObject *createWorldEntity();
+
+        DemonGame::DG_Entity *createVisualEntity();
 
         // Lighting objects
         typedef struct{

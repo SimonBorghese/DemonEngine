@@ -11,6 +11,7 @@
 #include <DemonPhysics/DP_CharacterController.h>
 #include <DemonRender/DemonLights/DR_DL_BasicLight.h>
 #include <DemonGame/Shared/External/DG_EXT_PhysicsCallback.h>
+#include <DemonIO/DI_BSPLoader.h>
 
 #include <math.h>
 
@@ -19,7 +20,7 @@
 #define SPEED 30
 #define JUMP_HEIGHT 0.4f
 #define DEFAULT_GRAVITY -9.81f
-float gravity = -9.81f;
+float gravity = DEFAULT_GRAVITY;
 
 DemonEngine::Engine *engine;
 DemonPhysics::DP_CharacterController *controller;
@@ -42,7 +43,7 @@ void keyDownCallback(int scancode){
 
 void keyCalback(int scancode){
     FPSFront = engine->getCamera()->getCameraFront();
-    FPSFront.y = 0.0f;
+    //FPSFront.y = 0.0f;
     switch (scancode){
         case SDL_SCANCODE_W:
             controller->move(FPSFront * engine->getDeltaTime() * SPEED);
@@ -65,7 +66,8 @@ void keyCalback(int scancode){
 
 void SCPCollideCallback(DemonGame::DG_PhysicsObject* other){
     printf("173 just touched: %s\n", other->getName().c_str());
-    other->getActor()->setPosition(glm::vec3(0.0f, 20.0f, 0.0f));
+    //other->getActor()->setPosition(glm::vec3(0.0f, 20.0f, 0.0f));
+    other->getActor()->applyForce(glm::vec3(0.0f, 20.0f, 0.0f));
 }
 
 int main(void) {
@@ -74,6 +76,9 @@ int main(void) {
     // Create the engine elements
     engine->createEngine();
 
+    auto map = engine->createVisualEntity();
+    map->createEntityFromMesh("test.bsp", glm::vec3(10.0f, -4.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f/8.0f));
+
     // Create a physics object (world entity) & static object (world object)
     auto scpthing = engine->createWorldEntity();
     scpthing->createEntityFromMesh("173.fbx");
@@ -81,32 +86,35 @@ int main(void) {
     scpthing->setName("173");
     // Set the collision callback function
     scpthing->setContactCallback(SCPCollideCallback);
+    scpthing->setMass(75.0f);
+    scpthing->setSpaceMassInertiaTensor(glm::vec3(2000.0f));
+    scpthing->updateMassInertia(5.0f);
 
     // Create a world static object
     engine->createWorldObject()->createEntityFromMesh("bloque.obj", glm::vec3(0.0f, -10.0f, 0.0f));
 
     // Create the FPS controller
     controller = engine->createFPSController(glm::vec3(0.0f), 5.0f, 1.0f);
+    
 
     // Create a light
-    engine->createEasyPointLight(glm::vec3(0.0f, -2.0f, 0.0f), 20.0f, 1.0f);
+    DemonRender::DemonLight::DR_DL_BasicLight *light1 = engine->createEasyPointLight(glm::vec3(0.0f, -2.0f, 0.0f), 500.0f, 1.0f);
 
     // Set the key callback functions
     engine->getEvent()->setKeyDownCallback(keyDownCallback);
     engine->getEvent()->setKeyCallback(keyCalback);
 
-    engine->getPhysicsManager()->getScene()->setSimulationEventCallback(new DemonGame::DG_EXT_PhysicsCallback);
 
     // Main game loop
     while (!engine->gameLoop()) {
-        printf("Gravity: %f\n", gravity);
-        controller->move(glm::vec3(0.0f, gravity * engine->getDeltaTime(), 0.0f));
+        //controller->move(glm::vec3(0.0f, gravity * engine->getDeltaTime(), 0.0f));
         if (controller->onGround() && gravity != DEFAULT_GRAVITY){
             gravity = DEFAULT_GRAVITY;
         }
         else if (gravity > DEFAULT_GRAVITY){
             gravity += DEFAULT_GRAVITY * engine->getDeltaTime();
         }
+        light1->getLightInfo()->position = controller->getPosition();
     }
 
     engine->destroyEngine();

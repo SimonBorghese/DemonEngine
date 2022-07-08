@@ -24,7 +24,7 @@ namespace DemonIO {
 
         virtual ~DI_SceneLoader();
 
-        static DemonBase::b_Mesh **loadMeshesFromFile(const char *fileName, unsigned int *meshCountOut);
+        static DemonBase::b_Mesh **loadMeshesFromFile(const char *fileName, unsigned int *meshCountOut, glm::vec3 scale = glm::vec3(1.0f));
 
     private:
 

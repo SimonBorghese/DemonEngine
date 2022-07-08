@@ -9,14 +9,16 @@ namespace DemonGame {
                                                 glm::vec3 pos,
                                                 glm::vec3 rotation,
                                                 glm::vec3 scale) {
-        mainTransform.createTransform(pos, rotation, scale);
+        mainTransform.createTransform(pos, rotation, glm::vec3(1.0f));
         //mainTransform = new DemonWorld::DW_Transform(pos, rotation, scale);
         mainMeshRenderer = new DemonRender::DR_MeshRenderer();
         mainMeshRenderer->setShader(meshShader);
 
 
         unsigned int outLen;
-        DemonBase::b_Mesh **normalMesh = DemonIO::DI_SceneLoader::loadMeshesFromFile(meshFile, &outLen);
+        DemonBase::b_Mesh **normalMesh = DemonIO::DI_SceneLoader::loadMeshesFromFile(meshFile,
+                                                                                     &outLen,
+                                                                                     scale);
 
         mainMeshRenderer->loadExistingMeshes(normalMesh, outLen);
 
@@ -24,12 +26,14 @@ namespace DemonGame {
 
         rigidMesh = new DemonPhysics::DP_RigidMesh(normalMesh[0]);
         rigidActor = new DemonPhysics::DP_RigidPhysicsActor(rigidMesh);
+
         DemonPhysics::DP_PhysicsMaterial matgood;
         physicsManager->cookMesh(rigidMesh);
         physicsManager->cookMaterial(&matgood);
         //physicsManager->cookActor(rigidActor, &matgood);
         rigidActor->createActor(physicsManager->getPhysics(), matgood.getMaterial());
         physicsManager->addActor(rigidActor);
+
         rigidActor->setTransform(mainTransform);
         mainMeshRenderer->bindTransform(&mainTransform);
 

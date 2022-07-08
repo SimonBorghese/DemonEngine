@@ -10,14 +10,16 @@ namespace DemonGame {
                                          glm::vec3 pos,
                                          glm::vec3 rotation,
                                          glm::vec3 scale) {
-        mainTransform.createTransform(pos, rotation, scale);
+        mainTransform.createTransform(pos, rotation, glm::vec3(1.0f));
         //mainTransform = new DemonWorld::DW_Transform(pos, rotation, scale);
         mainMeshRenderer = new DemonRender::DR_MeshRenderer();
         mainMeshRenderer->setShader(meshShader);
         mainMeshRenderer->bindTransform(&mainTransform);
 
         unsigned int outLen;
-        DemonBase::b_Mesh **normalMesh = DemonIO::DI_SceneLoader::loadMeshesFromFile(meshFile, &outLen);
+        DemonBase::b_Mesh **normalMesh = DemonIO::DI_BSPLoader::loadMeshesFromFile(meshFile,
+                                                                                     &outLen,
+                                                                                     scale);
 
         mainMeshRenderer->loadExistingMeshes(normalMesh, outLen);
 

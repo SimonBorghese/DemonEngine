@@ -11,6 +11,7 @@
 #include <DemonRender/DR_Shader.h>
 #include <DemonWorld/DW_Transform.h>
 #include <DemonIO/DI_SceneLoader.h>
+#include <DemonIO/DI_BSPLoader.h>
 #include <DemonBase/b_GameObject.h>
 
 namespace DemonGame {

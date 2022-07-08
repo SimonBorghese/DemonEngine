@@ -50,7 +50,25 @@ namespace DemonGame {
 
         void update();
 
-        DemonPhysics::DP_RigidActor *getActor() { return rigidActor; }
+        DemonPhysics::DP_RigidPhysicsActor *getActor() { return rigidActor; }
+
+        float getMass() { return rigidActor->getRealActor()->getMass(); }
+        void setMass(float newMass) { rigidActor->getRealActor()->setMass(newMass); }
+
+        glm::vec3 getSpaceMassInertiaTensor() { return glm::vec3(
+        rigidActor->getRealActor()->getMassSpaceInertiaTensor().x,
+        rigidActor->getRealActor()->getMassSpaceInertiaTensor().y,
+        rigidActor->getRealActor()->getMassSpaceInertiaTensor().z); }
+
+        void setSpaceMassInertiaTensor(glm::vec3 tensor) {
+            rigidActor->getRealActor()->setMassSpaceInertiaTensor(physx::PxVec3(tensor.x, tensor.y, tensor.z));
+        }
+
+        void updateMassInertia(float desnity){
+            rigidActor->updateMassInteria(desnity);
+        }
+
+
 
     protected:
         DemonPhysics::DP_PhysicsManager *physicsManager;
