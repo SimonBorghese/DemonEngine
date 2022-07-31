@@ -13,13 +13,6 @@ namespace DemonRender {
     }
 
     void DR_MeshRenderer::renderMeshes() {
-        _targetShader->useProgram();
-        if (modelLocation == 0) {
-            modelLocation = _targetShader->getUniformLocation("model");
-        }
-        if (_currentTransform != nullptr) {
-            _targetShader->bindMatrix4f(modelLocation, _currentTransform->getModel());
-        }
         for (unsigned int m = 0; m < _targetMeshes.size(); m++) {
             _targetShader->bindDiffuseTexture(_targetMeshes.at(m)->getTexture());
             _targetMeshes.at(m)->renderMesh();
@@ -32,7 +25,7 @@ namespace DemonRender {
         const aiScene *oScene = oModelLoader->ReadFile(file, aiProcess_Triangulate | aiProcess_GenUVCoords |
                                                              aiProcess_FindInvalidData | aiProcess_OptimizeMeshes);
         if (strcmp("", oModelLoader->GetErrorString()) != 0) {
-            //(fmt::print("Failed to load: {}, Error: {}\n", file, oModelLoader->GetErrorString()));
+            (fmt::print("[MESH RENDERER] Failed to load: {}, Error: {}\n", file, oModelLoader->GetErrorString()));
         }
 
         for (unsigned int m = 0; m < oScene->mNumMeshes; m++) {
@@ -109,6 +102,16 @@ namespace DemonRender {
         for (unsigned int m = 0; m < _targetMeshes.size(); m++) {
             _targetMeshes.at(m)->destroyMesh();
             delete _targetMeshes.at(m);
+        }
+    }
+
+    void DR_MeshRenderer::bindShader() {
+        _targetShader->useProgram();
+        //if (modelLocation == 0) {
+            modelLocation = _targetShader->getUniformLocation("model");
+        //}
+        if (_currentTransform != nullptr) {
+            _targetShader->bindMatrix4f(modelLocation, _currentTransform->getModel());
         }
     }
 } // DemonRender

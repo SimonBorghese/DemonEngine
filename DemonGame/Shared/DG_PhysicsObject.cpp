@@ -24,43 +24,49 @@ namespace DemonGame {
 
         renderManager->addMeshGroup(mainMeshRenderer);
 
-        rigidMesh = new DemonPhysics::DP_RigidMesh(normalMesh[0]);
-        rigidActor = new DemonPhysics::DP_RigidPhysicsActor(rigidMesh);
+        rigidMesh = new DemonPhysics::DP_RigidConvexMesh(normalMesh[0]);
+        rigidActor = new DemonPhysics::DP_RigidPhysicsActor((DemonBase::b_RigidMesh*) rigidMesh);
 
-        DemonPhysics::DP_PhysicsMaterial matgood;
+        mainMaterial = new DemonPhysics::DP_PhysicsMaterial;
         physicsManager->cookMesh(rigidMesh);
-        physicsManager->cookMaterial(&matgood);
+        physicsManager->cookMaterial(mainMaterial);
         //physicsManager->cookActor(rigidActor, &matgood);
-        rigidActor->createActor(physicsManager->getPhysics(), matgood.getMaterial());
+        rigidActor->createActor(physicsManager->getPhysics(), mainMaterial->getMaterial());
         physicsManager->addActor(rigidActor);
 
         rigidActor->setTransform(mainTransform);
         mainMeshRenderer->bindTransform(&mainTransform);
-
-
         rigidActor->setEmbedData(&objDesc);
+
+        //mainTransform.setPosition(rigidActor->getTransform()->getPosition());
+        //mainTransform.setRotation(rigidActor->getTransform()->getRotation());
     }
 
     void DG_PhysicsObject::destroyEntity() {
+        //physicsManager->removeActor(rigidActor);
+        //if (rigidActor != NULL && rigidActor->getRealActor() != NULL) {
+            physicsManager->getScene()->removeActor(*rigidActor->getRealActor());
+        //}
         mainMaterial->destroyMaterial();
         rigidMesh->destroyMesh();
-        physicsManager->removeActor(rigidActor);
         rigidActor->destroyActor();
         mainMeshRenderer->destroyMeshes();
         //delete mainTransform;
-        delete mainMeshRenderer;
+        //delete mainMeshRenderer;
+        mainMeshRenderer->active = 0;
+        //delete rigidActor;
+        *rigidActor = nullptr;
+        delete rigidMesh;
+        //*rigidMesh = nullptr;
+        //delete mainMeshRenderer;
+        //delete mainMaterial;
     }
 
     void DG_PhysicsObject::update() {
-        //rigidActor->setTransform(mainTransform);
-        //printf("P: %f %f %f\n", rigidActor->getTransform()->getPosition().x, rigidActor->getTransform()->getPosition().y, rigidActor->getTransform()->getPosition().z);
-
-        //rigidActor->setTransform(*this);
-        rigidActor->updateActor();
-        mainTransform.setPosition(rigidActor->getTransform()->getPosition());
-        mainTransform.setRotation(rigidActor->getTransform()->getRotation());
-        //mainTransform = *rigidActor->getTransform();
-        //mainTransform = *rigidActor->getTransform();
-
+        if (mainMeshRenderer != nullptr && rigidActor->getTransform() != nullptr) {
+            rigidActor->updateActor();
+            mainTransform.setPosition(rigidActor->getTransform()->getPosition());
+            mainTransform.setRotation(rigidActor->getTransform()->getRotation());
+        }
     }
 } // DemonGame

@@ -5,6 +5,8 @@
 #ifndef DEMONENGINE_DG_PHYSICSOBJECT_H
 #define DEMONENGINE_DG_PHYSICSOBJECT_H
 #include "DG_Entity.h"
+#include <DemonBase/b_RigidMesh.h>
+#include <DemonPhysics/DP_RigidConvexMesh.h>
 #include <DemonPhysics/DP_RigidActor.h>
 #include <DemonPhysics/DP_RigidPhysicsActor.h>
 #include <DemonRender/DR_RenderManager.h>
@@ -18,7 +20,7 @@ namespace DemonGame {
     typedef struct{
         char magicString[5];
         std::string name;
-        std::function<void(DG_PhysicsObject*)> onContact;
+        std::function<void(DG_PhysicsObject*, DG_PhysicsObject*)> onContact;
         DG_PhysicsObject *reference;
     } DP_PHYSICS_OBJ_DESC;
 
@@ -39,7 +41,7 @@ namespace DemonGame {
         void setName(const char * name) { objDesc.name = std::string(name); }
         std::string getName() { return objDesc.name; }
 
-        void setContactCallback(std::function<void(DG_PhysicsObject*)> callback) { objDesc.onContact = callback; }
+        void setContactCallback(std::function<void(DG_PhysicsObject*, DG_PhysicsObject*)> callback) { objDesc.onContact = callback; }
 
         void createEntityFromMesh(const char *meshFile,
                                   glm::vec3 pos = glm::vec3(0.0f),
@@ -55,6 +57,13 @@ namespace DemonGame {
         float getMass() { return rigidActor->getRealActor()->getMass(); }
         void setMass(float newMass) { rigidActor->getRealActor()->setMass(newMass); }
 
+        void disableGravity() {
+            rigidActor->getRealActor()->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
+        }
+        void enableGravity() {
+            rigidActor->getRealActor()->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, false);
+        }
+
         glm::vec3 getSpaceMassInertiaTensor() { return glm::vec3(
         rigidActor->getRealActor()->getMassSpaceInertiaTensor().x,
         rigidActor->getRealActor()->getMassSpaceInertiaTensor().y,
@@ -68,12 +77,14 @@ namespace DemonGame {
             rigidActor->updateMassInteria(desnity);
         }
 
-
+        void setPosition(glm::vec3 newPos){
+            rigidActor->setPosition(newPos);
+        }
 
     protected:
         DemonPhysics::DP_PhysicsManager *physicsManager;
         DemonPhysics::DP_RigidPhysicsActor *rigidActor;
-        DemonPhysics::DP_RigidMesh *rigidMesh;
+        DemonPhysics::DP_RigidConvexMesh *rigidMesh;
         DemonPhysics::DP_PhysicsMaterial *mainMaterial;
 
         DP_PHYSICS_OBJ_DESC objDesc;

@@ -27,6 +27,17 @@ namespace DemonRender {
             viewPosLocation = _targetShader->getUniformLocation("viewPos");
         }
 
+        void setShader(DR_Shader *shader){
+
+            shader->useProgram();
+            if (shader != _targetShader){
+                viewLocation = shader->getUniformLocation("view");
+                projectionLocation = shader->getUniformLocation("projection");
+                viewPosLocation = shader->getUniformLocation("viewPos");
+            }
+            _targetShader = shader;
+        }
+
         void setPosition(glm::vec3 position) { cameraPos = position; }
 
         void setPosition(float x, float y, float z) { cameraPos = glm::vec3(x, y, z); }
@@ -39,6 +50,12 @@ namespace DemonRender {
             cameraFront.y = sin(glm::radians(y));
             cameraFront.z = sin(glm::radians(x)) * cos(glm::radians(y));
             cameraFront = glm::normalize(cameraFront);
+
+            cameraFrontFPS = glm::vec3(0.0f);
+            cameraFrontFPS.x = cos(glm::radians(x)) * cos(glm::radians(10.0f));
+            cameraFrontFPS.y = sin(glm::radians(10.0f));
+            cameraFrontFPS.z = sin(glm::radians(x)) * cos(glm::radians(10.0f));
+            cameraFrontFPS = glm::normalize(cameraFrontFPS);
         }
 
         void setMatrix() {
@@ -50,11 +67,13 @@ namespace DemonRender {
 
         glm::vec3 getCameraFront() { return cameraFront; }
 
-        glm::vec3 getFPSFront() { return glm::vec3(cameraFront.x, 0.0f, cameraFront.z); }
+        glm::vec3 getFPSFront() { return cameraFrontFPS; }
 
         glm::vec3 getPosition() { return cameraPos; }
 
         glm::vec3 getCameraUp() { return cameraUp; }
+
+        glm::mat4 getView() { return viewMat; }
 
     private:
         DR_Shader *_targetShader;
@@ -65,6 +84,7 @@ namespace DemonRender {
         glm::mat4 projectionMat = glm::mat4(1.0f);
         glm::vec3 cameraPos = glm::vec3(0.0f);
         glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+        glm::vec3 cameraFrontFPS = glm::vec3(0.0f, 0.0f, -1.0f);
         glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
     };
 

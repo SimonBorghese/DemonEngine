@@ -22,7 +22,9 @@ namespace DemonPhysics {
         }
 
         void destroyMaterial() {
-            mat->release();
+            if (mat != nullptr && mat->isReleasable()) {
+                mat->release();
+            }
         }
 
         physx::PxMaterial *getMaterial() { return mat; }

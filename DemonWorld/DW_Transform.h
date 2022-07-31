@@ -42,6 +42,8 @@ namespace DemonWorld {
 
         void scale(glm::vec3 offset) { _scale += offset; }
 
+        void setModel(glm::mat4 newModel) { defaultModel = newModel; }
+
         glm::vec3 getPosition() { return position; }
 
         glm::quat getRotation() { return rotation; }
@@ -49,17 +51,18 @@ namespace DemonWorld {
         glm::vec3 getScale() { return _scale; }
 
         glm::mat4 getModel() {
-            currentModel = glm::mat4(1.0f);
-            currentModel = glm::translate(currentModel, position);
-            /*
-            currentModel = glm::rotate(currentModel, rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-            currentModel = glm::rotate(currentModel, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-            currentModel = glm::rotate(currentModel, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-             */
-            if (rotation != glm::quat(0.0f, 0.0f, 0.0f, 0.0f)) {
-                currentModel = glm::rotate(currentModel, glm::angle(rotation), glm::axis(rotation));
-            }
-            currentModel = glm::scale(currentModel, _scale);
+                currentModel = defaultModel;
+                currentModel = glm::translate(currentModel, position);
+                /*
+                currentModel = glm::rotate(currentModel, rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+                currentModel = glm::rotate(currentModel, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+                currentModel = glm::rotate(currentModel, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+                 */
+                if (rotation != glm::quat(0.0f, 0.0f, 0.0f, 0.0f)) {
+                    currentModel = glm::rotate(currentModel, glm::angle(rotation), glm::axis(rotation));
+                }
+                currentModel = glm::scale(currentModel, _scale);
+
             return currentModel;
         }
 
@@ -81,6 +84,7 @@ namespace DemonWorld {
         glm::vec3 _scale = glm::vec3(1.0f);
 
         glm::mat4 currentModel = glm::mat4(1.0f);
+        glm::mat4 defaultModel = glm::mat4(1.0f);
 
     };
 

@@ -16,11 +16,11 @@ namespace DemonGame {
                 if (actorOneDesc != NULL && actorTwoDesc != NULL){
                     if (!strncmp(&actorOneDesc->magicString[0], "IOBJ", 4)){
                         if (actorOneDesc->onContact != nullptr){
-                            actorOneDesc->onContact(actorTwoDesc->reference);
+                            actorOneDesc->onContact(actorOneDesc->reference, actorTwoDesc->reference);
                         }
 
                         if (actorTwoDesc->onContact != nullptr){
-                            actorTwoDesc->onContact(actorOneDesc->reference);
+                            actorTwoDesc->onContact(actorTwoDesc->reference, actorOneDesc->reference);
                         }
 
                     }

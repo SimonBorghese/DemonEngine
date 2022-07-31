@@ -16,6 +16,7 @@
 #include <DemonGame/Shared/DG_BasicCameraController.h>
 #include <DemonGame/Shared/DG_RigidEntity.h>
 #include <DemonGame/Shared/DG_PhysicsObject.h>
+#include <DemonGame/Shared/DG_BSPMap.h>
 #include <DemonRender/DemonLights/DR_DL_BasicLight.h>
 #include "World.h"
 #include <fmt/core.h>
@@ -59,6 +60,8 @@ namespace DemonEngine {
 
         DemonGame::DG_Entity *createVisualEntity();
 
+        DemonGame::DG_BSPMap *createStaticWorld();
+
         // Lighting objects
         typedef struct{
             glm::vec3 position;
@@ -101,6 +104,15 @@ namespace DemonEngine {
 
 
         DemonPhysics::DP_CharacterController *createFPSController(glm::vec3 startPos, float height, float radius);
+
+        void setGravity(glm::vec3 newGravity) {
+            _mainPhysicsManager->getScene()->setGravity(physx::PxVec3(newGravity.x,
+                                                                      newGravity.y,
+                                                                      newGravity.z));
+        }
+        glm::vec3 getGravity() { return glm::vec3(_mainPhysicsManager->getScene()->getGravity().x,
+                                                  _mainPhysicsManager->getScene()->getGravity().y,
+                                                  _mainPhysicsManager->getScene()->getGravity().z);}
 
 
         // All the delicious getter functions

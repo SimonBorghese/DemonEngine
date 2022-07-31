@@ -12,7 +12,7 @@
 #include <fmt/core.h>
 #include <fmt/printf.h>
 #include <DemonBase/b_Mesh.h>
-
+#include <DemonMacro/DemonLog.h>
 
 namespace DemonRender {
 
@@ -34,6 +34,8 @@ namespace DemonRender {
         GLuint getTexture() { return TextureBuffer; }
 
         GLuint *getTexturePTR() { return &TextureBuffer; }
+
+        int type = GL_TRIANGLES;
 
     private:
         GLuint VAO = 0;

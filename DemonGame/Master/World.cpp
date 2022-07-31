@@ -42,7 +42,9 @@ namespace DemonEngine {
         }
 
         for (unsigned int g = 0; g < _worldEntites.size(); g++) {
-            _worldEntites.at(g)->update();
+            if (_worldEntites.at(g) != nullptr) {
+                _worldEntites.at(g)->update();
+            }
         }
     }
 
@@ -68,6 +70,17 @@ namespace DemonEngine {
         DemonGame::DG_PhysicsObject *target = _worldEntites.at(pointer);
         _worldEntites.erase(_worldEntites.cbegin() + pointer);
         return target;
+    }
+
+    void World::removeWorldEntityValue(DemonGame::DG_PhysicsObject *  pointer) {
+        std::remove(_worldEntites.begin(), _worldEntites.end(),pointer);
+    }
+
+    void World::removeWorldObjectValue(DemonGame::DG_RigidEntity *  pointer) {
+        std::remove(_worldObjects.begin(), _worldObjects.end(),pointer);
+    }
+    void World::removeWorldGenericValue(DemonGame::DG_Entity *  pointer) {
+        std::remove(_genericEntites.begin(), _genericEntites.end(),pointer);
     }
 
     DemonBase::b_Light *World::removeLightEntity(unsigned int pointer){

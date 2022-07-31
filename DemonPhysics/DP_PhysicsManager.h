@@ -5,10 +5,10 @@
 #define DEMONENGINE_DP_PHYSICSMANAGER_H
 
 #include <glm/glm.hpp>
-#include "DP_RigidMesh.h"
+#include "DP_RigidConvexMesh.h"
 #include "DP_RigidActor.h"
 #include <DemonBase/b_RigidActor.h>
-#include "DP_RigidMesh.h"
+#include <DemonBase/b_RigidMesh.h>
 #include "DP_PhysicsMaterial.h"
 #include <PhysX/PxPhysicsAPI.h>
 #include <PhysX/extensions/PxTriangleMeshExt.h>
@@ -40,7 +40,7 @@ namespace DemonPhysics {
 
         void removeActor(DemonBase::b_RigidActor *actor) { pScene->removeActor(*actor->getActor()); }
 
-        void cookMesh(DP_RigidMesh *targetMesh) { targetMesh->createMesh(pPhysics, pCooking); }
+        void cookMesh(DemonBase::b_RigidMesh *targetMesh) { targetMesh->createMesh(pPhysics, pCooking); }
 
         void cookActor(DP_RigidActor *targetActor, DP_PhysicsMaterial *mat) {
             targetActor->createActor(pPhysics, mat->getMaterial());

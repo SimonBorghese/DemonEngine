@@ -29,6 +29,9 @@ namespace DemonGame {
 
         void updateCamera();
 
+        void setRotation(glm::vec2 rotation) { xRotate = rotation.x; yRotate = rotation.y;}
+        glm::vec2 getRotation() { return glm::vec2(xRotate, yRotate); }
+
     private:
         DG_Event *eventHandler;
         DemonRender::DR_Camera *targetCamera;

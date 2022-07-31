@@ -40,6 +40,22 @@ namespace DemonBase {
                                   pControlFilter);
             pLastTime = SDL_GetTicks();
         }
+        /*
+         *
+         * case SDL_SCANCODE_W:
+            controller->move(FPSFront * engine->getDeltaTime() * SPEED);
+            break;
+        case SDL_SCANCODE_S:
+            controller->move(-FPSFront * engine->getDeltaTime() * SPEED);
+            break;
+        case SDL_SCANCODE_A:
+            controller->move(-(glm::normalize(
+                    glm::cross(FPSFront, engine->getCamera()->getCameraUp())) * 2.0f) * engine->getDeltaTime() * SPEED);
+            break;
+        case SDL_SCANCODE_D:
+            controller->move((glm::normalize(
+                    glm::cross(FPSFront, engine->getCamera()->getCameraUp())) * 2.0f) * engine->getDeltaTime() * SPEED);
+         */
 
         void translate(glm::vec3 pos) {
             pMainController->setPosition(physx::PxExtendedVec3(pos.x, pos.y, pos.z));

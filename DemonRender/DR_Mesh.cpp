@@ -11,7 +11,7 @@ namespace DemonRender {
     DR_Mesh::DR_Mesh(Vertex *vertices, unsigned int vertexLen, unsigned int *indices, unsigned int indexLen)
             : DemonBase::b_Mesh(vertices, vertexLen, indices, indexLen) {
         //DemonBase::b_Mesh(vertices, vertexLen, indices, indexLen);
-        assert(!((indexLen == 0 && vertexLen % 3 != 0) || (indexLen != 0 && indexLen % 3 != 0))); // Not Triangulated
+        //assert(!((indexLen == 0 && vertexLen % 3 != 0) || (indexLen != 0 && indexLen % 3 != 0))); // Not Triangulated
 
         glCreateVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
@@ -49,7 +49,7 @@ namespace DemonRender {
         unsigned int vertexLen = targetMesh->getVerticesVector().size();
         setMaterial(targetMesh->getMaterial());
         setTextureDiffuse(targetMesh->getTextureDiffuse());
-        assert(!((indexLen == 0 && vertexLen % 3 != 0) || (indexLen != 0 && indexLen % 3 != 0))); // Not Triangulated
+        //assert(!((indexLen == 0 && vertexLen % 3 != 0) || (indexLen != 0 && indexLen % 3 != 0))); // Not Triangulated
 
         glCreateVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
@@ -82,9 +82,9 @@ namespace DemonRender {
         glBindVertexArray(VAO);
 
         if (EBO != 0) {
-            glDrawElements(GL_TRIANGLES, _indexCount, GL_UNSIGNED_INT, 0);
+            glDrawElements(type, _indexCount, GL_UNSIGNED_INT, 0);
         } else {
-            glDrawArrays(GL_TRIANGLES, 0, _vertexCount);
+            glDrawArrays(type, 0, _vertexCount);
         }
 
 
@@ -92,7 +92,7 @@ namespace DemonRender {
 
     void DR_Mesh::createTextureFromSTB(const char *fileName, bool allowAlpha) {
         glGenTextures(1, &TextureBuffer);
-        glActiveTexture(GL_TEXTURE0);
+        //glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, TextureBuffer);
 
 
@@ -120,10 +120,12 @@ namespace DemonRender {
 
         if (!data) {
             if (strcmp(fileName, "")) {
+                ALERT("MESH");
                 fmt::print("Failed to load image: {}\n", fileName);
             }
             data = stbi_load("data/missing.png", &width, &height, &nrChannels, 3);
             if (!data) {
+                ALERT("MESH");
                 fmt::print("CRITICAL ERROR: UN-ABLE TO LOAD ESSENTIAL FILE\n");
             }
         }

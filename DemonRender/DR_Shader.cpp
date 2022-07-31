@@ -70,14 +70,99 @@ namespace DemonRender {
         free(vertexShaderSource);
         free(fragmentShaderSource);
 
+    }
 
+    void DR_Shader::createProgram(const char *vertexFile, const char *geometryFile, const char *fragmentFile){
+        FILE *file = fopen(vertexFile, "r");
+        int fLength = 0;
+        fseek(file, 0, SEEK_END);
+        fLength = ftell(file);
+        fseek(file, 0, SEEK_SET);
+        char *vertexShaderSource = (char *) malloc(sizeof(char) * fLength + 1);
+        fread(vertexShaderSource, 1, fLength, file);
+        vertexShaderSource[fLength] = '\0';
+        fclose(file);
+
+        file = fopen(geometryFile, "r");
+        fseek(file, 0, SEEK_END);
+        fLength = ftell(file);
+        fseek(file, 0, SEEK_SET);
+        char *geometryShaderSource = (char *) malloc(sizeof(char) * fLength + 1);
+        fread(geometryShaderSource, 1, fLength, file);
+        geometryShaderSource[fLength] = '\0';
+        fclose(file);
+
+        file = fopen(fragmentFile, "r");
+        fseek(file, 0, SEEK_END);
+        fLength = ftell(file);
+        fseek(file, 0, SEEK_SET);
+        char *fragmentShaderSource = (char *) malloc(sizeof(char) * fLength + 1);
+        fread(fragmentShaderSource, 1, fLength, file);
+        fragmentShaderSource[fLength] = '\0';
+        fclose(file);
+
+        GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+        GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+        GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+        shaderProgram = glCreateProgram();
+
+        glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+        glShaderSource(geometryShader, 1, &geometryShaderSource, NULL);
+        glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+
+
+        glCompileShader(vertexShader);
+        glCompileShader(geometryShader);
+        glCompileShader(fragmentShader);
+
+        int success;
+        char infoLog[512];
+
+        glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+        if (!success) {
+            glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+            printf("Vertex Shader Error: %s\n", infoLog);
+        }
+
+        glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &success);
+        if (!success) {
+            glGetShaderInfoLog(geometryShader, 512, NULL, infoLog);
+            printf("Vertex Shader Error: %s\n", infoLog);
+        }
+
+        glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+        if (!success) {
+            glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+            printf("Fragment Shader Error: %s\n", infoLog);
+        }
+
+        glAttachShader(shaderProgram, vertexShader);
+        glAttachShader(shaderProgram, geometryShader);
+        glAttachShader(shaderProgram, fragmentShader);
+
+        glLinkProgram(shaderProgram);
+        glUseProgram(shaderProgram);
+
+        glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+        if (!success) {
+            glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+            printf("Main Error: %s\n", infoLog);
+        }
+
+        glDeleteShader(vertexShader);
+        glDeleteShader(geometryShader);
+        glDeleteShader(fragmentShader);
+
+        free(vertexShaderSource);
+        free(geometryShaderSource);
+        free(fragmentShaderSource);
     }
 
     void DR_Shader::useProgram() {
         glUseProgram(shaderProgram);
-        if (diffuseLocation == 0) {
+        //if (diffuseLocation == 0) {
             diffuseLocation = getUniformLocation("diffuse_texture");
-        }
+        //}
     }
 
     void DR_Shader::destroyProgram() {

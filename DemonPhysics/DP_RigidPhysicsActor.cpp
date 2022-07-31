@@ -13,15 +13,13 @@ namespace DemonPhysics {
 
         if (_targetMeshes.size() < 1) {
             _mainShapes.push_back(physx::PxRigidActorExt::createExclusiveShape(*_mainActor,
-                                                                               physx::PxConvexMeshGeometry(
-                                                                                       targetMesh->getConvexMesh()),
+                                                                                       *targetMesh->getGeometry(),
                                                                                *mat));
         }
         else{
             for (unsigned  int m = 0; m < _targetMeshes.size(); m++){
                 _mainShapes.push_back(physx::PxRigidActorExt::createExclusiveShape(*_mainActor,
-                                                                                   physx::PxConvexMeshGeometry(
-                                                                                           _targetMeshes.at(m)->getConvexMesh()),
+                                                                                   *_targetMeshes.at(m)->getGeometry(),
                                                                                    *mat));
                 // END MESH GEN
                 if (_mainShapes.at(_mainShapes.size()-1) != NULL) {
@@ -38,5 +36,15 @@ namespace DemonPhysics {
         getRealActor()->setMassSpaceInertiaTensor(physx::PxVec3(1.0f));
         physx::PxRigidBodyExt::updateMassAndInertia(*getRealActor(), 1.0f);
 
+    }
+
+    void DP_RigidPhysicsActor::destroyActor() {
+        for (unsigned  int m = 0; m < _mainShapes.size(); m++) {
+            _mainActor->detachShape(*_mainShapes.at(m));
+            //_mainShapes.at(m)->release();
+        }
+
+        _ptrActorDynamic->release();
+        //_mainShape->release();
     }
 } // DemonPhysics

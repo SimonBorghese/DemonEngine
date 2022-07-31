@@ -9,7 +9,8 @@
 #include "DR_Shader.h"
 #include <DemonWorld/DW_Transform.h>
 #include <DemonBase/b_Mesh.h>
-#include <DemonPhysics/DP_RigidMesh.h>
+#include <DemonPhysics/DP_RigidConvexMesh.h>
+#include <DemonMacro/DemonLog.h>
 
 #include <vector>
 #include <assimp/IOSystem.hpp>
@@ -35,6 +36,10 @@ namespace DemonRender {
 
         void setShader(DR_Shader *targetShader);
 
+        DR_Shader* getShader() {
+            return _targetShader;
+        }
+
         void bindTransform(DemonWorld::DW_Transform *targetTransform) {
             _currentTransform = targetTransform;
         }
@@ -42,6 +47,10 @@ namespace DemonRender {
         void destroyMeshes();
 
         void renderMeshes();
+
+        void bindShader();
+
+        int active = 1;
 
     private:
         std::vector<DR_Mesh *> _targetMeshes;

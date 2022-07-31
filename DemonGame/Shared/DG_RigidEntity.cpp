@@ -22,9 +22,9 @@ namespace DemonGame {
 
         renderManager->addMeshGroup(mainMeshRenderer);
 
-        std::vector<DemonPhysics::DP_RigidMesh*> meshes;
+        std::vector<DemonBase::b_RigidMesh*> meshes;
         for (unsigned int m = 0; m < outLen; m++) {
-             meshes.push_back(new DemonPhysics::DP_RigidMesh(normalMesh[m]));
+             meshes.push_back((DemonBase::b_RigidMesh*) new DemonPhysics::DP_RigidTriangleMesh(normalMesh[m]));
             physicsManager->cookMesh(meshes.at(meshes.size()-1));
         }
 

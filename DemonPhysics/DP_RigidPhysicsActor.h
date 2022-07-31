@@ -6,15 +6,16 @@
 #define DEMONENGINE_DP_RIGIDPHYSICSACTOR_H
 
 #include "DP_RigidActor.h"
-
+#include <DemonBase/b_RigidMesh.h>
 namespace DemonPhysics {
 
     class DP_RigidPhysicsActor : public DP_RigidActor {
     public:
-        DP_RigidPhysicsActor(DP_RigidMesh *mesh) : DP_RigidActor(mesh) {}
-        DP_RigidPhysicsActor(std::vector<DP_RigidMesh*> meshes) : DP_RigidActor(meshes) {}
+        DP_RigidPhysicsActor(DemonBase::b_RigidMesh *mesh) : DP_RigidActor(mesh) {}
+        DP_RigidPhysicsActor(std::vector<DemonBase::b_RigidMesh*> meshes) : DP_RigidActor(meshes) {}
 
         void createActor(physx::PxPhysics *physx, physx::PxMaterial *mat);
+        void destroyActor();
 
         void applyForce(glm::vec3 forceDirections){
             _ptrActorDynamic->addForce(physx::PxVec3(forceDirections.x, forceDirections.y, forceDirections.z), physx::PxForceMode::eACCELERATION);

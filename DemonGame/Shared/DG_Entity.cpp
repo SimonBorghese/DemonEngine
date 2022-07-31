@@ -17,7 +17,7 @@ namespace DemonGame {
         mainMeshRenderer->bindTransform(&mainTransform);
 
         unsigned int outLen;
-        DemonBase::b_Mesh **normalMesh = DemonIO::DI_BSPLoader::loadMeshesFromFile(meshFile,
+        DemonBase::b_Mesh **normalMesh = DemonIO::DI_SceneLoader::loadMeshesFromFile(meshFile,
                                                                                      &outLen,
                                                                                      scale);
 

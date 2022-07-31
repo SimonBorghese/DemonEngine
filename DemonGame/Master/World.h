@@ -35,6 +35,12 @@ namespace DemonEngine {
 
         DemonGame::DG_PhysicsObject *removeWorldEntity(unsigned int pointer);
 
+        void removeWorldEntityValue(DemonGame::DG_PhysicsObject * pointer);
+
+        void removeWorldObjectValue(DemonGame::DG_RigidEntity * pointer);
+
+        void removeWorldGenericValue(DemonGame::DG_Entity * pointer);
+
         DemonBase::b_Light *removeLightEntity(unsigned int pointer);
 
     private:

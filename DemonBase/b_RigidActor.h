@@ -35,18 +35,31 @@ namespace DemonBase {
         }
 
         void updateActor() {
+
+            //_mainActor->setGlobalPose()
+            if ((void*) this == nullptr){
+                return;
+            }
+            if (_mainActor == nullptr){
+                printf("ERROR: ACTOR NULL!\n");
+                return;
+            }
+            if (!_mainActor->isReleasable()){
+                return;
+            }
+
             physx::PxTransform targetTransform;
             targetTransform.p = DemonWorld::DW_Transform::glmToPhys(_mainTransform.getPosition());
             glm::quat tq = _mainTransform.getRotation();
             targetTransform.q = physx::PxQuat(tq.x, tq.y, tq.z, tq.w);
 
-            //_mainActor->setGlobalPose()
-
+            //_mainActor->isReleasable()
+            //_mainActor->getGlobalPose();
+            //_mainActor->getGlobalPose().p;
             glm::vec3 pos = DemonWorld::DW_Transform::PhysToGlm(_mainActor->getGlobalPose().p);
             glm::quat quat = glm::quat(_mainActor->getGlobalPose().q.w, _mainActor->getGlobalPose().q.x,
                                        _mainActor->getGlobalPose().q.y, _mainActor->getGlobalPose().q.z);
 
-            //_mainTransform.createTransform(DemonWorld::DW_Transform::PhysToGlm(pos), )
             _mainTransform.setPosition(pos);
             _mainTransform.setRotation(quat);
         }
@@ -74,6 +87,12 @@ namespace DemonBase {
         void setPosition(glm::vec3 position) {
             //printf("Setting 0 %f %f %f\n", target[0], target[1], target[2]);
             _mainActor->setGlobalPose(physx::PxTransform(physx::PxVec3(position.x, position.y, position.z), _mainActor->getGlobalPose().q));
+        }
+        void translate(glm::vec3 position){
+            _mainActor->setGlobalPose(physx::PxTransform(physx::PxVec3(position.x,
+                                                                       position.y,
+                                                                       position.z) + _mainActor->getGlobalPose().p,
+                                                         _mainActor->getGlobalPose().q));
         }
 
         void setRotation(glm::quat rotation) {

@@ -13,13 +13,15 @@ void APIENTRY glDebugOutput(GLenum source,
                             GLsizei length,
                             const char *message,
                             const void *userParam) {
-    std::cout << "Length: " << length << " User Param: " << userParam << std::endl;
     // ignore non-significant error/warning codes
     if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
+    std::cout << "[OPENGL] Length: " << length << " User Param: " << userParam << std::endl;
 
-    std::cout << "---------------" << std::endl;
-    std::cout << "Debug message (" << id << "): " << message << std::endl;
+    std::cout << "[OPENGL] ---------------" << std::endl;
+    std::cout << "[OPENGL] Debug message (" << id << "): " << message << std::endl;
 
+
+    std::cout << "[OPENGL] ";
     switch (source) {
         case GL_DEBUG_SOURCE_API:
             std::cout << "Source: API";
@@ -41,6 +43,8 @@ void APIENTRY glDebugOutput(GLenum source,
             break;
     }
     std::cout << std::endl;
+
+    std::cout << "[OPENGL] ";
 
     switch (type) {
         case GL_DEBUG_TYPE_ERROR:
@@ -72,6 +76,8 @@ void APIENTRY glDebugOutput(GLenum source,
             break;
     }
     std::cout << std::endl;
+
+    std::cout << "[OPENGL] ";
 
     switch (severity) {
         case GL_DEBUG_SEVERITY_HIGH:
@@ -114,10 +120,11 @@ namespace DemonRender {
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         //glFrontFace(GL_CW);
+        */
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-         */
+
         glEnable(GL_DEPTH_TEST);
 
 #ifndef __WIN32__

@@ -30,11 +30,19 @@ namespace DemonRender {
     }
 
     void DR_RenderManager::render() {
-        if (hasCamera) {
-            _drMainCamera->setMatrix();
-        }
         for (unsigned int m = 0; m < _drMeshList.size(); m++) {
-            _drMeshList.at(m)->renderMeshes();
+            if (_drMeshList.at(m)->active) {
+                _drMeshList.at(m)->bindShader();
+                if (hasCamera) {
+                    _drMainCamera->setShader(_drMeshList.at(m)->getShader());
+                    _drMainCamera->setMatrix();
+                }
+                _drMeshList.at(m)->renderMeshes();
+            }
+            else{
+                delete _drMeshList.at(m);
+                _drMeshList.erase(_drMeshList.begin() + m);
+            }
         }
         _drwindow->flip();
     }

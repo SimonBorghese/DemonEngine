@@ -28,12 +28,12 @@ namespace DemonEngine {
     int Engine::gameLoop() {
         _currentTicks = SDL_GetTicks();
         _renderingManager->render();
-        _mainPhysicsManager->simulate(getDeltaTime());
 
         _renderingManager->newFrame();
         _mainEvents->pollEvents();
         _mainPlayer->updateCamera();
         _world->updateAll();
+        _mainPhysicsManager->simulate(getDeltaTime());
 
         return _mainEvents->getCloseState() || _mainEvents->getKeyDown(SDL_SCANCODE_ESCAPE);
     }
@@ -59,20 +59,27 @@ namespace DemonEngine {
     DemonGame::DG_RigidEntity *Engine::createWorldObject() {
         DemonGame::DG_RigidEntity *goodEnt = new DemonGame::DG_RigidEntity(_renderingManager, _shaderObject,
                                                                            _mainPhysicsManager);
-        _world->addWorldObject(goodEnt);
+        goodEnt->pointer = _world->addWorldObject(goodEnt);
         return goodEnt;
     }
 
     DemonGame::DG_PhysicsObject *Engine::createWorldEntity() {
         DemonGame::DG_PhysicsObject *goodEnt = new DemonGame::DG_PhysicsObject(_renderingManager, _shaderObject,
                                                                                _mainPhysicsManager);
-        _world->addWorldEntity(goodEnt);
+        goodEnt->pointer = _world->addWorldEntity(goodEnt);
         return goodEnt;
     }
 
     DemonGame::DG_Entity *Engine::createVisualEntity(){
         DemonGame::DG_Entity *goodEnt = new DemonGame::DG_Entity(_renderingManager, _shaderObject);
-        _world->addWorldGeneric(goodEnt);
+        goodEnt->pointer = _world->addWorldGeneric(goodEnt);
+        return goodEnt;
+    }
+
+    DemonGame::DG_BSPMap *Engine::createStaticWorld(){
+        DemonGame::DG_BSPMap *goodEnt = new DemonGame::DG_BSPMap(_renderingManager, _shaderObject,
+                                                                           _mainPhysicsManager);
+        goodEnt->pointer = _world->addWorldObject((DemonGame::DG_RigidEntity*) goodEnt);
         return goodEnt;
     }
 

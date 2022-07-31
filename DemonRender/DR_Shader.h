@@ -17,6 +17,8 @@ namespace DemonRender {
 
         void createProgram(const char *vertexFile, const char *fragmentFile);
 
+        void createProgram(const char *vertexFile, const char *geometryFile, const char *fragmentFile);
+
         void useProgram();
 
         void destroyProgram();

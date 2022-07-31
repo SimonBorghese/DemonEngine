@@ -15,7 +15,7 @@ namespace DemonPhysics {
     public:
         DP_CharacterController(glm::vec3 position, physx::PxMaterial *targetMaterial,
                                float height, float radius, physx::PxControllerManager *controllerManager,
-                               float stepOffset = 1.0f, float scaleCoeff = 1.0f, float volumeGrowth = 1.0f,
+                               float stepOffset = 2.0f, float scaleCoeff = 1.0f, float volumeGrowth = 1.0f,
                                float density = 2.0f, float slopeLimit = 90.0f) :
                 _characterHeight(height),
                 _characterRadius(radius),

@@ -12,10 +12,10 @@
 #include <DemonWorld/DW_Transform.h>
 #include <DemonIO/DI_SceneLoader.h>
 #include <DemonIO/DI_BSPLoader.h>
-#include <DemonBase/b_GameObject.h>
+#include <DemonBase/b_MeshEntity.h>
 
 namespace DemonGame {
-    class DG_Entity : public DemonBase::b_GameObject {
+    class DG_Entity : public DemonBase::b_MeshEntity {
     public:
         DG_Entity(DemonRender::DR_RenderManager *targetRender, DemonRender::DR_Shader *targetShader) :
                 renderManager(targetRender),

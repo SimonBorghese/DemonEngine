@@ -98,5 +98,9 @@ void main(){
 
     }
 
-    FragColor = vec4((ambient+diffuse+specular), 1.0f) * texture(diffuse_texture, textcord);
+    vec4 outputText = vec4((ambient+diffuse+specular), 1.0f) * texture(diffuse_texture, textcord);
+    //outputText.w = 1.0f - distance(viewPos, iFragPos) / 30;
+    //outputText += mix(vec4(vec3(1.0f), 0.0f), outputText, (distance(viewPos, iFragPos)));
+    FragColor = outputText;
+    //FragColor = vec4(iFragPos, 1.0f);
 }

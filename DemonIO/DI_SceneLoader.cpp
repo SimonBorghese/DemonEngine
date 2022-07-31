@@ -72,6 +72,9 @@ namespace DemonIO {
                 matSafe->GetTexture(aiTextureType_DIFFUSE, 0, &tex_loc);
                 meshes[m]->setTextureDiffuse(tex_loc);
             }
+            else{
+                meshes[m]->setTextureDiffuse(aiString("data/missing.png"));
+            }
 
             meshes[m]->setMaterial(matSafe);
         }
