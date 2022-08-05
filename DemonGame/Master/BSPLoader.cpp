@@ -7,7 +7,7 @@ namespace DemonEngine {
     DemonGame::DG_BSPMap* BSPLoader::loadBSP(const char *map){
         auto bspMap = _targetEngine->createStaticWorld();
         auto bspFile = DemonIO::DI_BSPLoader::createBSP(map);
-        bspMap->createEntityFromCBSP(bspFile, glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f/8.0f));
+        bspMap->createEntityFromCBSP(bspFile, glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f/4.0f));
 
         for (int e = 0; e < bspFile->nEntityCount; e++){
             BSP_EntityCreateInfo targetEntityCreationInfo;

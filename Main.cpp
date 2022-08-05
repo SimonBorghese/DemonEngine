@@ -18,9 +18,9 @@
 
 #define WIDTH 800
 #define HEIGHT 600
-#define SPEED 30
-#define JUMP_HEIGHT 0.8f
-#define GRAVITY_MULTIPLIER 3.0f
+#define SPEED 90
+#define JUMP_HEIGHT 0.3f
+#define GRAVITY_MULTIPLIER 10.0f
 #define DEFAULT_GRAVITY -9.81f * GRAVITY_MULTIPLIER
 float gravity = DEFAULT_GRAVITY;
 
@@ -29,11 +29,20 @@ DemonEngine::Engine *engine;
 DemonPhysics::DP_CharacterController *controller;
 glm::vec3 FPSFront = glm::vec3(0.0f);
 
-void SCPCollideCallback(DemonGame::DG_PhysicsObject* thisObj, DemonGame::DG_PhysicsObject* other){
-    printf("%s just touched: %s\n",thisObj->getName().c_str(), other->getName().c_str());
+DemonGame::DG_Entity *weaponThing;
+
+void SCPCollideCallback(DemonGame::DG_PhysicsObject* thisObj, DemonGame::DG_Object* other){
+    //printf("%s just touched: %s\n",thisObj->getName().c_str(), other->getName().c_str());
     //other->getActor()->setPosition(glm::vec3(0.0f, 20.0f, 0.0f));
-    other->getActor()->applyForce(glm::vec3(0.0f, 2000.0f, 0.0f));
-    thisObj->getActor()->applyForce(glm::vec3(0.0f, 2000.0f, 0.0f));
+    //other->getActor()->applyForce(-engine->getCamera()->getCameraFront() * 2000.0f);
+    thisObj->getActor()->applyForce(-engine->getCamera()->getCameraFront() * 2000.0f);
+    if (other->type == DemonGame::STATIC){
+        printf("The other is static\n");
+    }
+    else{
+        printf("The other is dynamic\n");
+        other->physObj->getActor()->applyForce(-engine->getCamera()->getCameraFront() * 2000.0f);
+    }
 }
 
 //std::vector<glm::vec3> starts;
@@ -44,9 +53,14 @@ void keyDownCallback(int scancode){
     auto newBlock = (DemonGame::DG_PhysicsObject*)0;
     switch (scancode){
         case SDL_SCANCODE_E:
-            //newBlock = engine->createWorldEntity();
-            //newBlock->createEntityFromMesh("block.obj", glm::vec3(0.0f));
-            //newBlock->setContactCallback(SCPCollideCallback);
+            newBlock = engine->createWorldEntity();
+            newBlock->createEntityFromMesh("block.obj",
+                                           weaponThing->getTransform()->getPosition() +
+                                           (engine->getCamera()->getFPSFront() * 3)
+                                           );
+            newBlock->setContactCallback(SCPCollideCallback);
+            newBlock->getActor()->getRealActor()->setMass(50.0f);
+            newBlock->getActor()->applyForce(glm::vec3(engine->getCamera()->getCameraFront() * 1000));
             //controller->translate(starts.at(currentStart++) + glm::vec3(0.0f, controller->getHeight(), 0.0f));
             //if (currentStart == starts.size()){
             //    currentStart = 0;
@@ -66,77 +80,100 @@ void keyCalback(int scancode){
     //sFPSFront.y = 0.0f;
     switch (scancode){
         case SDL_SCANCODE_W:
-            controller->move(FPSFront * engine->getDeltaTime() * SPEED);
+            if (!engine->getEvent()->getKey(SDL_SCANCODE_LCTRL)) {
+                controller->move(engine->getCamera()->getForward() * engine->getDeltaTime() * SPEED);
+            }
+            else{
+                controller->translate(controller->getPosition() + engine->getCamera()->getForward() * engine->getDeltaTime() * SPEED);
+            }
             break;
         case SDL_SCANCODE_S:
-            controller->move(-FPSFront * engine->getDeltaTime() * SPEED);
+            controller->move(engine->getCamera()->getBackward() * engine->getDeltaTime() * SPEED);
             break;
         case SDL_SCANCODE_A:
-            controller->move(-(glm::normalize(
-                    glm::cross(FPSFront, engine->getCamera()->getCameraUp())) * 2.0f) * engine->getDeltaTime() * SPEED);
+            controller->move(engine->getCamera()->getLeft() * engine->getDeltaTime() * SPEED);
             break;
         case SDL_SCANCODE_D:
-            controller->move((glm::normalize(
-                    glm::cross(FPSFront, engine->getCamera()->getCameraUp())) * 2.0f) * engine->getDeltaTime() * SPEED);
+            controller->move(engine->getCamera()->getRight() * engine->getDeltaTime() * SPEED);
             break;
         default:
             break;
     }
 }
 void bspCallback(DemonEngine::BSP_EntityCreateInfo info){
-    printf("Got: %s\n", info.name);
-    printf("Pos: %f %f %f\n", info.pos.x, info.pos.z, -info.pos.y);
+    //printf("Got: %s\n", info.name);
+    //printf("Pos: %f %f %f\n", info.pos.x, info.pos.z, -info.pos.y);
     glm::vec3 realPos = glm::vec3(info.pos.x, info.pos.z, -info.pos.y);
     if (!strcmp(info.name, "info_player_start")){
-        printf("Found player start\n");
-        //controller->getController()->setPosition(physx::PxExtendedVec3(info.pos.x, info.pos.y, info.pos.z));
+        //printf("Found player start\n");
         controller->translate(realPos);
-        engine->createWorldObject()->createEntityFromMesh("block.obj", realPos * (2.0f), glm::vec3(0.0f), glm::vec3(3.0f));
+
+        //To-Do: Remove this line
+        //engine->createWorldObject()->createEntityFromMesh("block.obj", realPos * (2.0f), glm::vec3(0.0f), glm::vec3(3.0f));
     }
 }
 
 int main(void) {
     // Initialize the engine
     engine = new DemonEngine::Engine(WIDTH, HEIGHT);
+
     // Create the engine elements
     engine->createEngine();
 
     // Create the FPS controller
-    controller = engine->createFPSController(glm::vec3(0.0f), 20.0f, 5.0f);
+    controller = engine->createFPSController(glm::vec3(0.0f), 10.0f, 5.0f);
+    controller->translate(glm::vec3(0.0f));
 
 
     DemonEngine::BSPLoader bspLoader(engine);
     bspLoader.setBSPCreationCallback(bspCallback);
-    bspLoader.loadBSP("notmy.bsp");
-
+    bspLoader.loadBSP("notmy4.bsp");
+    //engine->createWorldObject()->createEntityFromMesh("bloque.obj", glm::vec3(0.0f, -10.0f, 0.0f));
     
 
     // Create a light
-    auto *light1 = engine->createEasyPointLight(glm::vec3(0.0f, -2.0f, 0.0f), 5000.0f, 1.0f);
-    DemonEngine::Engine::DIRECTIONAL_LIGHT_INFO dirLightInfo;
-    dirLightInfo.direction = glm::vec3(0.0f, 10.0f, 0.0f);
-    dirLightInfo.specularAccuracy = 32;
-    dirLightInfo.ambientStrength = 0.5f;
-    dirLightInfo.specularStrength = 0.5f;
-    dirLightInfo.colour = glm::vec3(0.0f);
-    engine->createDirectionalLight(dirLightInfo);
+    auto *light1 = engine->createEasyPointLight(glm::vec3(0.0f, -2.0f, 0.0f), 100.0f, 1.0f);
+    //DemonEngine::Engine::DIRECTIONAL_LIGHT_INFO dirLightInfo;
+    //dirLightInfo.direction = glm::vec3(0.0f, 10.0f, 0.0f);
+    //dirLightInfo.specularAccuracy = 32;
+    //dirLightInfo.ambientStrength = 0.5f;
+    //dirLightInfo.specularStrength = 0.5f;
+    //dirLightInfo.colour = glm::vec3(0.0f);
+    //engine->createDirectionalLight(dirLightInfo);
 
     // Set the key callback functions
     engine->getEvent()->setKeyDownCallback(keyDownCallback);
     engine->getEvent()->setKeyCallback(keyCalback);
 
+    weaponThing = engine->createVisualEntity();
+    weaponThing->createEntityFromMesh("zapper.fbx");
+    //weaponThing->getTransform()->toggleTransformations();
+
 
 
 
     // Main game loop
+
+    unsigned int fps = 0;
+    unsigned int lastFPSCheck = SDL_GetTicks();
     while (!engine->gameLoop()) {
+        light1->getLightInfo()->position = controller->getPosition();
         if (!engine->getEvent()->getKey(SDL_SCANCODE_LCTRL)) {
+
+            weaponThing->getTransform()->setPosition(engine->getCamera()->getPosition() +
+            (engine->getCamera()->getCameraFront() * 5) +
+            (engine->getCamera()->getCameraRight() * 3) +
+            glm::vec3(0.0f, -5.0f, 0.0f));
+
+            weaponThing->getTransform()->setRotation(glm::vec3(glm::radians(-engine->getCamera()->getYRotation()),
+                                                               glm::radians((-(engine->getCamera()->getXRotation())) + 90.0f), 0.0f));
             FPSFront = engine->getCamera()->getFPSFront();
             controller->move(glm::vec3(0.0f, gravity * engine->getDeltaTime(), 0.0f));
         }
         else{
             FPSFront = engine->getCamera()->getCameraFront();
         }
+
         if (controller->onGround() && gravity != DEFAULT_GRAVITY){
             gravity = DEFAULT_GRAVITY;
         }
@@ -144,8 +181,13 @@ int main(void) {
             gravity += DEFAULT_GRAVITY * engine->getDeltaTime();
         }
         light1->getLightInfo()->position = controller->getPosition();
-        printf("\r%f %f %f", controller->getPosition().x, controller->getPosition().y, controller->getPosition().z);
-        fflush(stdout);
+
+        fps++;
+        if (SDL_GetTicks() - lastFPSCheck >= 1000){
+            printf("Current FPS: %d\n", fps);
+            fps = 0;
+            lastFPSCheck = SDL_GetTicks();
+        }
     }
 
     engine->destroyEngine();

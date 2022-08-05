@@ -37,6 +37,7 @@ namespace DemonGame {
         physicsManager->addActor(rigidActor);
         rigidActor->setTransform(mainTransform);
         mainMeshRenderer->bindTransform(&mainTransform);
+        rigidActor->setEmbedData(&generalStruct);
     }
 
     void DG_RigidEntity::destroyEntity() {

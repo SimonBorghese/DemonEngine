@@ -43,7 +43,7 @@ namespace DemonEngine {
 
             _mainPlayer = new DemonGame::DG_BasicCameraController(_mainEvents, _mainCamera, 0.5f);
 
-            _world = new World;
+            _world = new World(_mainPhysicsManager);
         }
 
         // Engine state functions

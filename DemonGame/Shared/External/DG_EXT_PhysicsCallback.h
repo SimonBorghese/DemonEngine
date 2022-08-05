@@ -5,6 +5,8 @@
 #ifndef DEMONENGINE_DG_EXT_PHYSICSCALLBACK_H
 #define DEMONENGINE_DG_EXT_PHYSICSCALLBACK_H
 #include <PhysX/PxSimulationEventCallback.h>
+#include <DemonBase/b_PhysUserData.h>
+#include <DemonMacro/DemonLog.h>
 #include "../DG_PhysicsObject.h"
 
 using namespace physx;

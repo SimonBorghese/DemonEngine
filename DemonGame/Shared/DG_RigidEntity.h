@@ -11,6 +11,7 @@
 #include <DemonPhysics/DP_RigidTriangleMesh.h>
 #include <DemonRender/DR_RenderManager.h>
 #include <DemonPhysics/DP_PhysicsManager.h>
+#include <DemonBase/b_PhysUserData.h>
 
 namespace DemonGame {
 
@@ -21,7 +22,17 @@ namespace DemonGame {
                        DemonPhysics::DP_PhysicsManager *targetManager) : DG_Entity(targetRender, targetShader),
                                                                          physicsManager(targetManager) {
             //rigidActor = new DemonPhysics::DP_RigidActor(rigidMesh);
+            generalStruct.name = "UNNAMED";
+            strncpy(&generalStruct.magicString[0], "IOBJ", sizeof(char) * 5);
+            generalStruct.type = DemonGame::STATIC;
+            generalStruct.structReference = &objDesc;
+
+            objDesc.reference = (DG_RigidEntity*) this;
+            strncpy(&objDesc.magicString[0], "IOBJ", sizeof(char) * 5);
         }
+
+        void setName(const char * name) { generalStruct.name = std::string(name); }
+        std::string getName() { return generalStruct.name; }
 
         void createEntityFromMesh(const char *meshFile,
                                   glm::vec3 pos = glm::vec3(0.0f),
@@ -39,6 +50,9 @@ namespace DemonGame {
         DemonPhysics::DP_RigidActor *rigidActor;
         DemonPhysics::DP_RigidConvexMesh *rigidMesh;
         DemonPhysics::DP_PhysicsMaterial *mainMaterial;
+
+        DemonBase::DemonUserData::generalStruct generalStruct;
+        DemonBase::DemonUserData::DP_RIGID_OBJ_DESC objDesc;
     };
 
 } // DemonGame

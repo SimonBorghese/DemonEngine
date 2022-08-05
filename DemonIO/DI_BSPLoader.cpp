@@ -110,14 +110,10 @@ namespace DemonIO {
     }
 
     glm::vec3 DI_BSPLoader::getPosFromEntity(CBSP_Entity *entity){
-        //glm::vec3 *targetPos = (glm::vec3*) malloc(sizeof(glm::vec3));
-        //*targetPos = glm::vec3(0.0f);
         glm::vec3 heapAlloc = glm::vec3(0.0f);
         CBSP_getOriginFromEntity(entity, (float*) &heapAlloc);
 
-        //glm::vec3 heapAlloc = *targetPos;
-        //free(targetPos);
-        return heapAlloc * glm::vec3(1.0f/8.0f);
+        return heapAlloc * glm::vec3(1.0f/4.0f);
         // Fuck you C++
     }
 } // DemonIO

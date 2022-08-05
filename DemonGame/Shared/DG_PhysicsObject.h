@@ -14,15 +14,9 @@
 #include <functional>
 #include <string>
 
-namespace DemonGame {
-    class DG_PhysicsObject;
+#include <DemonBase/b_PhysUserData.h>
 
-    typedef struct{
-        char magicString[5];
-        std::string name;
-        std::function<void(DG_PhysicsObject*, DG_PhysicsObject*)> onContact;
-        DG_PhysicsObject *reference;
-    } DP_PHYSICS_OBJ_DESC;
+namespace DemonGame {
 
     class DG_PhysicsObject : public DG_Entity {
     public:
@@ -31,17 +25,21 @@ namespace DemonGame {
                          DemonPhysics::DP_PhysicsManager *targetManager) :
                 DG_Entity(targetRender, targetShader),
                 physicsManager(targetManager) {
-            //rigidActor = new DemonPhysics::DP_RigidActor(rigidMesh);
-            strncpy(&objDesc.magicString[0], "IOBJ", sizeof(char) * 5);
-            objDesc.name = "UNNAMED";
-            objDesc.onContact = nullptr;
+
+            generalStruct.name = "UNNAMED";
+            strncpy(&generalStruct.magicString[0], "IOBJ", sizeof(char) * 5);
+            generalStruct.type = DemonGame::DYNAMIC;
+            generalStruct.structReference = &objDesc;
+
             objDesc.reference = (DG_PhysicsObject*) this;
+            objDesc.onContact = nullptr;
+            strncpy(&objDesc.magicString[0], "IOBJ", sizeof(char) * 5);
         }
 
-        void setName(const char * name) { objDesc.name = std::string(name); }
-        std::string getName() { return objDesc.name; }
+        void setName(const char * name) { generalStruct.name = std::string(name); }
+        std::string getName() { return generalStruct.name; }
 
-        void setContactCallback(std::function<void(DG_PhysicsObject*, DG_PhysicsObject*)> callback) { objDesc.onContact = callback; }
+        void setContactCallback(std::function<void(DG_PhysicsObject*, DG_Object*)> callback) { objDesc.onContact = callback; }
 
         void createEntityFromMesh(const char *meshFile,
                                   glm::vec3 pos = glm::vec3(0.0f),
@@ -87,7 +85,8 @@ namespace DemonGame {
         DemonPhysics::DP_RigidConvexMesh *rigidMesh;
         DemonPhysics::DP_PhysicsMaterial *mainMaterial;
 
-        DP_PHYSICS_OBJ_DESC objDesc;
+        DemonBase::DemonUserData::generalStruct generalStruct;
+        DemonBase::DemonUserData::DP_PHYSICS_OBJ_DESC objDesc;
     };
 } // DemonGame
 

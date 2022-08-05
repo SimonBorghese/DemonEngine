@@ -9,6 +9,12 @@ namespace DemonGame {
         xRotate += eventHandler->getMouseXOffset() * camSensitivity;
         yRotate -= eventHandler->getMouseYOffset() * camSensitivity;
         yRotate = glm::clamp(yRotate, -89.0f, 89.0f);
+        if (xRotate >= 360.0f){
+            xRotate = 0.0f;
+        }
+        if (xRotate < 0){
+            xRotate = 360.0f + xRotate;
+        }
 
         targetCamera->setEularAngles(xRotate, yRotate);
 

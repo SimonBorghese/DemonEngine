@@ -9,34 +9,37 @@ namespace DemonGame {
                                                 glm::vec3 pos,
                                                 glm::vec3 rotation,
                                                 glm::vec3 scale) {
+        // Create our base transform
         mainTransform.createTransform(pos, rotation, glm::vec3(1.0f));
-        //mainTransform = new DemonWorld::DW_Transform(pos, rotation, scale);
+        // Create the mesh renderer and set it to our shader
         mainMeshRenderer = new DemonRender::DR_MeshRenderer();
         mainMeshRenderer->setShader(meshShader);
-
-
+        // Load the meshes then add them to the render manager
         unsigned int outLen;
         DemonBase::b_Mesh **normalMesh = DemonIO::DI_SceneLoader::loadMeshesFromFile(meshFile,
                                                                                      &outLen,
                                                                                      scale);
-
         mainMeshRenderer->loadExistingMeshes(normalMesh, outLen);
-
         renderManager->addMeshGroup(mainMeshRenderer);
-
-        rigidMesh = new DemonPhysics::DP_RigidConvexMesh(normalMesh[0]);
-        rigidActor = new DemonPhysics::DP_RigidPhysicsActor((DemonBase::b_RigidMesh*) rigidMesh);
-
+        // Create the mesh and actors
+        // Create a vector of all the meshes in our list
+        std::vector<DemonBase::b_RigidMesh*> meshes;
+        for (unsigned int m = 0; m < outLen; m++) {
+            meshes.push_back((DemonBase::b_RigidMesh*) new DemonPhysics::DP_RigidConvexMesh(normalMesh[m]));
+            physicsManager->cookMesh(meshes.at(meshes.size()-1));
+        }
+        rigidActor = new DemonPhysics::DP_RigidPhysicsActor(meshes);
+        // Create the material for the actor
         mainMaterial = new DemonPhysics::DP_PhysicsMaterial;
-        physicsManager->cookMesh(rigidMesh);
         physicsManager->cookMaterial(mainMaterial);
-        //physicsManager->cookActor(rigidActor, &matgood);
+        // Finally actually create the actor and add it to the scene
         rigidActor->createActor(physicsManager->getPhysics(), mainMaterial->getMaterial());
         physicsManager->addActor(rigidActor);
-
+        // Bind our transform to the actor & mesh renderer
         rigidActor->setTransform(mainTransform);
         mainMeshRenderer->bindTransform(&mainTransform);
-        rigidActor->setEmbedData(&objDesc);
+        // Set the user data
+        rigidActor->setEmbedData(&generalStruct);
 
         //mainTransform.setPosition(rigidActor->getTransform()->getPosition());
         //mainTransform.setRotation(rigidActor->getTransform()->getRotation());

@@ -30,7 +30,7 @@ namespace DemonWorld {
 
         void setPosition(glm::vec3 newPos) { position = newPos; }
 
-        void setRotation(glm::vec3 newRot) { rotation = newRot; }
+        void setRotation(glm::vec3 newRot) { rotation = newRot;  }
 
         void setRotation(glm::quat newRot) { rotation = newRot; }
 
@@ -52,19 +52,24 @@ namespace DemonWorld {
 
         glm::mat4 getModel() {
                 currentModel = defaultModel;
-                currentModel = glm::translate(currentModel, position);
-                /*
-                currentModel = glm::rotate(currentModel, rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-                currentModel = glm::rotate(currentModel, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-                currentModel = glm::rotate(currentModel, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-                 */
-                if (rotation != glm::quat(0.0f, 0.0f, 0.0f, 0.0f)) {
-                    currentModel = glm::rotate(currentModel, glm::angle(rotation), glm::axis(rotation));
+                if (enableTransformations) {
+                    currentModel = glm::translate(currentModel, position);
+                    /*
+                    currentModel = glm::rotate(currentModel, rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+                    currentModel = glm::rotate(currentModel, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+                    currentModel = glm::rotate(currentModel, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+                     */
+                    if (rotation != glm::quat(0.0f, 0.0f, 0.0f, 0.0f)) {
+                        currentModel = glm::rotate(currentModel, glm::angle(rotation), glm::axis(rotation));
+                    }
+                    currentModel = glm::scale(currentModel, _scale);
                 }
-                currentModel = glm::scale(currentModel, _scale);
 
             return currentModel;
         }
+        glm::mat4 getDefaultModel() { return defaultModel; }
+
+        bool toggleTransformations() { enableTransformations = !enableTransformations; return enableTransformations;}
 
 #ifndef NOPHYSX
 
@@ -85,6 +90,8 @@ namespace DemonWorld {
 
         glm::mat4 currentModel = glm::mat4(1.0f);
         glm::mat4 defaultModel = glm::mat4(1.0f);
+
+        bool enableTransformations = true;
 
     };
 

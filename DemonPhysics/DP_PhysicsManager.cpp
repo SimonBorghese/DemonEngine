@@ -100,6 +100,9 @@ namespace DemonPhysics {
             printf("Error: PxCreateControllerManager failed, Line: %d\n", __LINE__);
             return;
         }
+
+        physx::PxRaycastBuffer  b;
+
     }
 
     void DP_PhysicsManager::closePhysics() {

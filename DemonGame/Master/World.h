@@ -15,7 +15,7 @@ namespace DemonEngine {
 
     class World {
     public:
-        World() {}
+        World(DemonPhysics::DP_PhysicsManager *phys) : _physManager(phys) {}
 
         int addWorldGeneric(DemonGame::DG_Entity *ent);
 
@@ -48,6 +48,8 @@ namespace DemonEngine {
         std::vector<DemonGame::DG_RigidEntity *> _worldObjects;
         std::vector<DemonGame::DG_PhysicsObject *> _worldEntites;
         std::vector<DemonBase::b_Light*> _lightEntites;
+
+        DemonPhysics::DP_PhysicsManager *_physManager;
 
     };
 

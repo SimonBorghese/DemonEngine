@@ -23,6 +23,20 @@ namespace DemonPhysics {
         void setVelocity(glm::vec3 forceDirections){
             _ptrActorDynamic->setLinearVelocity(physx::PxVec3(forceDirections.x, forceDirections.y, forceDirections.z));
         }
+        void setMass(float newMass){
+            _ptrActorDynamic->setMass(newMass);
+        }
+        float getMass() {
+            _ptrActorDynamic->getMass();
+        }
+
+        void setSpaceMassInertia(glm::vec3 tensor){
+            _ptrActorDynamic->setMassSpaceInertiaTensor(physx::PxVec3(tensor.x, tensor.y, tensor.z));
+        }
+        glm::vec3 getSpaceMassInertia(){
+            physx::PxVec3 tensor = _ptrActorDynamic->getMassSpaceInertiaTensor();
+            return glm::vec3(tensor.x, tensor.y, tensor.z);
+        }
 
         physx::PxRigidDynamic *getRealActor() { return (physx::PxRigidDynamic *) _mainActor; }
 

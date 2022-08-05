@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 
 #define GLM_ENABLE_EXPERIMENTAL
+#define UP_ANGLE 10.0f
 
 #include <glm/ext.hpp>
 
@@ -45,6 +46,8 @@ namespace DemonRender {
         void setEularAngles(glm::vec3 angles) { setEularAngles(angles.x, angles.y); }
 
         void setEularAngles(float x, float y) {
+            lastXE = x;
+            lastYE = y;
             cameraFront = glm::vec3(0.0f);
             cameraFront.x = cos(glm::radians(x)) * cos(glm::radians(y));
             cameraFront.y = sin(glm::radians(y));
@@ -52,9 +55,19 @@ namespace DemonRender {
             cameraFront = glm::normalize(cameraFront);
 
             cameraFrontFPS = glm::vec3(0.0f);
-            cameraFrontFPS.x = cos(glm::radians(x)) * cos(glm::radians(10.0f));
-            cameraFrontFPS.y = sin(glm::radians(10.0f));
-            cameraFrontFPS.z = sin(glm::radians(x)) * cos(glm::radians(10.0f));
+            cameraFrontFPS.x = cos(glm::radians(x)) * cos(glm::radians(UP_ANGLE));
+            cameraFrontFPS.y = sin(glm::radians(UP_ANGLE));
+            cameraFrontFPS.z = sin(glm::radians(x)) * cos(glm::radians(UP_ANGLE));
+            cameraFrontFPS = glm::normalize(cameraFrontFPS);
+
+            cameraRight = glm::normalize(glm::cross(cameraUp, -cameraFront));
+        }
+
+        void regenerateFPS(int yMultiplier){
+            cameraFrontFPS = glm::vec3(0.0f);
+            cameraFrontFPS.x = cos(glm::radians(lastXE)) * cos(glm::radians(UP_ANGLE * yMultiplier));
+            cameraFrontFPS.y = sin(glm::radians(UP_ANGLE * yMultiplier));
+            cameraFrontFPS.z = sin(glm::radians(lastXE)) * cos(glm::radians(UP_ANGLE * yMultiplier));
             cameraFrontFPS = glm::normalize(cameraFrontFPS);
         }
 
@@ -72,20 +85,33 @@ namespace DemonRender {
         glm::vec3 getPosition() { return cameraPos; }
 
         glm::vec3 getCameraUp() { return cameraUp; }
+        glm::vec3 getCameraRight() { return cameraRight; }
 
         glm::mat4 getView() { return viewMat; }
+
+        glm::vec3 getForward() { regenerateFPS(1); return cameraFrontFPS;}
+        glm::vec3 getBackward() { regenerateFPS(-1); return -cameraFrontFPS; }
+        glm::vec3 getRight() { return (glm::normalize(
+                    glm::cross(cameraFrontFPS, cameraUp)) * 2.0f); }
+        glm::vec3 getLeft() { return -getRight(); }
+
+        float getXRotation() { return lastXE; }
+        float getYRotation() { return lastYE; }
 
     private:
         DR_Shader *_targetShader;
         GLuint viewLocation = 0;
         GLuint projectionLocation = 0;
         GLuint viewPosLocation = 0;
+        // Last X & Y Euler angle
+        float lastXE, lastYE;
         glm::mat4 viewMat = glm::mat4(1.0f);
         glm::mat4 projectionMat = glm::mat4(1.0f);
         glm::vec3 cameraPos = glm::vec3(0.0f);
         glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
         glm::vec3 cameraFrontFPS = glm::vec3(0.0f, 0.0f, -1.0f);
         glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+        glm::vec3 cameraRight = glm::vec3(0.0f, 0.0f, 1.0f);
     };
 
 } // DemonRender
