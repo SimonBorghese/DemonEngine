@@ -30,9 +30,15 @@ namespace DemonRender {
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (sizeof(float) * 3));
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (sizeof(float) * 6));
+        glVertexAttribIPointer(3, 4,GL_INT,             sizeof(Vertex), (void*) (sizeof(float) * 8));
+        glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) ((sizeof(float) * 8) + (sizeof(GLint) * 4)));
+        glVertexAttribIPointer(5, 1,GL_INT,            sizeof(Vertex), (void*) ((sizeof(float) * 12) + (sizeof(GLint) * 4)));
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
+        glEnableVertexAttribArray(3);
+        glEnableVertexAttribArray(4);
+        glEnableVertexAttribArray(5);
 
         _vertexCount = vertexLen;
         _indexCount = indexLen;
@@ -70,9 +76,15 @@ namespace DemonRender {
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (sizeof(float) * 3));
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (sizeof(float) * 6));
+        glVertexAttribIPointer(3, 4,GL_INT,            sizeof(Vertex), (void*) (sizeof(float) * 8));
+        glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) ((sizeof(float) * 8) + (sizeof(GLint) * 4)));
+        glVertexAttribIPointer(5, 1,GL_INT,            sizeof(Vertex), (void*) ((sizeof(float) * 12) + (sizeof(GLint) * 4)));
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
+        glEnableVertexAttribArray(3);
+        glEnableVertexAttribArray(4);
+        glEnableVertexAttribArray(5);
 
         _vertexCount = vertexLen;
         _indexCount = indexLen;

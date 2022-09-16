@@ -17,6 +17,9 @@ typedef struct {
     glm::vec3 iPosition;
     glm::vec3 iNormal;
     glm::vec2 iTextCord;
+    glm::ivec4 iBoneIds;
+    glm::vec4 weights;
+    int animationBody;
 } Vertex;
 
 namespace DemonBase {
@@ -37,6 +40,9 @@ namespace DemonBase {
 
             for (unsigned int v = 0; v < vertexLen; v++) {
                 memcpy(&_rawVerticesPTR[v * 3], vertexEs + (v * sizeof(Vertex)), sizeof(float) * 3);
+
+                _glmVertices.push_back(glm::vec3(0.0f));
+                memcpy(&_glmVertices.at(_glmVertices.size() -1), vertexEs + (v * sizeof(Vertex)), sizeof(float) * 3);
             }
 
 
@@ -48,6 +54,8 @@ namespace DemonBase {
         }
 
         std::vector<Vertex> getVerticesVector() { return _vertices; }
+
+        std::vector<glm::vec3> getGLMVertices() { return _glmVertices; }
 
         std::vector<float> getRawVerticesVector() { return _rawVertices; }
 
@@ -78,6 +86,7 @@ namespace DemonBase {
 
     protected:
         std::vector<Vertex> _vertices;
+        std::vector<glm::vec3> _glmVertices;
         std::vector<float> _rawVertices;
         float *_rawVerticesPTR;
         std::vector<unsigned int> _indices;

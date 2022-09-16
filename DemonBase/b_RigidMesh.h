@@ -27,6 +27,10 @@ namespace DemonBase {
                                   bMesh->getIndicesVector().data(),
                                   bMesh->getIndicesVector().size()) {}
 
+        virtual ~b_RigidMesh() {
+            free(_geometry);
+        }
+
 
         virtual void createMesh(physx::PxPhysics *physx, physx::PxCooking *cooking) = 0;
 

@@ -27,7 +27,7 @@ namespace DemonPhysics {
             _ptrActorDynamic->setMass(newMass);
         }
         float getMass() {
-            _ptrActorDynamic->getMass();
+            return _ptrActorDynamic->getMass();
         }
 
         void setSpaceMassInertia(glm::vec3 tensor){

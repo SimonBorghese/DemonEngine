@@ -8,7 +8,7 @@ namespace DemonRender {
 
     void DR_Shader::createProgram(const char *vertexFile, const char *fragmentFile) {
         FILE *file = fopen(vertexFile, "r");
-        int fLength = 0;
+        int fLength;
         fseek(file, 0, SEEK_END);
         fLength = ftell(file);
         fseek(file, 0, SEEK_SET);
@@ -74,7 +74,7 @@ namespace DemonRender {
 
     void DR_Shader::createProgram(const char *vertexFile, const char *geometryFile, const char *fragmentFile){
         FILE *file = fopen(vertexFile, "r");
-        int fLength = 0;
+        int fLength;
         fseek(file, 0, SEEK_END);
         fLength = ftell(file);
         fseek(file, 0, SEEK_SET);
@@ -179,6 +179,10 @@ namespace DemonRender {
 
     void DR_Shader::bindVector3(uint32_t location, glm::vec3 targetVec) {
         glUniform3fv(location, 1, &targetVec[0]);
+    }
+
+    void DR_Shader::bindVector4(uint32_t location, glm::vec4 targetVec){
+        glUniform4fv(location, 1, &targetVec[0]);
     }
 
     void DR_Shader::bindDiffuseTexture(GLuint targetTexture) {

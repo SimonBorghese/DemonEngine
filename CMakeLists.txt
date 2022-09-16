@@ -33,14 +33,15 @@ target_link_libraries(DemonEngine ${ASSIMP_LIBRARIES})
 target_link_libraries(DemonEngine fmt)
 target_link_libraries(DemonEngine PhysX_static_64 PhysXCharacterKinematic_static_64 PhysXPvdSDK_static_64 PhysXExtensions_static_64 PhysXCooking_static_64 PhysXFoundation_static_64 PhysXVehicle_static_64 PhysXCommon_static_64)
 
-
 include_directories("/usr/include")
 include_directories(${CMAKE_SOURCE_DIR})
+include_directories("FBX")
 
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Werror")
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -g -O0")
 
 add_compile_definitions(_DEBUG)

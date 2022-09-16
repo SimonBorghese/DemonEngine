@@ -29,6 +29,8 @@ namespace DemonRender {
 
         void bindVector3(uint32_t location, glm::vec3 targetVec);
 
+        void bindVector4(uint32_t location, glm::vec4 targetVec);
+
         void bindFloat(uint32_t loc, float value) { glUniform1f(loc, value); }
 
         void bindInt(GLuint loc, int value) { glUniform1i(loc, value); }

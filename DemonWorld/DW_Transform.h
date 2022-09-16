@@ -54,15 +54,11 @@ namespace DemonWorld {
                 currentModel = defaultModel;
                 if (enableTransformations) {
                     currentModel = glm::translate(currentModel, position);
-                    /*
-                    currentModel = glm::rotate(currentModel, rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-                    currentModel = glm::rotate(currentModel, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-                    currentModel = glm::rotate(currentModel, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-                     */
                     if (rotation != glm::quat(0.0f, 0.0f, 0.0f, 0.0f)) {
                         currentModel = glm::rotate(currentModel, glm::angle(rotation), glm::axis(rotation));
                     }
                     currentModel = glm::scale(currentModel, _scale);
+
                 }
 
             return currentModel;

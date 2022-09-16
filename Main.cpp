@@ -12,9 +12,17 @@
 #include <DemonRender/DemonLights/DR_DL_BasicLight.h>
 #include <DemonGame/Shared/External/DG_EXT_PhysicsCallback.h>
 #include <DemonIO/DI_BSPLoader.h>
+#include <DemonGame/Shared/DG_AnimatedEntity.h>
 #include <DemonGame/Master/BSPLoader.h>
 
 #include <math.h>
+
+#include <DemonAnimation/DA_riggedMesh.h>
+#include <DemonIO/DI_AnimationSceneLoader.h>
+
+#include <vector>
+
+#define GET_SECONDS() (SDL_GetTicks() / 1000.0f)
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -29,7 +37,7 @@ DemonEngine::Engine *engine;
 DemonPhysics::DP_CharacterController *controller;
 glm::vec3 FPSFront = glm::vec3(0.0f);
 
-DemonGame::DG_Entity *weaponThing;
+DemonGame::DG_AnimatedEntity *weaponThing;
 
 void SCPCollideCallback(DemonGame::DG_PhysicsObject* thisObj, DemonGame::DG_Object* other){
     //printf("%s just touched: %s\n",thisObj->getName().c_str(), other->getName().c_str());
@@ -53,18 +61,21 @@ void keyDownCallback(int scancode){
     auto newBlock = (DemonGame::DG_PhysicsObject*)0;
     switch (scancode){
         case SDL_SCANCODE_E:
-            newBlock = engine->createWorldEntity();
-            newBlock->createEntityFromMesh("block.obj",
-                                           weaponThing->getTransform()->getPosition() +
-                                           (engine->getCamera()->getFPSFront() * 3)
-                                           );
-            newBlock->setContactCallback(SCPCollideCallback);
-            newBlock->getActor()->getRealActor()->setMass(50.0f);
-            newBlock->getActor()->applyForce(glm::vec3(engine->getCamera()->getCameraFront() * 1000));
-            //controller->translate(starts.at(currentStart++) + glm::vec3(0.0f, controller->getHeight(), 0.0f));
-            //if (currentStart == starts.size()){
-            //    currentStart = 0;
-            //}
+            if (weaponThing->isAnimationFinished(GET_SECONDS())) {
+                newBlock = engine->createWorldEntity();
+                newBlock->createEntityFromMesh("block.obj",
+                                               weaponThing->getTransform()->getPosition() +
+                                               (engine->getCamera()->getFPSFront() * 3)
+                );
+                newBlock->setContactCallback(SCPCollideCallback);
+                newBlock->getActor()->getRealActor()->setMass(50.0f);
+                newBlock->getActor()->applyForce(glm::vec3(engine->getCamera()->getCameraFront() * 1000));
+                weaponThing->playOnce(SDL_GetTicks() / 1000.0f);
+                //controller->translate(starts.at(currentStart++) + glm::vec3(0.0f, controller->getHeight(), 0.0f));
+                //if (currentStart == starts.size()){
+                //    currentStart = 0;
+                //}
+            }
             break;
         case SDL_SCANCODE_SPACE:
             if (controller->onGround()) {
@@ -78,26 +89,37 @@ void keyDownCallback(int scancode){
 
 void keyCalback(int scancode){
     //sFPSFront.y = 0.0f;
+    glm::vec3 target = glm::vec3(0.0f);
     switch (scancode){
         case SDL_SCANCODE_W:
             if (!engine->getEvent()->getKey(SDL_SCANCODE_LCTRL)) {
-                controller->move(engine->getCamera()->getForward() * engine->getDeltaTime() * SPEED);
+                //controller->move(engine->getCamera()->getForward() * engine->getDeltaTime() * SPEED);
+                target = engine->getCamera()->getForward() * engine->getDeltaTime() * SPEED;
             }
             else{
-                controller->translate(controller->getPosition() + engine->getCamera()->getForward() * engine->getDeltaTime() * SPEED);
+                //controller->translate(controller->getPosition() + engine->getCamera()->getForward() * engine->getDeltaTime() * SPEED);
+                target = engine->getCamera()->getCameraFront() * engine->getDeltaTime() * SPEED;
             }
             break;
         case SDL_SCANCODE_S:
-            controller->move(engine->getCamera()->getBackward() * engine->getDeltaTime() * SPEED);
+            //controller->move(engine->getCamera()->getBackward() * engine->getDeltaTime() * SPEED);
+            target = engine->getCamera()->getBackward() * engine->getDeltaTime() * SPEED;
             break;
         case SDL_SCANCODE_A:
-            controller->move(engine->getCamera()->getLeft() * engine->getDeltaTime() * SPEED);
+            //controller->move(engine->getCamera()->getLeft() * engine->getDeltaTime() * SPEED);
+            target = engine->getCamera()->getLeft() * engine->getDeltaTime() * SPEED;
             break;
         case SDL_SCANCODE_D:
-            controller->move(engine->getCamera()->getRight() * engine->getDeltaTime() * SPEED);
+            //controller->move(engine->getCamera()->getRight() * engine->getDeltaTime() * SPEED);
+            target = engine->getCamera()->getRight() * engine->getDeltaTime() * SPEED;
             break;
         default:
             break;
+    }
+    if (!engine->getEvent()->getKey(SDL_SCANCODE_LCTRL)) {
+        controller->move(target);
+    } else{
+        controller->translate(controller->getPosition() + target);
     }
 }
 void bspCallback(DemonEngine::BSP_EntityCreateInfo info){
@@ -125,14 +147,14 @@ int main(void) {
     controller->translate(glm::vec3(0.0f));
 
 
-    DemonEngine::BSPLoader bspLoader(engine);
-    bspLoader.setBSPCreationCallback(bspCallback);
-    bspLoader.loadBSP("notmy4.bsp");
+    //DemonEngine::BSPLoader bspLoader(engine);
+    //bspLoader.setBSPCreationCallback(bspCallback);
+    //bspLoader.loadBSP("notmy4.bsp");
     //engine->createWorldObject()->createEntityFromMesh("bloque.obj", glm::vec3(0.0f, -10.0f, 0.0f));
-    
+
 
     // Create a light
-    auto *light1 = engine->createEasyPointLight(glm::vec3(0.0f, -2.0f, 0.0f), 100.0f, 1.0f);
+    auto *light1 = engine->createEasyPointLight(glm::vec3(0.0f, -2.0f, 0.0f), 1000000.0f, 1.0f);
     //DemonEngine::Engine::DIRECTIONAL_LIGHT_INFO dirLightInfo;
     //dirLightInfo.direction = glm::vec3(0.0f, 10.0f, 0.0f);
     //dirLightInfo.specularAccuracy = 32;
@@ -145,18 +167,45 @@ int main(void) {
     engine->getEvent()->setKeyDownCallback(keyDownCallback);
     engine->getEvent()->setKeyCallback(keyCalback);
 
-    weaponThing = engine->createVisualEntity();
-    weaponThing->createEntityFromMesh("zapper.fbx");
-    //weaponThing->getTransform()->toggleTransformations();
+    weaponThing = new DG_AnimatedEntity(engine->getRenderingManager(), engine->getObjectShader());
+    weaponThing->createEntityFromMesh("zapper2.fbx");
+    /*
+    unsigned int meshes;
+    Assimp::Importer *killable;
+    DemonAnimation::DA_riggedMesh ** mesh =
+            DemonIO::DI_AnimationSceneLoader::loadMeshesFromFile("vamp.fbx", &meshes, glm::vec3(1.0f), &killable);
+    printf("Got: %d meshes\n", meshes);
+
+    DemonRender::DR_Mesh weird(mesh[0]);
+    weird.createTextureFromSTB("Vampire_diffuse.png", true);
+    DemonRender::DR_MeshRenderer meshRenderer;
+    DemonWorld::DW_Transform good;
+    good.createTransform(glm::vec3(0.0f));
+    meshRenderer.addMesh(&weird);
+    meshRenderer.setShader(engine->getObjectShader());
+    meshRenderer.bindTransform(&good);
+    engine->getRenderingManager()->addMeshGroup(&meshRenderer);
+     */
+
+    DG_AnimatedEntity *newAnimatedEnt = new DG_AnimatedEntity(engine->getRenderingManager(), engine->getObjectShader());
+    newAnimatedEnt->createEntityFromMesh("vamp2.fbx");
 
 
-
-
-    // Main game loop
-
+    //mesh[0]->engine = engine;
     unsigned int fps = 0;
     unsigned int lastFPSCheck = SDL_GetTicks();
+    weaponThing->setAnimation(4);
     while (!engine->gameLoop()) {
+
+        if (engine->getEvent()->getKeyDown(SDL_SCANCODE_P) && newAnimatedEnt->isAnimationFinished(GET_SECONDS())) {
+            newAnimatedEnt->playOnce(GET_SECONDS());
+        }
+            weaponThing->getTransform()->scale(glm::vec3(1.0f));
+            newAnimatedEnt->playAnimation(GET_SECONDS());
+
+            weaponThing->playAnimation(GET_SECONDS());
+            weaponThing->getTransform()->setScale(glm::vec3(0.01f, 0.01f, -0.01f));
+
         light1->getLightInfo()->position = controller->getPosition();
         if (!engine->getEvent()->getKey(SDL_SCANCODE_LCTRL)) {
 
@@ -167,7 +216,11 @@ int main(void) {
 
             weaponThing->getTransform()->setRotation(glm::vec3(glm::radians(-engine->getCamera()->getYRotation()),
                                                                glm::radians((-(engine->getCamera()->getXRotation())) + 90.0f), 0.0f));
+
             FPSFront = engine->getCamera()->getFPSFront();
+
+            gravity = 0.0f;
+
             controller->move(glm::vec3(0.0f, gravity * engine->getDeltaTime(), 0.0f));
         }
         else{
@@ -196,6 +249,73 @@ int main(void) {
     return 0;
 }
 
+
+/*
+ *
+ * //std::vector<glm::vec3>
+    // Begin my horrible nav mesh test
+    std::vector<std::vector<glm::vec3>> totalVertex;
+    unsigned int numOfMeshes = 0;
+    DemonBase::b_Mesh **bMeshes = DemonIO::DI_BSPLoader::loadMeshesFromFile("notmy4.bsp", &numOfMeshes, glm::vec3(1.0f/4.0f));
+    //printf("FOUND NUM MESHES: %d\n", numOfMeshes);
+    for (unsigned int m = 0; m < 1; m++){
+        DemonBase::b_Mesh *bMesh = bMeshes[m];
+        std::vector<glm::vec3> allVertices;
+        for (unsigned int v = 0; v < bMesh->getGLMVertices().size(); v++){
+            glm::vec3 vertex = bMesh->getGLMVertices().at(v);
+
+            if (allVertices.size() == 0){
+                allVertices.push_back(vertex);
+            } else{
+                for (unsigned int av = 0; av <= allVertices.size(); av++){
+                    if (av == allVertices.size()){
+                        allVertices.push_back(vertex);
+                        break;
+                    } else{
+                        if (allVertices.at(av).y >= vertex.y){
+                            allVertices.insert(allVertices.begin() + av, vertex);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        totalVertex.push_back(allVertices);
+    }
+
+
+    std::vector<Vertex> rawVertices;
+    std::vector<unsigned int> rawIndices;
+    unsigned int num = 0;
+    for (unsigned int av = 0; av < totalVertex.size(); av++){
+        std::vector<glm::vec3> allVertices = totalVertex.at(av);
+
+        //float highestY = allVertices.at(allVertices.size() -1).y;
+        for (int ax = (int) allVertices.size() - 1; ax >= 0; ax--) {
+            //if (allVertices.at(ax).y >= highestY) {
+                Vertex newVx;
+                newVx.iPosition = allVertices.at(ax);
+                newVx.iNormal = glm::vec3(1.0f);
+                newVx.iTextCord = glm::vec3(0.0f);
+                rawVertices.push_back(newVx);
+                rawIndices.push_back(num++);
+                //printf("Found: %f %f %f\n", allVertices.at(ax).x, allVertices.at(ax).y, allVertices.at(ax).z);
+            //}
+        }
+    }
+
+    DemonRender::DR_Mesh weird(rawVertices.data(), rawVertices.size(), rawIndices.data(), rawIndices.size());
+    weird.type = GL_LINES;
+
+    DemonRender::DR_MeshRenderer meshRenderer;
+    DemonWorld::DW_Transform good;
+    good.createTransform(glm::vec3(0.0f));
+    meshRenderer.addMesh(&weird);
+    meshRenderer.setShader(engine->getObjectShader());
+    meshRenderer.bindTransform(&good);
+    engine->getRenderingManager()->addMeshGroup(&meshRenderer);
+
+ */
 /*
 DemonEngine::Engine engine(WIDTH, HEIGHT);
 DemonGame::DG_RigidEntity *shipEnt;
@@ -254,7 +374,7 @@ int main(void){
     engine.getEvent()->setKeyDownCallback(keyDownCallback);
     engine.getEvent()->setKeyCallback(keyCallback);
     engine.createEasyPointLight(glm::vec3(0.0f), 100.0f, 1.0f);
-    /*
+
     // Below: Particle Test
     Vertex billiboardVertices[4];
     billiboardVertices[0].iPosition = glm::vec3(-0.5f, -0.5f, -0.0f);

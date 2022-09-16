@@ -47,6 +47,7 @@ namespace DemonGame {
                             }
                             // Call onContact
                             physicsObjDesc->onContact(physicsObjDesc->reference, reference);
+                            delete reference;
                         }
                     }
 
@@ -79,6 +80,7 @@ namespace DemonGame {
                             }
                             // Call onContact
                             physicsObjDesc->onContact(physicsObjDesc->reference, reference);
+                            delete reference;
                         }
                     }
 

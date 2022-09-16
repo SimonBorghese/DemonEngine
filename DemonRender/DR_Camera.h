@@ -23,6 +23,7 @@ namespace DemonRender {
 
         void configureProjection(float FOV, float twitterRatio, float zClose, float zFar) {
             projectionMat = glm::perspective(glm::radians(FOV), twitterRatio, zClose, zFar);
+            //projectionMat = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 100.0f);
             viewLocation = _targetShader->getUniformLocation("view");
             projectionLocation = _targetShader->getUniformLocation("projection");
             viewPosLocation = _targetShader->getUniformLocation("viewPos");

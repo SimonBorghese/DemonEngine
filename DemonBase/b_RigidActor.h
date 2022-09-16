@@ -37,9 +37,9 @@ namespace DemonBase {
         void updateActor() {
 
             //_mainActor->setGlobalPose()
-            if ((void*) this == nullptr){
-                return;
-            }
+            //if ((b_RigidActor*) this == nullptr){
+            //    return;
+            //}
             if (_mainActor == nullptr){
                 printf("ERROR: ACTOR NULL!\n");
                 return;

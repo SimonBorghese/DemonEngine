@@ -14,6 +14,22 @@ namespace DemonIO {
         if (strcmp("", oModelLoader->GetErrorString()) != 0) {
             (fmt::print("Failed to load: {}, Error: {}\n", fileName, oModelLoader->GetErrorString()));
         }
+        /*
+        for (unsigned int a = 0; a < oScene->mNumAnimations; a++){
+            aiAnimation *anim = oScene->mAnimations[a];
+            printf("Reading anim: %s\n", anim->mName.C_Str());
+            //oScene->mRootNode->FindNode(anim->mChannels[0]->mNodeName)->
+            for (unsigned int c = 0; c < anim->mNumChannels; c++){
+                aiNodeAnim *nodeAnim = anim->mChannels[c];
+
+                //nodeAnim->
+                for (unsigned int p = 0; p < nodeAnim->mNumPositionKeys; p++){
+                    aiVector3D vector3D = nodeAnim->mPositionKeys[p].mValue;
+                    printf("Found pos key: %f %f %f\n", vector3D.x, vector3D.y, vector3D.z);
+                }
+            }
+        }
+         */
 
         // Allocate our meshes
         DemonBase::b_Mesh **meshes = (DemonBase::b_Mesh **) malloc(sizeof(DemonBase::b_Mesh *) * oScene->mNumMeshes);
@@ -22,7 +38,14 @@ namespace DemonIO {
             unsigned int numVertices = oScene->mMeshes[m]->mNumVertices;
             // Stack allocations go brrrrr....
             Vertex m_vertices[numVertices];
+            //oScene->mMeshes[0]->
+            aiBone bone;
+            //bone.
             for (unsigned int v = 0; v < numVertices; v++) {
+
+                m_vertices[v].iBoneIds = glm::ivec4(-1);
+                m_vertices[v].weights = glm::vec4(1.0f);
+
                 m_vertices[v].iPosition.x = oScene->mMeshes[m]->mVertices[v].x * scale.x;
                 m_vertices[v].iPosition.y = oScene->mMeshes[m]->mVertices[v].y * scale.y;
                 m_vertices[v].iPosition.z = oScene->mMeshes[m]->mVertices[v].z * scale.z;
@@ -43,12 +66,14 @@ namespace DemonIO {
                         m_vertices[v].iTextCord.y = (oScene->mMeshes[m]->mTextureCoords[t][v]).y;
                         break;
                     }
+                    printf("Got: %f %f in ASSIMP\n", m_vertices[v].iTextCord.x, m_vertices[v].iTextCord.y);
                 }
                 if (!oScene->mMeshes[m]->mTextureCoords[0]) {
                     m_vertices[v].iTextCord.x = 0.0f;
                     m_vertices[v].iTextCord.y = 0.0f;
                 }
             }
+
 
             std::vector<uint32_t> m_indices;
             for (unsigned int f = 0; f < oScene->mMeshes[m]->mNumFaces; f++) {

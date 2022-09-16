@@ -54,6 +54,8 @@ namespace DemonEngine {
 
         _renderingManager->destroyRenderer();
         delete _renderingManager;
+
+        delete _world;
     }
 
     DemonGame::DG_RigidEntity *Engine::createWorldObject() {

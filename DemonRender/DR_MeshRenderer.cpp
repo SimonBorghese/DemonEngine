@@ -92,7 +92,7 @@ namespace DemonRender {
             std::string base_filename = tex_loc.C_Str();
             base_filename = base_filename.substr(base_filename.find_last_of("/\\") + 1);
 
-            targetMesh->createTextureFromSTB(base_filename.c_str(), false);
+            targetMesh->createTextureFromSTB(base_filename.c_str(), true);
             //}
 
         }
@@ -107,9 +107,9 @@ namespace DemonRender {
 
     void DR_MeshRenderer::bindShader() {
         _targetShader->useProgram();
-        //if (modelLocation == 0) {
+        if (modelLocation == 0) {
             modelLocation = _targetShader->getUniformLocation("model");
-        //}
+        }
         if (_currentTransform != nullptr) {
             _targetShader->bindMatrix4f(modelLocation, _currentTransform->getModel());
         }

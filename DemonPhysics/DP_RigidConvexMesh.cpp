@@ -18,7 +18,7 @@ namespace DemonPhysics {
         _geometry = new physx::PxConvexMeshGeometry;
         //*_geometry = physx::PxConvexMeshGeometry(_mesh);
         auto tempGeo = physx::PxConvexMeshGeometry(_mesh);
-        memcpy(_geometry, &tempGeo, sizeof(physx::PxConvexMeshGeometry));
+        memcpy((void*) _geometry, (void*) &tempGeo, sizeof(physx::PxConvexMeshGeometry));
     }
 
     void DP_RigidConvexMesh::destroyMesh() {
