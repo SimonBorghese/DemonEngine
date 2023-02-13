@@ -15,32 +15,37 @@ namespace DemonGame {
     DG_Event::~DG_Event() {}
 
     void DG_Event::pollEvents() {
-        keysDown.fill(0);
-        keysUp.fill(0);
-        getKillState = 0;
-        offsetMouseY = 0;
-        offsetMouseX = 0;
+            keysDown.fill(0);
+            keysUp.fill(0);
+            getKillState = 0;
+            offsetMouseY = 0;
+            offsetMouseX = 0;
         while (SDL_PollEvent(&e)) {
+            if (callBack != nullptr) {
+                callBack(&e);
+            }
             switch (e.type) {
                 case SDL_QUIT:
                     getKillState = 1;
                     break;
                 case SDL_MOUSEMOTION:
-                    mouseX = e.motion.x;
-                    mouseY = e.motion.y;
-                    offsetMouseX = e.motion.xrel;
-                    offsetMouseY = e.motion.yrel;
+                    if (_enableMouseMovement) {
+                        mouseX = e.motion.x;
+                        mouseY = e.motion.y;
+                        offsetMouseX = e.motion.xrel;
+                        offsetMouseY = e.motion.yrel;
+                    }
                     break;
                 case SDL_KEYUP:
                     keysActive[e.key.keysym.scancode] = 0;
                     keysUp[e.key.keysym.scancode] = 1;
-                    if (_keyUpFunc) {
-                        _keyUpFunc(e.key.keysym.scancode);
+                    for (auto & upFunc : _keyUpFunc){
+                        upFunc(e.key.keysym.scancode);
                     }
                     break;
                 case SDL_KEYDOWN:
-                    if (_keyDownFunc && !keysActive[e.key.keysym.scancode]) {
-                        _keyDownFunc(e.key.keysym.scancode);
+                    for (auto & downFunc : _keyDownFunc){
+                        downFunc(e.key.keysym.scancode);
                     }
                     keysActive[e.key.keysym.scancode] = 1;
                     keysDown[e.key.keysym.scancode] = 1;
@@ -50,10 +55,10 @@ namespace DemonGame {
             }
         }
 
-        if (_keyFunc) {
+        for (auto & keyFunc : _keyFunc) {
             for (int k = 0; k < INPUT_KEYS_LEN; k++) {
                 if (keysActive[k]) {
-                    _keyFunc(k);
+                    keyFunc(k);
                 }
             }
         }

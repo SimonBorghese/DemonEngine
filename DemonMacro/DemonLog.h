@@ -8,5 +8,6 @@
 
 #define _alert(name, line, file) fprintf(stdout, "[%s] [file %s at line %d] ", name, file, line)
 #define ALERT(name) _alert(name, __LINE__, __FILE_NAME__);
+#define LOG(log, condition) if (!condition) { ALERT(log)}
 
 #endif //DEMONENGINE_DEMONLOG_H

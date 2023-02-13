@@ -10,6 +10,7 @@
 #include <DemonGame/Shared/DG_RigidEntity.h>
 #include <DemonGame/Shared/DG_PhysicsObject.h>
 #include <DemonBase/b_Light.h>
+#include <DemonGL/DemonGL.h>
 
 namespace DemonEngine {
 
@@ -23,11 +24,13 @@ namespace DemonEngine {
 
         int addWorldEntity(DemonGame::DG_PhysicsObject *ent);
 
-        int addLightEntity(DemonBase::b_Light *light);
+        int addLightEntity(DGL::Light *light);
 
-        void updateAll();
+        void updateAll(DGL::Shader *overrideShader = nullptr, glm::mat4 view = glm::mat4(0.0f), glm::mat4 projection = glm::mat4(0.0f));
 
         void clearAll();
+
+        void destroyWorld();
 
         DemonGame::DG_Entity *removeWorldGeneric(unsigned int pointer);
 
@@ -41,13 +44,15 @@ namespace DemonEngine {
 
         void removeWorldGenericValue(DemonGame::DG_Entity * pointer);
 
-        DemonBase::b_Light *removeLightEntity(unsigned int pointer);
+        void removeLightEntityValue(DGL::Light * pointer);
+
+        DGL::Light *removeLightEntity(unsigned int pointer);
 
     private:
         std::vector<DemonGame::DG_Entity *> _genericEntites;
         std::vector<DemonGame::DG_RigidEntity *> _worldObjects;
         std::vector<DemonGame::DG_PhysicsObject *> _worldEntites;
-        std::vector<DemonBase::b_Light*> _lightEntites;
+        std::vector<DGL::Light*> _lightEntites;
 
         DemonPhysics::DP_PhysicsManager *_physManager;
 

@@ -16,9 +16,12 @@ namespace DemonGame{
     // This should be used to quickly determine what type a reference points to
     // Static could either be a DG_RigidEntity or DP_RIGID_OBJ_DESC
     // Dynamic could either be DG_PhysicsObject or DP_PHYSICS_OBJ_DESC
+    // Trigger could either be a DG_Trigger or DP_TRIGGER_OBJ_DESC
     enum DG_OBJ_TYPE{
         STATIC,
-        DYNAMIC
+        DYNAMIC,
+        TRIGGER,
+        CHARACTER
     };
 
     // This is a general struct for objects
@@ -42,10 +45,13 @@ namespace DemonBase{
         // The struct Reference points to the specific struct for the object
         // If type = STATIC then the structReference points to a DP_RIGID_OBJ_DESC
         // If type = DYNAMIC then the structReference points to a DP_PHYSICS_OBJ_DESC
+        // If type = TRIGGER then the structReference points to a DP_TRIGGER_OBJ_DESC
+        // If type = CHARACTER then the structReference points to a DP_CHARACTER_OBJ_DESC
         typedef struct{
             char magicString[5]; // IOBJ
             std::string name;
             DG_OBJ_TYPE type;
+            void *originalObject; // Pointing to a GameClient, mostly useless
             void *structReference;
         } generalStruct;
 
@@ -66,6 +72,17 @@ namespace DemonBase{
             char magicString[5]; // IOBJ
             DemonGame::DG_RigidEntity *reference;
         } DP_RIGID_OBJ_DESC;
+
+        typedef struct{
+            char magicString[5]; // IOBJ
+            std::function<void(DemonGame::DG_Object*, bool)> triggerActivate; // function to run on trigger active, bool if character
+        } DP_TRIGGER_OBJ_DESC;
+
+        typedef struct{
+            char magicString[5]; // IOBJ
+            std::function<void(DemonGame::DG_Object*)> characterCallback; // Characters don't have proper rigid bodies
+            // so no originating object
+        } DP_CHARACTER_OBJ_DESC;
     }
 }
 

@@ -4,17 +4,21 @@
 
 #ifndef DEMONENGINE_DG_ANIMATEDENTITY_H
 #define DEMONENGINE_DG_ANIMATEDENTITY_H
+
+class DA_riggedMesh;
+
 #include "DG_Entity.h"
 #include <DemonAnimation/DA_riggedMesh.h>
 #include <DemonIO/DI_AnimationSceneLoader.h>
-
+#include <iostream>
+#include <memory>
 
 namespace DemonGame {
 
     class DG_AnimatedEntity : public DG_Entity{
     public:
-        DG_AnimatedEntity(DemonRender::DR_RenderManager *targetRender, DemonRender::DR_Shader *targetShader) :
-                DG_Entity(targetRender, targetShader) {
+        DG_AnimatedEntity(DGL::Shader *targetShader) :
+                DG_Entity(targetShader) {
 
         }
 
@@ -26,12 +30,17 @@ namespace DemonGame {
         void playAnimation(float currentTime);
 
         void setAnimation(int index);
+        // WARNING: DON'T USE VERY SLOW
+        void setAnimation(std::string name);
 
         void playOnce(float currentTime);
 
         int isAnimationFinished(float currentTime);
+
+        int enableDepth = 1;
     private:
         DemonAnimation::DA_riggedMesh **animMeshes;
+        DemonBase::b_Mesh **renderMesh;
         unsigned int numMeshes;
     };
 

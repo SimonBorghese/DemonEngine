@@ -26,6 +26,7 @@ namespace DemonPhysics {
 
     void DP_PhysicsManager::createPhysics(glm::vec3 gravity) {
         pFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, pAllocate, pError);
+        //printf("Physics version: %x\n", PX_PHYSICS_VERSION);
         if (!pFoundation) {
             printf("Error: PxCreateFoundation Failed, Line: %d\n", __LINE__);
             return;
@@ -76,7 +77,7 @@ namespace DemonPhysics {
 
         if (!pPhysDec->cpuDispatcher) {
             // Create CPU dispatcher with 2 threads (for now)
-            pCpuDispatcher = physx::PxDefaultCpuDispatcherCreate(2);
+            pCpuDispatcher = physx::PxDefaultCpuDispatcherCreate(4);
             if (!pCpuDispatcher)
                 printf("PxDefaultCpuDispatcherCreate failed!\n");
             pPhysDec->cpuDispatcher = pCpuDispatcher;
@@ -85,10 +86,13 @@ namespace DemonPhysics {
         if (!pPhysDec->filterShader)
             pPhysDec->filterShader = NotifyAllFilterShader;
 
+        pPhysDec->broadPhaseType = physx::PxBroadPhaseType::eSAP;
+
 
 
         // Create our scene
         pScene = pPhysics->createScene(*pPhysDec);
+        pScene->setFlag(PxSceneFlag::eENABLE_STABILIZATION, true);
         if (pScene == NULL) {
             printf("Failed to create scene\n");
             return;
@@ -114,5 +118,34 @@ namespace DemonPhysics {
         PxCloseExtensions();
         pPhysics->release();
         pFoundation->release();
+    }
+
+    physx::PxRaycastBuffer DP_PhysicsManager::rayCast(glm::vec3 origin, glm::vec3 direction, float distance){
+        PxRaycastBuffer hit;
+        bool success = pScene->raycast(physx::PxVec3(origin.x, origin.y, origin.z),
+                                       physx::PxVec3(direction.x, direction.y, direction.z),
+                                       distance, hit);
+        if (!success){
+            //printf("[Physics] RAY CAST FAILED!\n");
+            hit.nbTouches = 0;
+            hit.hasBlock = false;
+        }
+        return hit;
+
+    }
+
+    physx::PxSweepBuffer DP_PhysicsManager::sweepCube(glm::vec3 origin, glm::vec3 direction, float distance, glm::vec3 cubeScale){
+        physx::PxSweepBuffer hit;
+
+        PxBoxGeometry sweepGeo = PxBoxGeometry(physx::PxVec3(cubeScale.x, cubeScale.y, cubeScale.z));
+        bool success = pScene->sweep(sweepGeo, physx::PxTransform(physx::PxVec3(origin.x, origin.y, origin.z)),
+                                     physx::PxVec3(direction.x, direction.y, direction.z),
+                                     distance, hit);
+        if (!success){
+            //printf("[Physics] SWEEP CAST FAILED!\n");
+            hit.nbTouches = 0;
+            hit.hasBlock = false;
+        }
+        return hit;
     }
 } // DemonPhysics

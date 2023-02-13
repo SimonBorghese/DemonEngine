@@ -16,6 +16,9 @@ enum PLATFORMS {
 #define GAME_VERSION 0.1f
 #define GAME_SHADER_DIRECTORY "DemonShaders"
 
+#define GAME_DEBUG_SHADER_VERTEX "DemonShaders/vertex_debug.glsl"
+#define GAME_DEBUG_SHADER_FRAGMENT "DemonShaders/fragment_debug.glsl"
+
 // Literally hard coded shaders moment OwO
 #define GAME_OBJECT_SHADER_VERTEX "vertex_noAnim.glsl"
 #define GAME_OBJECT_SHADER_FRAGMENT "frag_colourDebug.glsl"

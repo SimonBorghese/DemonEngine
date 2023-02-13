@@ -5,7 +5,7 @@
 #ifndef DEMONENGINE_B_RIGIDACTOR_H
 #define DEMONENGINE_B_RIGIDACTOR_H
 
-#include <PhysX/PxRigidActor.h>
+#include <PxRigidActor.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <DemonWorld/DW_Transform.h>

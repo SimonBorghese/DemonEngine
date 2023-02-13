@@ -26,6 +26,8 @@ namespace DemonIO {
 
         static DemonBase::b_Mesh **loadMeshesFromFile(const char *fileName, unsigned int *meshCountOut, glm::vec3 scale = glm::vec3(1.0f));
 
+        static DemonBase::b_Mesh **normalizeAroundOrigin(DemonBase::b_Mesh **meshes, uint32_t inLength, glm::vec3 *outOrigin);
+
     private:
 
     };

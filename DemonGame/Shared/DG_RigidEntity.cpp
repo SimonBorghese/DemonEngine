@@ -9,57 +9,83 @@ namespace DemonGame {
                                               glm::vec3 pos,
                                               glm::vec3 rotation,
                                               glm::vec3 scale) {
-        mainTransform.createTransform(pos, rotation, glm::vec3(1.0f));
-        //mainTransform = new DemonWorld::DW_Transform(pos, rotation, scale);
-        mainMeshRenderer = new DemonRender::DR_MeshRenderer();
-        mainMeshRenderer->setShader(meshShader);
+        DemonGame::DG_Entity::createEntityFromMesh(meshFile, pos, rotation, scale);
 
-
-        unsigned int outLen;
-        DemonBase::b_Mesh **normalMesh = DemonIO::DI_SceneLoader::loadMeshesFromFile(meshFile, &outLen, scale);
-
-        mainMeshRenderer->loadExistingMeshes(normalMesh, outLen);
-
-        renderManager->addMeshGroup(mainMeshRenderer);
 
         std::vector<DemonBase::b_RigidMesh*> meshes;
-        for (unsigned int m = 0; m < outLen; m++) {
-             meshes.push_back((DemonBase::b_RigidMesh*) new DemonPhysics::DP_RigidTriangleMesh(normalMesh[m]));
+        for (unsigned int m = 0; m < _numMeshes; m++) {
+             meshes.push_back((DemonBase::b_RigidMesh*) new DemonPhysics::DP_RigidTriangleMesh(_loadedMesh[m]));
             physicsManager->cookMesh(meshes.at(meshes.size()-1));
         }
 
         rigidActor = new DemonPhysics::DP_RigidActor(meshes);
 
-        DemonPhysics::DP_PhysicsMaterial matgood(1.0f, 1.0f, 0.0f);
-        physicsManager->cookMaterial(&matgood);
+        if (!mainMaterial) {
+            mainMaterial = new DemonPhysics::DP_PhysicsMaterial(0.0f, 0.0f, 0.0f);
+        }
+        physicsManager->cookMaterial(mainMaterial);
         //physicsManager->cookActor(rigidActor, &matgood);
-        rigidActor->createActor(physicsManager->getPhysics(), matgood.getMaterial());
+        rigidActor->createActor(physicsManager->getPhysics(), mainMaterial->getMaterial());
         physicsManager->addActor(rigidActor);
-        rigidActor->setTransform(mainTransform);
-        mainMeshRenderer->bindTransform(&mainTransform);
+        rigidActor->setTransform(*mainTransform);
         rigidActor->setEmbedData(&generalStruct);
+    }
+
+    void DG_RigidEntity::createEntityFromExistingMesh(DemonBase::b_Mesh **meshes, uint32_t numMesh,
+                                      glm::vec3 pos,
+                                      glm::vec3 rotation){
+        DG_Entity::createEntityFromExistingMesh(meshes, numMesh, pos, rotation);
+
+        std::vector<DemonBase::b_RigidMesh*> rigidMeshes;
+        for (unsigned int m = 0; m < _numMeshes; m++) {
+            rigidMeshes.push_back((DemonBase::b_RigidMesh*) new DemonPhysics::DP_RigidTriangleMesh(_loadedMesh[m]));
+            physicsManager->cookMesh(rigidMeshes.at(rigidMeshes.size()-1));
+        }
+
+        rigidActor = new DemonPhysics::DP_RigidActor(rigidMeshes);
+
+        if (!mainMaterial) {
+            mainMaterial = new DemonPhysics::DP_PhysicsMaterial(0.0f, 0.0f, 0.0f);
+        }
+        physicsManager->cookMaterial(mainMaterial);
+        //physicsManager->cookActor(rigidActor, &matgood);
+        rigidActor->createActor(physicsManager->getPhysics(), mainMaterial->getMaterial());
+        physicsManager->addActor(rigidActor);
+        rigidActor->setTransform(*mainTransform);
+        rigidActor->setEmbedData(&generalStruct);
+
     }
 
     void DG_RigidEntity::destroyEntity() {
         mainMaterial->destroyMaterial();
-        rigidMesh->destroyMesh();
+        //rigidMesh->destroyMesh();
         physicsManager->removeActor(rigidActor);
         rigidActor->destroyActor();
-        mainMeshRenderer->destroyMeshes();
+        _primaryMesh->destroyMeshes();
         //delete mainTransform;
-        delete mainMeshRenderer;
+        delete _primaryMesh;
     }
 
-    void DG_RigidEntity::update() {
-        //rigidActor->setTransform(mainTransform);
-        //printf("P: %f %f %f\n", rigidActor->getTransform()->getPosition().x, rigidActor->getTransform()->getPosition().y, rigidActor->getTransform()->getPosition().z);
-
+    void DG_RigidEntity::update(DGL::Shader *overrideShader) {
+        DG_Entity::update(overrideShader);
         rigidActor->updateActor();
-        mainTransform.setPosition(rigidActor->getTransform()->getPosition());
-        mainTransform.setRotation(rigidActor->getTransform()->getRotation());
+        mainTransform->setPosition(rigidActor->getTransform()->getPosition());
+        mainTransform->setRotation(rigidActor->getTransform()->getRotation());
+    }
 
-        //mainTransform = *rigidActor->getTransform();
-        //mainTransform = *rigidActor->getTransform();
+    PxSweepBuffer DG_RigidEntity::sweepCast(glm::vec3 origin, glm::vec3 direction, float distance, DemonPhysics::DP_PhysicsManager *manager){
+        physx::PxSweepBuffer hit;
+        //PxQueryFilterData filterData(PxQueryFlag::eSTATIC);
+
+        bool success = manager->getScene()->sweep(*rigidMesh->getGeometry(), physx::PxTransform(physx::PxVec3(origin.x, origin.y, origin.z)),
+                                     physx::PxVec3(direction.x, direction.y, direction.z),
+                                     distance, hit);
+        if (!success){
+            //printf("[Physics] SWEEP CAST FAILED!\n");
+            hit.nbTouches = 0;
+            hit.hasBlock = false;
+        }
+        return hit;
 
     }
 } // DemonGame

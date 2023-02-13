@@ -4,7 +4,7 @@
 
 #ifndef DEMONENGINE_DG_EXT_PHYSICSCALLBACK_H
 #define DEMONENGINE_DG_EXT_PHYSICSCALLBACK_H
-#include <PhysX/PxSimulationEventCallback.h>
+#include <PxSimulationEventCallback.h>
 #include <DemonBase/b_PhysUserData.h>
 #include <DemonMacro/DemonLog.h>
 #include "../DG_PhysicsObject.h"
@@ -16,7 +16,7 @@ namespace DemonGame {
     class DG_EXT_PhysicsCallback : public physx::PxSimulationEventCallback{
     public:
         virtual void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs);
-        virtual void onTrigger(PxTriggerPair*, PxU32) {}
+        virtual void onTrigger(PxTriggerPair* pairs, PxU32 count);
         virtual void onConstraintBreak(PxConstraintInfo*, PxU32) {}
         virtual void onWake(PxActor** , PxU32 ) {}
         virtual void onSleep(PxActor** , PxU32 ){}

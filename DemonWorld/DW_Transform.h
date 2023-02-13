@@ -10,7 +10,7 @@
 
 #ifndef NOPHYSX
 
-#include <PhysX/foundation/PxVec3.h>
+#include <foundation/PxVec3.h>
 
 #endif
 
@@ -30,15 +30,15 @@ namespace DemonWorld {
 
         void setPosition(glm::vec3 newPos) { position = newPos; }
 
-        void setRotation(glm::vec3 newRot) { rotation = newRot;  }
+        void setRotation(glm::vec3 newRot) { rotation = glm::quat(newRot);  }
 
-        void setRotation(glm::quat newRot) { rotation = newRot; }
+        void setRotation(glm::quat q) { rotation = (q); }
 
         void setScale(glm::vec3 newScale) { _scale = newScale; }
 
         void translate(glm::vec3 offset) { position += offset; }
 
-        void rotate(glm::quat offset) { rotation += offset; }
+        void rotate(glm::vec3 offset) { rotation += glm::quat(offset); }
 
         void scale(glm::vec3 offset) { _scale += offset; }
 
@@ -54,8 +54,14 @@ namespace DemonWorld {
                 currentModel = defaultModel;
                 if (enableTransformations) {
                     currentModel = glm::translate(currentModel, position);
-                    if (rotation != glm::quat(0.0f, 0.0f, 0.0f, 0.0f)) {
+                    if (rotation != glm::quat(0.0f, 0.0f, 0.0f, 0.0f)){
                         currentModel = glm::rotate(currentModel, glm::angle(rotation), glm::axis(rotation));
+                        /*
+                        currentModel = glm::rotate(currentModel, rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+                        currentModel = glm::rotate(currentModel, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+                        currentModel = glm::rotate(currentModel, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+                         */
+
                     }
                     currentModel = glm::scale(currentModel, _scale);
 

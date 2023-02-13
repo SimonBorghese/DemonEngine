@@ -10,26 +10,31 @@ namespace DemonGame {
                                          glm::vec3 pos,
                                          glm::vec3 rotation,
                                          glm::vec3 scale) {
-        mainTransform.createTransform(pos, rotation, glm::vec3(1.0f));
-        //mainTransform = new DemonWorld::DW_Transform(pos, rotation, scale);
-        mainMeshRenderer = new DemonRender::DR_MeshRenderer();
-        mainMeshRenderer->setShader(meshShader);
-        mainMeshRenderer->bindTransform(&mainTransform);
 
-        unsigned int outLen;
-        DemonBase::b_Mesh **normalMesh = DemonIO::DI_SceneLoader::loadMeshesFromFile(meshFile,
-                                                                                     &outLen,
+        _loadedMesh = DemonIO::DI_SceneLoader::loadMeshesFromFile(meshFile,
+                                                                                     &_numMeshes,
                                                                                      scale);
 
-        mainMeshRenderer->loadExistingMeshes(normalMesh, outLen);
+        _primaryMesh = new DGL::MeshRenderer(_shader, _loadedMesh, _numMeshes);
+        mainTransform = _primaryMesh->getTransform();
+        mainTransform->createTransform(pos, rotation, glm::vec3(1.0f));
+    }
 
-        renderManager->addMeshGroup(mainMeshRenderer);
+    void DG_Entity::createEntityFromExistingMesh(DemonBase::b_Mesh **meshes, uint32_t numMesh,
+                                      glm::vec3 pos,
+                                      glm::vec3 rotation){
+        _loadedMesh = meshes;
+        _numMeshes = numMesh;
+        _primaryMesh = new DGL::MeshRenderer(_shader, _loadedMesh, _numMeshes);
+        mainTransform = _primaryMesh->getTransform();
+        mainTransform->createTransform(pos, rotation, glm::vec3(1.0f));
     }
 
 
     void DG_Entity::destroyEntity() {
-        mainMeshRenderer->destroyMeshes();
+
+        _primaryMesh->destroyMeshes();
         //delete mainTransform;
-        delete mainMeshRenderer;
+        delete _primaryMesh;
     }
 } // DemonGame

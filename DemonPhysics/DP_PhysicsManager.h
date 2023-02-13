@@ -10,13 +10,13 @@
 #include <DemonBase/b_RigidActor.h>
 #include <DemonBase/b_RigidMesh.h>
 #include "DP_PhysicsMaterial.h"
-#include <PhysX/PxPhysicsAPI.h>
-#include <PhysX/extensions/PxTriangleMeshExt.h>
-#include <PhysX/extensions/PxDefaultErrorCallback.h>
-#include <PhysX/extensions/PxDefaultSimulationFilterShader.h>
-#include <PhysX/extensions/PxDefaultAllocator.h>
-#include <PhysX/extensions/PxDefaultCpuDispatcher.h>
-#include <PhysX/characterkinematic/PxController.h>
+#include <PxPhysicsAPI.h>
+#include <extensions/PxTriangleMeshExt.h>
+#include <extensions/PxDefaultErrorCallback.h>
+#include <extensions/PxDefaultSimulationFilterShader.h>
+#include <extensions/PxDefaultAllocator.h>
+#include <extensions/PxDefaultCpuDispatcher.h>
+#include <characterkinematic/PxController.h>
 
 using namespace physx;
 
@@ -30,6 +30,10 @@ namespace DemonPhysics {
 
         //void beginSimulationTiming();
         void simulate(float simulationTime) {
+            if (simulationTime < 0.0f){
+                printf("Got simulation time less than 0: %f\n", simulationTime);
+                assert(simulationTime > 0.0f);
+            }
             pScene->simulate(simulationTime);
             pScene->fetchResults(true);
         }
@@ -47,6 +51,9 @@ namespace DemonPhysics {
         }
 
         void cookMaterial(DP_PhysicsMaterial *targetMat) { targetMat->createMaterial(pPhysics); }
+
+        physx::PxRaycastBuffer rayCast(glm::vec3 origin, glm::vec3 direction, float distance);
+        physx::PxSweepBuffer   sweepCube(glm::vec3 origin, glm::vec3 direction, float distance, glm::vec3 cubeScale);
 
 
         physx::PxPhysics *getPhysics() { return pPhysics; }

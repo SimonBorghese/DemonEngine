@@ -9,7 +9,7 @@
 #include <DemonPhysics/DP_RigidConvexMesh.h>
 #include <DemonPhysics/DP_RigidActor.h>
 #include <DemonPhysics/DP_RigidPhysicsActor.h>
-#include <DemonRender/DR_RenderManager.h>
+#include <DemonGL/DemonGL.h>
 #include <DemonPhysics/DP_PhysicsManager.h>
 #include <functional>
 #include <string>
@@ -20,10 +20,9 @@ namespace DemonGame {
 
     class DG_PhysicsObject : public DG_Entity {
     public:
-        DG_PhysicsObject(DemonRender::DR_RenderManager *targetRender,
-                         DemonRender::DR_Shader *targetShader,
+        DG_PhysicsObject(DGL::Shader *targetShader,
                          DemonPhysics::DP_PhysicsManager *targetManager) :
-                DG_Entity(targetRender, targetShader),
+                DG_Entity(targetShader),
                 physicsManager(targetManager) {
 
             generalStruct.name = "UNNAMED";
@@ -46,9 +45,14 @@ namespace DemonGame {
                                   glm::vec3 rotation = glm::vec3(0.0f),
                                   glm::vec3 scale = glm::vec3(1.0f));
 
+        // Cannot apply scale here
+        void createEntityFromExistingMesh(DemonBase::b_Mesh **meshes, uint32_t numMesh,
+                                          glm::vec3 pos = glm::vec3(0.0f),
+                                          glm::vec3 rotation = glm::vec3(0.0f));
+
         void destroyEntity();
 
-        void update();
+        void update(DGL::Shader *overrideShader);
 
         DemonPhysics::DP_RigidPhysicsActor *getActor() { return rigidActor; }
 
@@ -78,12 +82,13 @@ namespace DemonGame {
         void setPosition(glm::vec3 newPos){
             rigidActor->setPosition(newPos);
         }
+        void setMaterial(DemonPhysics::DP_PhysicsMaterial *newMat) { mainMaterial = newMat; }
 
     protected:
         DemonPhysics::DP_PhysicsManager *physicsManager;
         DemonPhysics::DP_RigidPhysicsActor *rigidActor;
         DemonPhysics::DP_RigidConvexMesh *rigidMesh;
-        DemonPhysics::DP_PhysicsMaterial *mainMaterial;
+        DemonPhysics::DP_PhysicsMaterial *mainMaterial = nullptr;
 
         DemonBase::DemonUserData::generalStruct generalStruct;
         DemonBase::DemonUserData::DP_PHYSICS_OBJ_DESC objDesc;

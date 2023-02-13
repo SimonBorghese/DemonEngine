@@ -5,20 +5,23 @@
 #ifndef DEMONENGINE_DP_PHYSICSMATERIAL_H
 #define DEMONENGINE_DP_PHYSICSMATERIAL_H
 
-#include <PhysX/PxPhysicsAPI.h>
-#include <PhysX/PxMaterial.h>
+#include <PxPhysicsAPI.h>
+#include <PxMaterial.h>
 
 namespace DemonPhysics {
     class DP_PhysicsMaterial {
     public:
-        DP_PhysicsMaterial(float staticFric = 1.0f, float dynamicFric = 1.0f, float _interia = 1.0f) :
+        DP_PhysicsMaterial(float staticFric = 1.0f, float dynamicFric = 1.0f, float _restitution = 1.0f) :
                 staticFriction(staticFric),
                 dynamicFriction(dynamicFric),
-                intertia(_interia) {}
+                restitution(_restitution) {}
 
         void createMaterial(physx::PxPhysics *phys) {
-            mat = phys->createMaterial(staticFriction, dynamicFriction, intertia);
+            mat = phys->createMaterial(staticFriction, dynamicFriction, restitution);
+#ifndef _PHYSX3
             mat->setFlags(physx::PxMaterialFlag::eIMPROVED_PATCH_FRICTION);
+#endif
+            mat->setFlag(physx::PxMaterialFlag::eCOMPLIANT_CONTACT, true);
         }
 
         void destroyMaterial() {
@@ -32,7 +35,7 @@ namespace DemonPhysics {
     private:
         float staticFriction;
         float dynamicFriction;
-        float intertia;
+        float restitution;
         physx::PxMaterial *mat;
 
     };

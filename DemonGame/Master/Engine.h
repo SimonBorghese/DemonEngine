@@ -7,22 +7,21 @@
 /*
  * A master class for managing all elements of the engine
  */
+#include <DemonGL/DemonGL.h>
 #include <DemonGame/GAME_DEF.h>
-#include <DemonRender/DR_RenderManager.h>
-#include <DemonRender/DR_Shader.h>
+#include <DemonGame/Shared/DG_AnimatedEntity.h>
 #include <DemonPhysics/DP_PhysicsManager.h>
-#include <DemonRender/DR_Camera.h>
 #include <DemonGame/Shared/DG_Event.h>
 #include <DemonGame/Shared/DG_BasicCameraController.h>
 #include <DemonGame/Shared/DG_RigidEntity.h>
 #include <DemonGame/Shared/DG_PhysicsObject.h>
-#include <DemonGame/Shared/DG_BSPMap.h>
-#include <DemonRender/DemonLights/DR_DL_BasicLight.h>
 #include "World.h"
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <vector>
 #include <DemonGame/Shared/External/DG_EXT_PhysicsCallback.h>
+#include <DemonGame/Shared/DG_Trigger.h>
+#include <DemonUI/DU_Overlay.h>
 
 namespace DemonEngine {
 
@@ -34,33 +33,36 @@ namespace DemonEngine {
                                                                                                            _height(height),
                                                                                                            _fov(fov),
                                                                                                            _zFar(zFar) {
-            _renderingManager = new DemonRender::DR_RenderManager;
-            _shaderObject = new DemonRender::DR_Shader;
-            _mainCamera = new DemonRender::DR_Camera(_shaderObject);
+            _defaultWindow = new DGL::Window(GAME_NAME, width, height);
+            _defaultCamera = new DGL::Camera();
+
             _mainEvents = new DemonGame::DG_Event;
 
             _mainPhysicsManager = new DemonPhysics::DP_PhysicsManager;
 
-            _mainPlayer = new DemonGame::DG_BasicCameraController(_mainEvents, _mainCamera, 0.5f);
+            _mainPlayer = new DemonGame::DG_BasicCameraController(_mainEvents, _defaultCamera, 0.5f);
 
             _world = new World(_mainPhysicsManager);
+
         }
 
         // Engine state functions
         void createEngine();
 
-        int gameLoop();
+        int gameLoop(float deltaTime = 0.0f);
 
         void destroyEngine();
 
         // Some basic crap
-        DemonGame::DG_RigidEntity *createWorldObject();
+        DemonGame::DG_RigidEntity *createWorldObject(DGL::Shader *targetShader = nullptr);
 
-        DemonGame::DG_PhysicsObject *createWorldEntity();
+        DemonGame::DG_PhysicsObject *createWorldEntity(DGL::Shader *targetShader = nullptr);
 
-        DemonGame::DG_Entity *createVisualEntity();
+        DemonGame::DG_Entity *createVisualEntity(DGL::Shader *targetShader = nullptr);
 
-        DemonGame::DG_BSPMap *createStaticWorld();
+        DemonGame::DG_AnimatedEntity *createAnimatedEntity(DGL::Shader *targetShader = nullptr);
+
+        DemonGame::DG_Trigger *createTrigger(DGL::Shader *targetShader = nullptr);
 
         // Lighting objects
         typedef struct{
@@ -93,13 +95,13 @@ namespace DemonEngine {
         } DIRECTIONAL_LIGHT_INFO;
 
 
-        DemonRender::DemonLight::DR_DL_BasicLight* createPointLight(POINT_LIGHT_INFO info);
-        DemonRender::DemonLight::DR_DL_BasicLight* createSpotLight(SPOT_LIGHT_INFO info);
-        DemonRender::DemonLight::DR_DL_BasicLight* createDirectionalLight(DIRECTIONAL_LIGHT_INFO info);
+        DGL::Light* createPointLight(POINT_LIGHT_INFO info);
+        DGL::Light* createSpotLight(SPOT_LIGHT_INFO info);
+        DGL::Light* createDirectionalLight(DIRECTIONAL_LIGHT_INFO info);
 
-        DemonRender::DemonLight::DR_DL_BasicLight* createEasyPointLight(glm::vec3 position, float distance, float strength, glm::vec3 colour = glm::vec3(1.0f));
-        DemonRender::DemonLight::DR_DL_BasicLight* createEasySpotLight(glm::vec3 position, glm::vec3 direction, float angle, float distance, float strength, glm::vec3 colour = glm::vec3(1.0f));
-        DemonRender::DemonLight::DR_DL_BasicLight* createEasyDirectionalLight(glm::vec3 direction, float strength, glm::vec3 colour = glm::vec3(1.0f));
+        DGL::Light* createEasyPointLight(glm::vec3 position, float distance, float strength, glm::vec3 colour = glm::vec3(1.0f));
+        DGL::Light* createEasySpotLight(glm::vec3 position, glm::vec3 direction, float angle, float distance, float strength, glm::vec3 colour = glm::vec3(1.0f));
+        DGL::Light* createEasyDirectionalLight(glm::vec3 direction, float strength, glm::vec3 colour = glm::vec3(1.0f));
 
 
 
@@ -116,11 +118,9 @@ namespace DemonEngine {
 
 
         // All the delicious getter functions
-        DemonRender::DR_RenderManager *getRenderingManager() { return _renderingManager; }
+        DGL::Camera *getCamera() { return _defaultCamera; }
 
-        DemonRender::DR_Shader *getObjectShader() { return _shaderObject; }
-
-        DemonRender::DR_Camera *getCamera() { return _mainCamera; }
+        DGL::Window *getWindow() { return _defaultWindow; }
 
         DemonGame::DG_Event *getEvent() { return _mainEvents; }
 
@@ -130,27 +130,66 @@ namespace DemonEngine {
 
         World *getWorld() { return _world; }
 
+        void setCamera(DGL::Camera *newCam){
+            if (!newCam){
+                _enabledCamera = _defaultCamera;
+                return;
+            }
+            _enabledCamera = newCam;
+
+        }
+        DGL::Camera *getDefaultCamera() { return _defaultCamera; }
+
+        DGL::Shader *getDefaultShader() { return _debugShader; }
+
         double getDeltaTime() {
             return (double) ((SDL_GetTicks() - _currentTicks)) / 1000;
         }
 
+        void updateDeltatime() { _currentTicks = SDL_GetTicks(); }
+
+        DemonUI::DU_Overlay* getOverlay() { return _mainOverlay; }
+
+        std::vector<DGL::Light*>* getLights() { return &_lightEntities; }
+
+        DemonPhysics::DP_CharacterController* createCharacterController(glm::vec3 position, float height, float radius,
+                                                                       float stepOffset = 2.0f, float scaleCoeff = 1.0f,
+                                                                       float volumeGrowth = 1.0f, float density = 2.0f,
+                                                                       float slopeLimit = 50.0f,
+                                                                        DemonPhysics::DP_PhysicsMaterial *material = nullptr);
+        std::function<void()> midRenderFunc = []() -> void {};
+
+        int getGameState(std::string name);
+        int* getGameStatePTR(std::string name);
+        void setGameState(std::string name, int value);
+        void setGameStatePTR(std::string name, int *ptr);
     private:
         // Some fundimental variables
         unsigned int _width, _height, _fov, _zFar;
 
         // The foundation objects
-        DemonRender::DR_RenderManager *_renderingManager;
-        DemonRender::DR_Shader *_shaderObject;
-        DemonRender::DR_Camera *_mainCamera;
+        DGL::Window *_defaultWindow;
+        DGL::Camera *_defaultCamera;
+        DGL::Camera *_enabledCamera;
+        DGL::Shader *_debugShader;
         DemonGame::DG_Event *_mainEvents;
         DemonPhysics::DP_PhysicsManager *_mainPhysicsManager;
         DemonGame::DG_BasicCameraController *_mainPlayer;
+
+        DemonUI::DU_Overlay *_mainOverlay;
+
+        std::vector<DGL::Light*> _lightEntities;
+        DGL::Shader *_shadowShader;
 
         // T h e   g a m e
         World *_world;
 
         // delta time stuff
         unsigned int _currentTicks;
+
+        // Game state variables
+        std::map<std::string, int*> _gameState;
+
 
     };
 

@@ -5,8 +5,8 @@
 #ifndef DEMONENGINE_DP_RIGIDACTOR_H
 #define DEMONENGINE_DP_RIGIDACTOR_H
 
-#include <PhysX/PxPhysicsAPI.h>
-#include <PhysX/PxRigidActor.h>
+#include <PxPhysicsAPI.h>
+#include <PxRigidActor.h>
 #include <DemonBase/b_RigidMesh.h>
 #include <DemonBase/b_RigidActor.h>
 #include <DemonBase/b_GameObject.h>

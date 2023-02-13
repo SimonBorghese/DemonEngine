@@ -21,29 +21,29 @@ namespace DemonEngine {
         return _worldEntites.size() - 1;
     }
 
-    int World::addLightEntity(DemonBase::b_Light *light){
+    int World::addLightEntity(DGL::Light *light){
         _lightEntites.push_back(light);
         return _lightEntites.size() - 1;
     }
 
-    void World::updateAll() {
-        // Update Lights
-        for (unsigned int l = 0; l < _lightEntites.size(); l++){
-            _lightEntites.at(l)->renderLight();
+    void World::updateAll(DGL::Shader *overrideShader, glm::mat4 view, glm::mat4 projection) {
+        if (view != glm::mat4(0.0f)){
+            overrideShader->setView(view);
+            overrideShader->setProjection(projection);
         }
 
         // Update Generics
         for (unsigned int g = 0; g < _genericEntites.size(); g++) {
-            _genericEntites.at(g)->update();
+            _genericEntites.at(g)->update(overrideShader);
         }
 
         for (unsigned int g = 0; g < _worldObjects.size(); g++) {
-            _worldObjects.at(g)->update();
+            _worldObjects.at(g)->update(overrideShader);
         }
 
         for (unsigned int g = 0; g < _worldEntites.size(); g++) {
             if (_worldEntites.at(g) != nullptr) {
-                _worldEntites.at(g)->update();
+                _worldEntites.at(g)->update(overrideShader);
             }
         }
     }
@@ -52,6 +52,39 @@ namespace DemonEngine {
         _genericEntites.clear();
         _worldObjects.clear();
         _worldEntites.clear();
+        _lightEntites.clear();
+    }
+
+    void World::destroyWorld(){
+        for (auto genericEntity : _genericEntites){
+            //removeWorldGenericValue(genericEntity);
+            genericEntity->destroyEntity();
+            delete genericEntity;
+        }
+
+        for (auto worldObjects : _worldObjects){
+            //removeWorldObjectValue(worldObjects);
+            worldObjects->destroyEntity();
+            delete worldObjects;
+        }
+
+        for (auto worldEntity = _worldEntites.begin(); worldEntity != _worldEntites.end(); worldEntity++){
+            //removeWorldEntityValue(*worldEntity);
+            printf("Freeing 1\n");
+            if (worldEntity != std::next(worldEntity) && worldEntity != std::prev(worldEntity)) {
+                (*worldEntity)->destroyEntity();
+                delete *worldEntity;
+            } else{
+                break;
+            }
+        }
+
+        for (auto lightEntity : _lightEntites){
+            //lightEntity->destroyLight();
+            //lightEntity->renderLight();
+            removeLightEntityValue(lightEntity);
+        }
+
     }
 
     DemonGame::DG_Entity *World::removeWorldGeneric(unsigned int pointer) {
@@ -83,8 +116,12 @@ namespace DemonEngine {
         std::remove(_genericEntites.begin(), _genericEntites.end(),pointer);
     }
 
-    DemonBase::b_Light *World::removeLightEntity(unsigned int pointer){
-        DemonBase::b_Light *target = _lightEntites.at(pointer);
+    void World::removeLightEntityValue(DGL::Light * pointer){
+        std::remove(_lightEntites.begin(), _lightEntites.end(), pointer);
+    }
+
+    DGL::Light *World::removeLightEntity(unsigned int pointer){
+        DGL::Light *target = _lightEntites.at(pointer);
         _lightEntites.erase(_lightEntites.cbegin() + pointer);
         return target;
     }

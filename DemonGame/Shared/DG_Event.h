@@ -36,10 +36,17 @@ namespace DemonGame {
 
         int getCloseState();
 
-        void setKeyUpCallback( std::function<void(int)> target) { _keyUpFunc = target; }
-        void setKeyDownCallback( std::function<void(int)> target) { _keyDownFunc = target; }
-        void setKeyCallback( std::function<void(int)> target) { _keyFunc = target; }
+        void addKeyUpCallback( std::function<void(int)> target) { _keyUpFunc.push_back(target); }
+        void addKeyDownCallback( std::function<void(int)> target) { _keyDownFunc.push_back(target); }
+        void addKeyCallback( std::function<void(int)> target) { _keyFunc.push_back(target); }
 
+        SDL_Event* getEvent() { return &e; }
+
+        std::function<bool(SDL_Event*)> callBack;
+
+        void toggleMouseMovements(){
+            _enableMouseMovement = !_enableMouseMovement;
+        }
     private:
         SDL_Event e;
 
@@ -54,9 +61,12 @@ namespace DemonGame {
         int offsetMouseX = 0;
         int offsetMouseY = 0;
 
-        std::function<void(int)> _keyUpFunc = nullptr;
-        std::function<void(int)> _keyDownFunc = nullptr;
-        std::function<void(int)> _keyFunc = nullptr;
+        std::vector<std::function<void(int)>> _keyUpFunc;
+        std::vector<std::function<void(int)>> _keyDownFunc;
+        std::vector<std::function<void(int)>> _keyFunc;
+
+        int _enableMouseMovement = 1;
+
     };
 
 } // DemonGame

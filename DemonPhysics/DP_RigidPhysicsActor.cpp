@@ -8,7 +8,7 @@ namespace DemonPhysics {
     void DP_RigidPhysicsActor::createActor(physx::PxPhysics *physx, physx::PxMaterial *mat) {
         _mainActor = (physx::PxRigidDynamic *) physx->createRigidDynamic(physx::PxTransform(physx::PxVec3(0.0f)));
         _ptrActorDynamic = (physx::PxRigidDynamic *) _mainActor;
-        physx::PxTransform relativePose(physx::PxQuat(1, physx::PxVec3(0.0f, 0.0f, 0.0f)));
+        physx::PxTransform relativePose(physx::PxQuat(0, physx::PxVec3(0.0f, 0.0f, 0.0f)));
 
 
         if (_targetMeshes.size() < 1) {
@@ -24,6 +24,7 @@ namespace DemonPhysics {
                 // END MESH GEN
                 if (_mainShapes.at(_mainShapes.size()-1) != NULL) {
                     _mainShapes.at(_mainShapes.size()-1)->setLocalPose(relativePose);
+                    //_mainShapes.at(_mainShapes.size()-1)->setContactOffset(0.0f);
                 } else {
                     _mainActor = NULL;
                     return;
@@ -32,8 +33,8 @@ namespace DemonPhysics {
         }
 
         //((physx::PxRigidDynamic*) _mainActor)
-        getRealActor()->setMass(1.0f);
-        getRealActor()->setMassSpaceInertiaTensor(physx::PxVec3(1.0f));
+        //getRealActor()->setMass(1.0f);
+        //getRealActor()->setMassSpaceInertiaTensor(physx::PxVec3(1.0f));
         physx::PxRigidBodyExt::updateMassAndInertia(*getRealActor(), 1.0f);
 
     }

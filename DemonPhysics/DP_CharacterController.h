@@ -5,8 +5,8 @@
 #ifndef DEMONENGINE_DP_CHARACTERCONTROLLER_H
 #define DEMONENGINE_DP_CHARACTERCONTROLLER_H
 
-#include <PhysX/characterkinematic/PxController.h>
-#include <PhysX/characterkinematic/PxCapsuleController.h>
+#include <characterkinematic/PxController.h>
+#include <characterkinematic/PxCapsuleController.h>
 #include <DemonBase/b_Controller.h>
 
 namespace DemonPhysics {
@@ -16,7 +16,7 @@ namespace DemonPhysics {
         DP_CharacterController(glm::vec3 position, physx::PxMaterial *targetMaterial,
                                float height, float radius, physx::PxControllerManager *controllerManager,
                                float stepOffset = 2.0f, float scaleCoeff = 1.0f, float volumeGrowth = 1.0f,
-                               float density = 2.0f, float slopeLimit = 90.0f) :
+                               float density = 2.0f, float slopeLimit = 50.0f) :
                 _characterHeight(height),
                 _characterRadius(radius),
                 _stepOffset(stepOffset),
@@ -28,7 +28,7 @@ namespace DemonPhysics {
             physx::PxCapsuleControllerDesc desc;
             desc.height = _characterHeight;
             desc.radius = _characterRadius;
-            desc.climbingMode = physx::PxCapsuleClimbingMode::eEASY;
+            desc.climbingMode = physx::PxCapsuleClimbingMode::eCONSTRAINED;
             desc.slopeLimit = _slopeLimit;
             desc.density = _density;
             desc.volumeGrowth = _volumeGrowth;
@@ -41,6 +41,18 @@ namespace DemonPhysics {
             desc.position = physx::PxExtendedVec3(position.x, position.y, position.z);
 
             pMainController = controllerManager->createController(desc);
+            pMainController->getActor()->setName("character");
+
+            generalStruct.type = DemonGame::CHARACTER;
+            generalStruct.name = "UNNAMED";
+            strncpy(&generalStruct.magicString[0], "IOBJ", sizeof(char) * 5);
+            generalStruct.originalObject = nullptr;
+            generalStruct.structReference = &objDesc;
+
+            strncpy(&objDesc.magicString[0], "IOBJ", sizeof(char) * 5);
+            objDesc.characterCallback = nullptr;
+
+            pMainController->getActor()->userData = &generalStruct;
         }
 
         void setHeight(float height){

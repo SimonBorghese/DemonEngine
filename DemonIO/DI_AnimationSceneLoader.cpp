@@ -10,7 +10,7 @@ namespace DemonIO {
         assert(currentBody <= MAX_ANIMATED_BODIES);
         std::vector<DemonBase::b_Mesh> newMeshes;
 
-        Assimp::Importer *oModelLoader = new Assimp::Importer;
+        auto *oModelLoader = new Assimp::Importer;
         const aiScene *oScene = oModelLoader->ReadFile(fileName, aiProcess_Triangulate | aiProcess_GenUVCoords |
                                                                  aiProcess_FindInvalidData | aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices | aiProcess_LimitBoneWeights);
         if (strcmp("", oModelLoader->GetErrorString()) != 0) {
@@ -18,19 +18,19 @@ namespace DemonIO {
         }
 
         // Allocate our meshes
-        DemonAnimation::DA_riggedMesh **meshes = (DemonAnimation::DA_riggedMesh **) malloc(sizeof(DemonAnimation::DA_riggedMesh *) * oScene->mNumMeshes);
+        auto **meshes = (DemonAnimation::DA_riggedMesh **) malloc(sizeof(DemonAnimation::DA_riggedMesh*) * oScene->mNumMeshes);
 
         unsigned int numBone = 0;
         int totalBone = 0;
 
         for (unsigned int m = 0; m < oScene->mNumMeshes; m++) {
+
             unsigned int numVertices = oScene->mMeshes[m]->mNumVertices;
             aiMesh *currentMesh = oScene->mMeshes[m];
 
-            // Stack allocations go brrrrr....
-            Vertex *m_vertices = (Vertex*) malloc(sizeof(Vertex) * (numVertices + 1));
-            //oScene->mMeshes[0]->
-            //bone.
+            auto *m_vertices = (Vertex*) malloc(sizeof(Vertex) * (numVertices + 1));
+
+
             for (unsigned int v = 0; v < numVertices; v++) {
 
                 m_vertices[v].iBoneIds = glm::ivec4(-1);
@@ -51,7 +51,7 @@ namespace DemonIO {
                     m_vertices[v].iNormal.z = 0.0f;
                 }
 
-                for (int t = 0; t < AI_MAX_NUMBER_OF_TEXTURECOORDS; t++) {
+                for (unsigned int t = 0; t < oScene->mMeshes[m]->mNumUVComponents[0]; t++) {
                     if (oScene->mMeshes[m]->mTextureCoords[t]) {
                         m_vertices[v].iTextCord.x = (oScene->mMeshes[m]->mTextureCoords[t][v]).x;
                         m_vertices[v].iTextCord.y = (oScene->mMeshes[m]->mTextureCoords[t][v]).y;
@@ -65,11 +65,11 @@ namespace DemonIO {
             }
 
             // Bone/Node Name:BoneID
-            std::map<std::string, DemonAnimation::BoneInfo*> *_boneMap = new std::map<std::string, DemonAnimation::BoneInfo*>;
+            auto *_boneMap = new std::map<std::string, DemonAnimation::BoneInfo*>;
 
             // Name:Animation
             // WE ALSO NEED TO FREE THIS AT SOME POINT
-            std::map<unsigned int, aiAnimation*> *_animationMap = new std::map<unsigned int, aiAnimation*>;
+            auto *_animationMap = new std::map<unsigned int, aiAnimation*>;
 
             std::map<int, std::string> _boneNames;
 
@@ -78,12 +78,12 @@ namespace DemonIO {
             for (unsigned int b = 0; b < currentMesh->mNumBones; ++b){
                 aiBone *currentBone = currentMesh->mBones[b];
 
-                int boneID = -1;
+                int boneID;
                 std::string boneName = currentBone->mName.C_Str();
                 if (_boneMap->find(boneName) == _boneMap->end())
                 {
-                    DemonAnimation::BoneInfo *newBoneInfo = new DemonAnimation::BoneInfo;
-                    newBoneInfo->id = numBone;
+                    auto *newBoneInfo = new DemonAnimation::BoneInfo;
+                    newBoneInfo->id = (int) numBone;
                     newBoneInfo->offset = GetGLMMat(currentBone->mOffsetMatrix);
                     (*_boneMap)[boneName] = newBoneInfo;
                     boneID = totalBone;
@@ -98,13 +98,13 @@ namespace DemonIO {
                 assert(boneID != -1);
                 auto weights = currentBone->mWeights;
 
-                for (int weightIndex = 0; weightIndex < currentBone->mNumWeights; weightIndex++)
+                for (unsigned int weightIndex = 0; weightIndex < currentBone->mNumWeights; weightIndex++)
                 {
-                    int vertexId = weights[weightIndex].mVertexId;
+                    unsigned int vertexId = weights[weightIndex].mVertexId;
                     float weight = weights[weightIndex].mWeight;
                     
                     assert(vertexId <= numVertices);
-                    for (unsigned int cb = 0; cb < MAX_BONE_INFLUENCE; cb++) {
+                    for (int cb = 0; cb < MAX_BONE_INFLUENCE; cb++) {
                         if (m_vertices[vertexId].weights[cb] == 0.0f) {
                             m_vertices[vertexId].weights[cb] = weight;
                             m_vertices[vertexId].iBoneIds[cb] = boneID;
@@ -123,48 +123,29 @@ namespace DemonIO {
             }
 
 
-            std::vector<uint32_t> m_indices;
+            auto m_indices = new std::vector<uint32_t>;
             for (unsigned int f = 0; f < oScene->mMeshes[m]->mNumFaces; f++) {
                 aiFace face = oScene->mMeshes[m]->mFaces[f];
                 for (unsigned int i = 0; i < face.mNumIndices; i++) {
-                    m_indices.push_back(face.mIndices[i]);
+                    m_indices->push_back(face.mIndices[i]);
                 }
             }
-            /*
-            Vertex m_REALvertices[m_indices.size()];
-            for (unsigned int i = 0; i < m_indices.size(); i++){
-                m_REALvertices[i] = m_vertices[m_indices.at(i)];
-            }
-             */
-            // Make it a heap allocation so we don't lose it
-
-
-
-            /*
-             *
-             *
-             * REMINDER
-             *
-             *
-             *
-             * ADD MESHES INIT
-             *
-             *
-             *
-             *
-             * HERE
-                */
 
             auto globalTransformation = oScene->mRootNode->mTransformation;
             glm::mat4 globalMatrix = GetGLMMat(globalTransformation.Inverse());
+
             meshes[m] = new DemonAnimation::DA_riggedMesh(&m_vertices[0], numVertices,
-                                                          m_indices.data(), m_indices.size(),
+                                                          m_indices->data(), m_indices->size(),
                                                           (_boneMap), (_animationMap),
                                                           globalMatrix, oScene->mRootNode,
                                                           currentBody);
+
+            delete m_indices;
+            free(m_vertices);
+
             aiMaterial *matSafe = oScene->mMaterials[oScene->mMeshes[m]->mMaterialIndex];
 
-            if (matSafe != NULL) {
+            if (matSafe != nullptr) {
                 aiString tex_loc;
                 matSafe->GetTexture(aiTextureType_DIFFUSE, 0, &tex_loc);
                 meshes[m]->setTextureDiffuse(tex_loc);

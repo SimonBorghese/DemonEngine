@@ -5,8 +5,9 @@
 #ifndef DEMONENGINE_B_CONTROLLER_H
 #define DEMONENGINE_B_CONTROLLER_H
 
-#include <PhysX/PxPhysicsAPI.h>
-#include <PhysX/characterkinematic/PxController.h>
+#include <PxPhysicsAPI.h>
+#include <characterkinematic/PxController.h>
+#include <DemonBase/b_PhysUserData.h>
 
 // Needed for time calculation, bad to include but I need it
 #include <SDL2/SDL.h>
@@ -37,6 +38,27 @@ namespace DemonBase {
             if (!pLastTime) { pLastTime = SDL_GetTicks(); }
 
             pMainController->move(physx::PxVec3(forward.x, forward.y, forward.z), 0.0f, (SDL_GetTicks() - pLastTime),
+                                  pControlFilter);
+            if (realTarget != glm::vec3(0.0f)) {
+                forceTarget = glm::normalize(realTarget);
+                pMainController->move(physx::PxVec3(forceTarget.x, forceTarget.y * 33.0f, forceTarget.z), 0.0f,
+                                      (SDL_GetTicks() - pLastTime), pControlFilter);
+                realTarget -= glm::normalize(realTarget);
+                //glm::clamp(realTarget, glm::vec3(0.0f), glm::vec3(2000.0f));
+                if (realTarget.x <= 0.0f || realTarget.y <= 0.0f || realTarget.z <= 0.0f){
+                    realTarget = glm::vec3(0.0f);
+                }
+            }
+            pLastTime = SDL_GetTicks();
+        }
+        void setRealTarget(glm::vec3 newTarget){
+            realTarget += newTarget;
+        }
+
+        void move(glm::vec3 forward, float time) {
+            if (!pLastTime) { pLastTime = SDL_GetTicks(); }
+
+            pMainController->move(physx::PxVec3(forward.x, forward.y, forward.z), 0.0f, (time),
                                   pControlFilter);
             pLastTime = SDL_GetTicks();
         }
@@ -75,11 +97,19 @@ namespace DemonBase {
 
         void setName(const char *newName) {
             pMainController->getActor()->setName(newName);
+            generalStruct.name = std::string(newName);
             name = newName;
         }
 
-        const char *getName() { return name; }
+        void setUserPointer(void *target){
+            generalStruct.originalObject = target;
+        }
 
+        void setContactCallback(std::function<void(DG_Object*)> callback){
+            objDesc.characterCallback = callback;
+        }
+
+        const char *getName() { return name; }
     protected:
         physx::PxMaterial *pMainMat;
         const char *name;
@@ -87,6 +117,11 @@ namespace DemonBase {
         physx::PxControllerFilters pControlFilter;
 
         uint32_t pLastTime = 0;
+        glm::vec3 realTarget = glm::vec3(0.0f);
+        glm::vec3 forceTarget = glm::vec3(0.0f);
+
+        DemonBase::DemonUserData::generalStruct generalStruct;
+        DemonBase::DemonUserData::DP_CHARACTER_OBJ_DESC objDesc;
     };
 }
 

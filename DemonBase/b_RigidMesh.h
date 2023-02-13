@@ -5,8 +5,8 @@
 #ifndef DEMONENGINE_B_RIGIDMESH_H
 #define DEMONENGINE_B_RIGIDMESH_H
 #include "b_Mesh.h"
-#include <PhysX/PxPhysicsAPI.h>
-#include <PhysX/PxShape.h>
+#include <PxPhysicsAPI.h>
+#include <PxShape.h>
 
 
 

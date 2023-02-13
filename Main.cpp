@@ -1,455 +1,368 @@
-#include <stdlib.h>
-#include <stdio.h>
-
-#define GLM_ENABLE_EXPERIMENTAL
-
-#include <glm/ext.hpp>
-
-#include <DemonRender/DR_Shader.h>
 
 #include <DemonGame/Master/Engine.h>
-#include <DemonPhysics/DP_CharacterController.h>
-#include <DemonRender/DemonLights/DR_DL_BasicLight.h>
-#include <DemonGame/Shared/External/DG_EXT_PhysicsCallback.h>
-#include <DemonIO/DI_BSPLoader.h>
-#include <DemonGame/Shared/DG_AnimatedEntity.h>
 #include <DemonGame/Master/BSPLoader.h>
-
+#include <DemonGame/Master/World.h>
+#include <DemonGame/Shared/Lua/LuaInterface.h>
+#include <DemonPhysics/DP_CharacterController.h>
 #include <math.h>
+#include <GameClients/Protal/npc_charger.h>
 
-#include <DemonAnimation/DA_riggedMesh.h>
-#include <DemonIO/DI_AnimationSceneLoader.h>
+#include <PathFinder.h>
+#include <DemonNPC/Level.h>
+#include <DemonMacro/DemonBench.h>
 
-#include <vector>
-
-#define GET_SECONDS() (SDL_GetTicks() / 1000.0f)
-
-#define WIDTH 800
-#define HEIGHT 600
-#define SPEED 90
-#define JUMP_HEIGHT 0.3f
-#define GRAVITY_MULTIPLIER 10.0f
-#define DEFAULT_GRAVITY -9.81f * GRAVITY_MULTIPLIER
-float gravity = DEFAULT_GRAVITY;
 
 
 DemonEngine::Engine *engine;
-DemonPhysics::DP_CharacterController *controller;
-glm::vec3 FPSFront = glm::vec3(0.0f);
+DemonEngine::BSPLoader *bspLoader;
+DemonEngine::World *world;
+DemonPhysics::DP_CharacterController *player;
+DG::Lua::LuaInterface luaInterface;
+DNPC::Level *_npcWorld;
 
-DemonGame::DG_AnimatedEntity *weaponThing;
+std::vector<Protal::npc_charger*> chargers;
+uint32_t maxChargers = 200.0f;
+uint32_t radius = 20.0f;
 
-void SCPCollideCallback(DemonGame::DG_PhysicsObject* thisObj, DemonGame::DG_Object* other){
-    //printf("%s just touched: %s\n",thisObj->getName().c_str(), other->getName().c_str());
-    //other->getActor()->setPosition(glm::vec3(0.0f, 20.0f, 0.0f));
-    //other->getActor()->applyForce(-engine->getCamera()->getCameraFront() * 2000.0f);
-    thisObj->getActor()->applyForce(-engine->getCamera()->getCameraFront() * 2000.0f);
-    if (other->type == DemonGame::STATIC){
-        printf("The other is static\n");
-    }
-    else{
-        printf("The other is dynamic\n");
-        other->physObj->getActor()->applyForce(-engine->getCamera()->getCameraFront() * 2000.0f);
-    }
-}
-
-//std::vector<glm::vec3> starts;
-//unsigned int currentStart = 0;
+DG_RigidEntity *follower;
 
 
-void keyDownCallback(int scancode){
-    auto newBlock = (DemonGame::DG_PhysicsObject*)0;
-    switch (scancode){
-        case SDL_SCANCODE_E:
-            if (weaponThing->isAnimationFinished(GET_SECONDS())) {
-                newBlock = engine->createWorldEntity();
-                newBlock->createEntityFromMesh("block.obj",
-                                               weaponThing->getTransform()->getPosition() +
-                                               (engine->getCamera()->getFPSFront() * 3)
-                );
-                newBlock->setContactCallback(SCPCollideCallback);
-                newBlock->getActor()->getRealActor()->setMass(50.0f);
-                newBlock->getActor()->applyForce(glm::vec3(engine->getCamera()->getCameraFront() * 1000));
-                weaponThing->playOnce(SDL_GetTicks() / 1000.0f);
-                //controller->translate(starts.at(currentStart++) + glm::vec3(0.0f, controller->getHeight(), 0.0f));
-                //if (currentStart == starts.size()){
-                //    currentStart = 0;
-                //}
-            }
-            break;
-        case SDL_SCANCODE_SPACE:
-            if (controller->onGround()) {
-                gravity = DEFAULT_GRAVITY * -JUMP_HEIGHT;
-            }
-            break;
-        default:
-            break;
-    }
-}
+float health = 100.0f;
 
-void keyCalback(int scancode){
-    //sFPSFront.y = 0.0f;
-    glm::vec3 target = glm::vec3(0.0f);
-    switch (scancode){
+void keyCallback(int SCANCODE){
+    switch (SCANCODE){
         case SDL_SCANCODE_W:
-            if (!engine->getEvent()->getKey(SDL_SCANCODE_LCTRL)) {
-                //controller->move(engine->getCamera()->getForward() * engine->getDeltaTime() * SPEED);
-                target = engine->getCamera()->getForward() * engine->getDeltaTime() * SPEED;
-            }
-            else{
-                //controller->translate(controller->getPosition() + engine->getCamera()->getForward() * engine->getDeltaTime() * SPEED);
-                target = engine->getCamera()->getCameraFront() * engine->getDeltaTime() * SPEED;
-            }
+            player->move(engine->getCamera()->getFPSFront());
             break;
         case SDL_SCANCODE_S:
-            //controller->move(engine->getCamera()->getBackward() * engine->getDeltaTime() * SPEED);
-            target = engine->getCamera()->getBackward() * engine->getDeltaTime() * SPEED;
+            player->move(-engine->getCamera()->getFPSFront());
             break;
         case SDL_SCANCODE_A:
-            //controller->move(engine->getCamera()->getLeft() * engine->getDeltaTime() * SPEED);
-            target = engine->getCamera()->getLeft() * engine->getDeltaTime() * SPEED;
+            player->move(-engine->getCamera()->getCameraRight());
             break;
         case SDL_SCANCODE_D:
-            //controller->move(engine->getCamera()->getRight() * engine->getDeltaTime() * SPEED);
-            target = engine->getCamera()->getRight() * engine->getDeltaTime() * SPEED;
+            player->move(engine->getCamera()->getCameraRight());
             break;
-        default:
+
+    }
+}
+
+void keyDownCallback(int SCANCODE){
+    switch (SCANCODE){
+        case SDL_SCANCODE_E:
+            auto projectile = engine->createWorldEntity();
+            projectile->createEntityFromMesh("block.obj", player->getPosition() + (engine->getCamera()->getCameraFront() * 5.0f));
+            projectile->setMass(100.0f);
+            projectile->getActor()->applyForce(engine->getCamera()->getCameraFront() * 5000.0f);
             break;
     }
-    if (!engine->getEvent()->getKey(SDL_SCANCODE_LCTRL)) {
-        controller->move(target);
-    } else{
-        controller->translate(controller->getPosition() + target);
-    }
-}
-void bspCallback(DemonEngine::BSP_EntityCreateInfo info){
-    //printf("Got: %s\n", info.name);
-    //printf("Pos: %f %f %f\n", info.pos.x, info.pos.z, -info.pos.y);
-    glm::vec3 realPos = glm::vec3(info.pos.x, info.pos.z, -info.pos.y);
-    if (!strcmp(info.name, "info_player_start")){
-        //printf("Found player start\n");
-        controller->translate(realPos);
-
-        //To-Do: Remove this line
-        //engine->createWorldObject()->createEntityFromMesh("block.obj", realPos * (2.0f), glm::vec3(0.0f), glm::vec3(3.0f));
-    }
-}
-
-int main(void) {
-    // Initialize the engine
-    engine = new DemonEngine::Engine(WIDTH, HEIGHT);
-
-    // Create the engine elements
-    engine->createEngine();
-
-    // Create the FPS controller
-    controller = engine->createFPSController(glm::vec3(0.0f), 10.0f, 5.0f);
-    controller->translate(glm::vec3(0.0f));
-
-
-    //DemonEngine::BSPLoader bspLoader(engine);
-    //bspLoader.setBSPCreationCallback(bspCallback);
-    //bspLoader.loadBSP("notmy4.bsp");
-    //engine->createWorldObject()->createEntityFromMesh("bloque.obj", glm::vec3(0.0f, -10.0f, 0.0f));
-
-
-    // Create a light
-    auto *light1 = engine->createEasyPointLight(glm::vec3(0.0f, -2.0f, 0.0f), 1000000.0f, 1.0f);
-    //DemonEngine::Engine::DIRECTIONAL_LIGHT_INFO dirLightInfo;
-    //dirLightInfo.direction = glm::vec3(0.0f, 10.0f, 0.0f);
-    //dirLightInfo.specularAccuracy = 32;
-    //dirLightInfo.ambientStrength = 0.5f;
-    //dirLightInfo.specularStrength = 0.5f;
-    //dirLightInfo.colour = glm::vec3(0.0f);
-    //engine->createDirectionalLight(dirLightInfo);
-
-    // Set the key callback functions
-    engine->getEvent()->setKeyDownCallback(keyDownCallback);
-    engine->getEvent()->setKeyCallback(keyCalback);
-
-    weaponThing = new DG_AnimatedEntity(engine->getRenderingManager(), engine->getObjectShader());
-    weaponThing->createEntityFromMesh("zapper2.fbx");
-    /*
-    unsigned int meshes;
-    Assimp::Importer *killable;
-    DemonAnimation::DA_riggedMesh ** mesh =
-            DemonIO::DI_AnimationSceneLoader::loadMeshesFromFile("vamp.fbx", &meshes, glm::vec3(1.0f), &killable);
-    printf("Got: %d meshes\n", meshes);
-
-    DemonRender::DR_Mesh weird(mesh[0]);
-    weird.createTextureFromSTB("Vampire_diffuse.png", true);
-    DemonRender::DR_MeshRenderer meshRenderer;
-    DemonWorld::DW_Transform good;
-    good.createTransform(glm::vec3(0.0f));
-    meshRenderer.addMesh(&weird);
-    meshRenderer.setShader(engine->getObjectShader());
-    meshRenderer.bindTransform(&good);
-    engine->getRenderingManager()->addMeshGroup(&meshRenderer);
-     */
-
-    DG_AnimatedEntity *newAnimatedEnt = new DG_AnimatedEntity(engine->getRenderingManager(), engine->getObjectShader());
-    newAnimatedEnt->createEntityFromMesh("vamp2.fbx");
-
-
-    //mesh[0]->engine = engine;
-    unsigned int fps = 0;
-    unsigned int lastFPSCheck = SDL_GetTicks();
-    weaponThing->setAnimation(4);
-    while (!engine->gameLoop()) {
-
-        if (engine->getEvent()->getKeyDown(SDL_SCANCODE_P) && newAnimatedEnt->isAnimationFinished(GET_SECONDS())) {
-            newAnimatedEnt->playOnce(GET_SECONDS());
-        }
-            weaponThing->getTransform()->scale(glm::vec3(1.0f));
-            newAnimatedEnt->playAnimation(GET_SECONDS());
-
-            weaponThing->playAnimation(GET_SECONDS());
-            weaponThing->getTransform()->setScale(glm::vec3(0.01f, 0.01f, -0.01f));
-
-        light1->getLightInfo()->position = controller->getPosition();
-        if (!engine->getEvent()->getKey(SDL_SCANCODE_LCTRL)) {
-
-            weaponThing->getTransform()->setPosition(engine->getCamera()->getPosition() +
-            (engine->getCamera()->getCameraFront() * 5) +
-            (engine->getCamera()->getCameraRight() * 3) +
-            glm::vec3(0.0f, -5.0f, 0.0f));
-
-            weaponThing->getTransform()->setRotation(glm::vec3(glm::radians(-engine->getCamera()->getYRotation()),
-                                                               glm::radians((-(engine->getCamera()->getXRotation())) + 90.0f), 0.0f));
-
-            FPSFront = engine->getCamera()->getFPSFront();
-
-            gravity = 0.0f;
-
-            controller->move(glm::vec3(0.0f, gravity * engine->getDeltaTime(), 0.0f));
-        }
-        else{
-            FPSFront = engine->getCamera()->getCameraFront();
-        }
-
-        if (controller->onGround() && gravity != DEFAULT_GRAVITY){
-            gravity = DEFAULT_GRAVITY;
-        }
-        else if (gravity > DEFAULT_GRAVITY){
-            gravity += DEFAULT_GRAVITY * engine->getDeltaTime();
-        }
-        light1->getLightInfo()->position = controller->getPosition();
-
-        fps++;
-        if (SDL_GetTicks() - lastFPSCheck >= 1000){
-            printf("Current FPS: %d\n", fps);
-            fps = 0;
-            lastFPSCheck = SDL_GetTicks();
-        }
-    }
-
-    engine->destroyEngine();
-    delete engine;
-
-    return 0;
 }
 
 
-/*
- *
- * //std::vector<glm::vec3>
-    // Begin my horrible nav mesh test
-    std::vector<std::vector<glm::vec3>> totalVertex;
-    unsigned int numOfMeshes = 0;
-    DemonBase::b_Mesh **bMeshes = DemonIO::DI_BSPLoader::loadMeshesFromFile("notmy4.bsp", &numOfMeshes, glm::vec3(1.0f/4.0f));
-    //printf("FOUND NUM MESHES: %d\n", numOfMeshes);
-    for (unsigned int m = 0; m < 1; m++){
-        DemonBase::b_Mesh *bMesh = bMeshes[m];
-        std::vector<glm::vec3> allVertices;
-        for (unsigned int v = 0; v < bMesh->getGLMVertices().size(); v++){
-            glm::vec3 vertex = bMesh->getGLMVertices().at(v);
+std::vector<glm::vec3> lines;
 
-            if (allVertices.size() == 0){
-                allVertices.push_back(vertex);
-            } else{
-                for (unsigned int av = 0; av <= allVertices.size(); av++){
-                    if (av == allVertices.size()){
-                        allVertices.push_back(vertex);
-                        break;
-                    } else{
-                        if (allVertices.at(av).y >= vertex.y){
-                            allVertices.insert(allVertices.begin() + av, vertex);
-                            break;
-                        }
+void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
+    enum BSP_ENTITIES{
+        INFO_PLAYER_START,
+        INFO_POINT_LIGHT,
+        INFO_DIRECTIONAL_LIGHT,
+        INFO_DOOR,
+        INFO_DOOR_TARGET,
+        INFO_KEY,
+        PHYS_PROP,
+        INFO_BRUSHDOOR,
+        INFO_BRUSHDOOR_TARGET,
+        INFO_BRUSHPROP,
+        INFO_SCRIPTED_PROP,
+        INFO_NODE
+    };
+
+#define INSERT(name, ent) entityList.insert(std::pair<std::string, BSP_ENTITIES>(name, ent))
+    std::map<std::string, BSP_ENTITIES> entityList{};
+    INSERT("info_player_start", INFO_PLAYER_START);
+    INSERT("info_point_light", INFO_POINT_LIGHT);
+    INSERT("info_directional_light", INFO_DIRECTIONAL_LIGHT);
+    INSERT("info_door", INFO_DOOR);
+    INSERT("info_door_target", INFO_DOOR_TARGET);
+    INSERT("info_key", INFO_KEY);
+    INSERT("phys_prop", PHYS_PROP);
+    INSERT("info_brushdoor", INFO_BRUSHDOOR);
+    INSERT("info_brushdoor_target", INFO_BRUSHDOOR_TARGET);
+    INSERT("info_brushprop", INFO_BRUSHPROP);
+    INSERT("info_scripted_prop", INFO_SCRIPTED_PROP);
+    INSERT("info_node", INFO_NODE);
+
+    glm::vec3 realPos = glm::vec3(_info.pos.x, _info.pos.z, -_info.pos.y);
+
+    auto lookingEntity = entityList.find(_info.name);
+    //printf("Ent Name: %s and %d\n", info.name, info.entityNumber);
+
+    if (lookingEntity != entityList.end()){
+        switch (lookingEntity->second){
+            case INFO_PLAYER_START:
+            {
+                player->translate(realPos);
+            }
+                break;
+            case INFO_BRUSHPROP:
+            {
+                if (_info.brushMeshes) {
+                    auto newProp = engine->createWorldEntity();
+                    auto objMass = CBSP_getKeyFromEntity(_info.currentEntity, "mass");
+                    float mass = 0.0f;
+                    if (strcmp(objMass, CBSP_getKeyFromEntity_FAILURE)) {
+                        mass = atof(objMass);
                     }
+
+                    newProp->createEntityFromExistingMesh(_info.brushMeshes, _info.numBrushMesh, _info.origin,
+                                                          glm::vec3(0.0f, glm::radians(_info.angle), 0.0f));
+                    if (mass > 0.0f) {
+                        //newProp->setMass(mass);
+                    }
+                    DemonPhysics::DP_PhysicsMaterial *newMat = new DemonPhysics::DP_PhysicsMaterial(0.8f, 0.5f,
+                                                                                                    0.8f);
+                    newMat->createMaterial(engine->getPhysicsManager()->getPhysics());;
+                    newProp->setMaterial(newMat);
                 }
             }
+                break;
+            case INFO_POINT_LIGHT:
+            {
+                float distance = 0.0f;
+                distance = atof(CBSP_getKeyFromEntity(_info.currentEntity, "distance")) * 1.0f;
+                float intensity = 0.0f;
+                intensity = atoi(CBSP_getKeyFromEntity(_info.currentEntity, "intensity")) / 100.0f;
+
+#define SHADOW_HELL 1.0f
+#define SHADOW_RES 512
+                engine->createEasyPointLight(realPos, distance, intensity)->createShadowBuffer(
+                        SHADOW_RES * SHADOW_HELL, SHADOW_RES * SHADOW_HELL);
+                engine->createEasyPointLight(realPos, distance, intensity);
+            }
+                break;
+            case INFO_SCRIPTED_PROP:
+            {
+                const char *script = CBSP_getKeyFromEntity(_info.currentEntity, "script");
+                if (strcmp(script, CBSP_getKeyFromEntity_FAILURE)){
+                    luaInterface.initFile(script);
+                    luaInterface.callFunction("onInit");
+                    //assert(0);
+                } else{
+                    assert(0);
+                }
+            }
+                break;
+            case INFO_NODE:
+            {
+                _npcWorld->addNode(realPos);
+            }
+                break;
+            default:
+                break;
         }
-        totalVertex.push_back(allVertices);
+    }
+}
+
+std::vector<glm::vec3> Epath;
+std::vector<glm::vec3> targets;
+
+
+DGL::Shader* lineShader;
+GLuint VAO;
+GLuint VBO;
+glm::vec3 prevPosition = glm::vec3(-1.0f);
+
+DG_Entity *startMarker;
+DG_Entity *endMarker;
+
+
+glm::vec3 startPos;
+glm::vec3 endPos;
+int run = 0;
+DNPC::Path *levelPath;
+
+void init(){
+    // Init Engine
+    engine = new DemonEngine::Engine(1600, 900);
+    engine->createEngine();
+    engine->getWindow()->setMouseGrab(-1);
+
+    // Init BSP Loader
+    bspLoader = new DemonEngine::BSPLoader(engine);
+
+    // Create the player's character controller
+    player = engine->createFPSController(glm::vec3(0.0f, 100.0f, 0.0f), 6.0f, 1.0f);
+
+
+    //luaInterface.registerFunction("createBlockAtPlayer", &Protal::createBlockAtPlayer);
+    luaInterface.registerFunction("createBlockAtPlayer", [](lua_State *)mutable {
+        engine->createWorldEntity()->createEntityFromMesh("block.obj", engine->getCamera()->getPosition());
+        return 0;
+    });
+
+    _npcWorld = new DNPC::Level(engine->getPhysicsManager());
+
+
+
+    // Load the BSP map
+    bspLoader->setBSPCreationCallback([](DemonEngine::BSP_EntityCreateInfo _info){
+        bspCallback(_info);
+    });
+    bspLoader->loadBSP("worlds/maze");
+
+
+
+    // Add the event key callback
+    engine->getEvent()->addKeyCallback([](int scancode){
+        keyCallback(scancode);
+    });
+    engine->getEvent()->addKeyDownCallback([](int scancode){
+        keyDownCallback(scancode);
+    });
+
+    follower = engine->createWorldObject();
+    follower->createEntityFromMesh("173/173.fbx", _npcWorld->getNodeNear(glm::vec3(100.0f))->getPosition(), glm::vec3(0.0f), glm::vec3(0.5f));
+
+    lineShader = new DGL::Shader("DemonShaders/vertex_line.glsl", "DemonShaders/fragment_color.glsl");
+    lineShader->createShader();
+
+    glCreateVertexArrays(1, &VAO);
+
+    glGenBuffers(1, &VBO);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * lines.size(), lines.data(), GL_STREAM_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*) (0));
+    glEnableVertexAttribArray(0);
+
+    engine->midRenderFunc = [](){
+        lineShader->useShader();
+        glBindVertexArray(VAO);
+        glDrawArrays( GL_LINE_STRIP, 0, lines.size());
+    };
+
+    prevPosition = glm::vec3(0.0f);
+
+    startMarker = engine->createVisualEntity();
+    endMarker = engine->createVisualEntity();
+    startMarker->createEntityFromMesh("block.obj");
+    endMarker->createEntityFromMesh("block.obj");
+
+    glm::vec3 position = engine->getCamera()->getPosition();
+    glm::vec3 followerPos = follower->getTransform()->getPosition();
+
+    uint32_t start = SDL_GetTicks();
+    levelPath = _npcWorld->getPath(position, followerPos);
+    printf("Benchmark time: %d\n", SDL_GetTicks() - start);
+    assert(levelPath);
+    run = 1;
+    //startMarker->getTransform()->setPosition(closestFollowerNode->getPosition());
+    //endMarker->getTransform()->setPosition(closestPlayerNode->getPosition());
+
+    //std::reverse(targets.begin(), targets.end());
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * lines.size(), lines.data());
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    follower->setName("SCP 173");
+}
+
+float currentTime = 0.0f;
+
+int  loop(){
+
+    //for (auto mesh : follower->getMeshRenderer()->getMeshes()){
+    //    mesh->_displaySamples = 1;
+    //}
+    currentTime += engine->getDeltaTime();
+
+    glm::vec3 playerP = glm::vec3(engine->getCamera()->getPosition());
+    glm::vec3 origin = follower->getTransform()->getPosition() + glm::vec3(0.0f, 2.0f, 0.0f);
+    //printf("Follower is rendered: %d\n", follower->getMeshRenderer()->getRenderStatus());b
+
+
+    //printf("Current values: %f %f\n", (playerP.z - origin.z), (playerP.x - origin.x));
+    if (engine->getEvent()->getKeyDown(SDL_SCANCODE_V)){
+        engine->setGameState("noclip", !engine->getGameState("noclip"));
     }
 
 
-    std::vector<Vertex> rawVertices;
-    std::vector<unsigned int> rawIndices;
-    unsigned int num = 0;
-    for (unsigned int av = 0; av < totalVertex.size(); av++){
-        std::vector<glm::vec3> allVertices = totalVertex.at(av);
+    if (engine->getEvent()->getKeyDown(SDL_SCANCODE_RALT)){
+        startPos = engine->getCamera()->getPosition();
+        run = 0;
+    }
+    if (engine->getEvent()->getKeyDown(SDL_SCANCODE_RCTRL)){
+        endPos = engine->getCamera()->getPosition();
+        run = 0;
+    }
+    if (engine->getCamera()->getPosition() != prevPosition || prevPosition == glm::vec3(-1.0f)){
+        prevPosition = engine->getCamera()->getPosition();
+        glm::vec3 position = engine->getCamera()->getPosition();
+        glm::vec3 followerPos = follower->getTransform()->getPosition();
 
-        //float highestY = allVertices.at(allVertices.size() -1).y;
-        for (int ax = (int) allVertices.size() - 1; ax >= 0; ax--) {
-            //if (allVertices.at(ax).y >= highestY) {
-                Vertex newVx;
-                newVx.iPosition = allVertices.at(ax);
-                newVx.iNormal = glm::vec3(1.0f);
-                newVx.iTextCord = glm::vec3(0.0f);
-                rawVertices.push_back(newVx);
-                rawIndices.push_back(num++);
-                //printf("Found: %f %f %f\n", allVertices.at(ax).x, allVertices.at(ax).y, allVertices.at(ax).z);
-            //}
+        uint32_t start = SDL_GetTicks();
+        levelPath = _npcWorld->getPath(position, followerPos);
+        printf("Benchmark time: %d\n", SDL_GetTicks() - start);
+        assert(levelPath);
+        run = 1;
+        //startMarker->getTransform()->setPosition(closestFollowerNode->getPosition());
+        //endMarker->getTransform()->setPosition(closestPlayerNode->getPosition());
+
+        //std::reverse(targets.begin(), targets.end());
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * lines.size(), lines.data());
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+    levelPath->setStartPosition(follower->getTransform()->getPosition());
+
+    glm::vec3 viewForward = engine->getCamera()->getPosition() - follower->getTransform()->getPosition();
+    viewForward = glm::normalize(viewForward);
+    //float dot = glm::dot(viewForward, engine->getCamera()->getCameraFront());
+    //printf("Dot product: %f\n", dot);
+
+    glm::vec3 moveTarget = glm::normalize(levelPath->getNextTarget() - follower->getTransform()->getPosition()) *
+                           (float) engine->getDeltaTime() * 30.0f;
+    if (run && !follower->getMeshRenderer()->getRenderStatus()) {
+        float roty = glm::atan((playerP.z - origin.z) / (playerP.x - origin.x));
+
+        if ((playerP.x - origin.x) > 0){
+            roty = roty - glm::radians(180.0f);
         }
-    }
+        roty = (-roty - glm::radians(90.0f));
+        follower->getActor()->setRotation(glm::quat(glm::vec3(0.0f,roty,0.0f)));
 
-    DemonRender::DR_Mesh weird(rawVertices.data(), rawVertices.size(), rawIndices.data(), rawIndices.size());
-    weird.type = GL_LINES;
-
-    DemonRender::DR_MeshRenderer meshRenderer;
-    DemonWorld::DW_Transform good;
-    good.createTransform(glm::vec3(0.0f));
-    meshRenderer.addMesh(&weird);
-    meshRenderer.setShader(engine->getObjectShader());
-    meshRenderer.bindTransform(&good);
-    engine->getRenderingManager()->addMeshGroup(&meshRenderer);
-
- */
-/*
-DemonEngine::Engine engine(WIDTH, HEIGHT);
-DemonGame::DG_RigidEntity *shipEnt;
-std::vector<DemonGame::DG_PhysicsObject*> destructionQueue;
-
-void AlienPhysicsCallback(DemonGame::DG_PhysicsObject* thisObj, DemonGame::DG_PhysicsObject* other){
-    if (!strcmp(other->getName().c_str(), "bullet")){
-        destructionQueue.push_back(thisObj);
-    }
-}
-
-void keyDownCallback(int scancode){
-    if (scancode == SDL_SCANCODE_E){
-        auto block = engine.createWorldEntity();
-        block->createEntityFromMesh("nblock.obj",
-                                        shipEnt->getTransform()->getPosition() +
-                                        glm::vec3(5.0f, 0.0f, 0.0f));
-        block->setName("bullet");
-    }
-}
-
-void keyCallback(int scancode){
-    switch (scancode){
-        case SDL_SCANCODE_A:
-            shipEnt->getActor()->translate(glm::vec3(0.0f, 0.0f, -10.0f) * engine.getDeltaTime());
-            break;
-        case SDL_SCANCODE_D:
-            shipEnt->getActor()->translate(glm::vec3(0.0f, 0.0f, 10.0f) * engine.getDeltaTime());
-            break;
-        default:
-            break;
-    }
-}
-
-void bspCallback(DemonEngine::BSP_EntityCreateInfo info){
-    if (!strcmp(info.name, "alien")){
-        auto alien = engine.createWorldEntity();
-        alien->createEntityFromMesh("nblock.obj", glm::vec3(info.pos.x, info.pos.z, -info.pos.y));
-        alien->setContactCallback(AlienPhysicsCallback);
-        alien->disableGravity();
-    }
-}
-
-int main(void){
-    engine.createEngine();
-    shipEnt = engine.createWorldObject();
-    shipEnt->createEntityFromMesh("nblock.obj");
-
-    DemonEngine::BSPLoader bspLoader(&engine);
-    bspLoader.setBSPCreationCallback(bspCallback);
-    bspLoader.loadBSP("alien.bsp");
-
-    engine.setGravity(glm::vec3(50.0f, 0.0f, 0.0f));
-
-
-    engine.getEvent()->setKeyDownCallback(keyDownCallback);
-    engine.getEvent()->setKeyCallback(keyCallback);
-    engine.createEasyPointLight(glm::vec3(0.0f), 100.0f, 1.0f);
-
-    // Below: Particle Test
-    Vertex billiboardVertices[4];
-    billiboardVertices[0].iPosition = glm::vec3(-0.5f, -0.5f, -0.0f);
-    billiboardVertices[0].iTextCord = glm::vec3(-1.0f, -1.0f, 0.0f);
-    billiboardVertices[0].iNormal = glm::vec3(1.0f);
-
-    billiboardVertices[1].iPosition = glm::vec3(0.5f, -0.5f, 0.0f);
-    billiboardVertices[1].iTextCord = glm::vec3(1.0f, -1.0f, 0.0f);
-    billiboardVertices[1].iNormal = glm::vec3(1.0f);
-
-    billiboardVertices[2].iPosition = glm::vec3(-0.5f, 0.5f, -0.0f);
-    billiboardVertices[2].iTextCord = glm::vec3(-1.0f, 1.0f, 0.0f);
-    billiboardVertices[2].iNormal = glm::vec3(1.0f);
-
-    billiboardVertices[3].iPosition = glm::vec3(0.5f, 0.5f, 0.0f);
-    billiboardVertices[3].iTextCord = glm::vec3(1.0f, 1.0f, 0.0f);
-    billiboardVertices[3].iNormal = glm::vec3(1.0f);
-
-    unsigned int indices[6];
-    indices[0] = 0;
-    indices[1] = 2;
-    indices[2] = 3;
-
-    indices[3] = 3;
-    indices[4] = 1;
-    indices[5] = 0;
-
-    Vertex billiboardVertices[1];
-    billiboardVertices[0].iPosition = glm::vec3(-0.5f, -0.5f, -0.0f);
-    billiboardVertices[0].iTextCord = glm::vec3(-1.0f, -1.0f, 0.0f);
-    billiboardVertices[0].iNormal = glm::vec3(1.0f);
-
-    unsigned int indices[1];
-    indices[0] = 0;
-
-    DemonRender::DR_Mesh billiBoardmesh(&billiboardVertices[0], 1, &indices[0], 1);
-    billiBoardmesh.type = GL_POINTS;
-    billiBoardmesh.createTextureFromSTB("explosion.png", true);
-    DemonRender::DR_MeshRenderer billiBoardRenderer;
-    billiBoardRenderer.addMesh(&billiBoardmesh);
-
-    DemonRender::DR_Shader billiboardShader;
-    billiboardShader.createProgram("DemonShaders/vertex_particle.glsl", "DemonShaders/geo_dot2quad.glsl", "DemonShaders/frag_colourDebug.glsl");
-
-    billiBoardRenderer.setShader(&billiboardShader);
-
-
-    DemonWorld::DW_Transform objTransform;
-    objTransform.setPosition(glm::vec3(5.0f, 5.0f, 5.0f));
-    billiBoardRenderer.bindTransform(&objTransform);
-
-    engine.getRenderingManager()->addMeshGroup(&billiBoardRenderer);
-    //DemonRender::DR_Mesh billiboard()
-
-
-    // End particle test
-
-    while (!engine.gameLoop()){
-        if (!engine.getEvent()->getKey(SDL_SCANCODE_LCTRL)) {
-            engine.getCameraController()->setRotation(glm::vec2(0.0f, -35.0f));
+        if (glm::distance(follower->getTransform()->getPosition(), levelPath->getNextTarget()) > 1.0f) {
+            follower->getActor()->translate(moveTarget);
+        } else {
+            levelPath->advanceTarget();
         }
-        engine.createFPSController(glm::vec3(5.0f, 5.0f, 0.0f), 2.0f, 1.0f);
 
-        //engine.getCamera()->setPosition(shipEnt->getTransform()->getPosition() + glm::vec3(-10.0f, 10.0f, 0.0f));
-
-
-        for (unsigned int a = 0; a < destructionQueue.size(); a++){
-            //destructionQueue.at(a)->destroyEntity();
-            destructionQueue.at(a)->setPosition(glm::vec3(-1000.0f));
-            //engine.getWorld()->removeWorldEntityValue(destructionQueue.at(a));
-            //delete destructionQueue.at(a);
-        }
-        destructionQueue.clear();
     }
 
-    engine.destroyEngine();
+
+    if (engine->getEvent()->getKeyDown(SDL_SCANCODE_M)){
+        engine->getWindow()->setMouseGrab(-1);
+        engine->getEvent()->toggleMouseMovements();
+    }
+
+    ImGui::Begin("Debug");
+    ImGui::Text("FPS: %f\n", ImGui::GetIO().Framerate);
+    ImGui::Text("Health: %f\n", health);
+    ImGui::End();
+
+    // Apply gravity to player
+    if (!engine->getGameState("noclip")) {
+        player->move(glm::vec3(0.0f, -9.81f * engine->getDeltaTime(), 0.0f));
+    }
+
+    return !engine->gameLoop(fmin(engine->getDeltaTime(), 0.016f));
 }
-*/
+void close(){
+    //charger->destroy();
+    engine->destroyEngine();
+}
+
+int main(){
+    init();
+    while (loop()){}
+    close();
+}
