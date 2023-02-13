@@ -6,6 +6,7 @@
 #include <DemonPhysics/DP_CharacterController.h>
 #include <math.h>
 #include <GameClients/Protal/npc_charger.h>
+#include <GameClients/Protal/npc_173.h>
 
 #include <PathFinder.h>
 #include <DemonNPC/Level.h>
@@ -23,8 +24,6 @@ DNPC::Level *_npcWorld;
 std::vector<Protal::npc_charger*> chargers;
 uint32_t maxChargers = 200.0f;
 uint32_t radius = 20.0f;
-
-DG_RigidEntity *follower;
 
 
 float health = 100.0f;
@@ -58,8 +57,6 @@ void keyDownCallback(int SCANCODE){
     }
 }
 
-
-std::vector<glm::vec3> lines;
 
 void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
     enum BSP_ENTITIES{
@@ -163,23 +160,8 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
     }
 }
 
-std::vector<glm::vec3> Epath;
-std::vector<glm::vec3> targets;
 
-
-DGL::Shader* lineShader;
-GLuint VAO;
-GLuint VBO;
-glm::vec3 prevPosition = glm::vec3(-1.0f);
-
-DG_Entity *startMarker;
-DG_Entity *endMarker;
-
-
-glm::vec3 startPos;
-glm::vec3 endPos;
-int run = 0;
-DNPC::Path *levelPath;
+Protal::npc_173 *scp;
 
 void init(){
     // Init Engine
@@ -220,34 +202,8 @@ void init(){
         keyDownCallback(scancode);
     });
 
-    follower = engine->createWorldObject();
-    follower->createEntityFromMesh("173/173.fbx", _npcWorld->getNodeNear(glm::vec3(100.0f))->getPosition(), glm::vec3(0.0f), glm::vec3(0.5f));
 
-    lineShader = new DGL::Shader("DemonShaders/vertex_line.glsl", "DemonShaders/fragment_color.glsl");
-    lineShader->createShader();
-
-    glCreateVertexArrays(1, &VAO);
-
-    glGenBuffers(1, &VBO);
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * lines.size(), lines.data(), GL_STREAM_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*) (0));
-    glEnableVertexAttribArray(0);
-
-    engine->midRenderFunc = [](){
-        lineShader->useShader();
-        glBindVertexArray(VAO);
-        glDrawArrays( GL_LINE_STRIP, 0, lines.size());
-    };
-
-    prevPosition = glm::vec3(0.0f);
-
-    startMarker = engine->createVisualEntity();
-    endMarker = engine->createVisualEntity();
-    startMarker->createEntityFromMesh("block.obj");
-    endMarker->createEntityFromMesh("block.obj");
-
+/*
     glm::vec3 position = engine->getCamera()->getPosition();
     glm::vec3 followerPos = follower->getTransform()->getPosition();
 
@@ -255,15 +211,11 @@ void init(){
     levelPath = _npcWorld->getPath(position, followerPos);
     printf("Benchmark time: %d\n", SDL_GetTicks() - start);
     assert(levelPath);
-    run = 1;
-    //startMarker->getTransform()->setPosition(closestFollowerNode->getPosition());
-    //endMarker->getTransform()->setPosition(closestPlayerNode->getPosition());
-
-    //std::reverse(targets.begin(), targets.end());
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * lines.size(), lines.data());
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     follower->setName("SCP 173");
+    */
+    scp = new Protal::npc_173("173/173.fbx", _npcWorld->getNodeNear(glm::vec3(100.0f))->getPosition(), _npcWorld, engine);
+    scp->init();
+
 }
 
 float currentTime = 0.0f;
@@ -275,68 +227,15 @@ int  loop(){
     //}
     currentTime += engine->getDeltaTime();
 
-    glm::vec3 playerP = glm::vec3(engine->getCamera()->getPosition());
-    glm::vec3 origin = follower->getTransform()->getPosition() + glm::vec3(0.0f, 2.0f, 0.0f);
-    //printf("Follower is rendered: %d\n", follower->getMeshRenderer()->getRenderStatus());b
+    scp->loop();
 
 
-    //printf("Current values: %f %f\n", (playerP.z - origin.z), (playerP.x - origin.x));
+
     if (engine->getEvent()->getKeyDown(SDL_SCANCODE_V)){
         engine->setGameState("noclip", !engine->getGameState("noclip"));
     }
 
 
-    if (engine->getEvent()->getKeyDown(SDL_SCANCODE_RALT)){
-        startPos = engine->getCamera()->getPosition();
-        run = 0;
-    }
-    if (engine->getEvent()->getKeyDown(SDL_SCANCODE_RCTRL)){
-        endPos = engine->getCamera()->getPosition();
-        run = 0;
-    }
-    if (engine->getCamera()->getPosition() != prevPosition || prevPosition == glm::vec3(-1.0f)){
-        prevPosition = engine->getCamera()->getPosition();
-        glm::vec3 position = engine->getCamera()->getPosition();
-        glm::vec3 followerPos = follower->getTransform()->getPosition();
-
-        uint32_t start = SDL_GetTicks();
-        levelPath = _npcWorld->getPath(position, followerPos);
-        printf("Benchmark time: %d\n", SDL_GetTicks() - start);
-        assert(levelPath);
-        run = 1;
-        //startMarker->getTransform()->setPosition(closestFollowerNode->getPosition());
-        //endMarker->getTransform()->setPosition(closestPlayerNode->getPosition());
-
-        //std::reverse(targets.begin(), targets.end());
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * lines.size(), lines.data());
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-    }
-    levelPath->setStartPosition(follower->getTransform()->getPosition());
-
-    glm::vec3 viewForward = engine->getCamera()->getPosition() - follower->getTransform()->getPosition();
-    viewForward = glm::normalize(viewForward);
-    //float dot = glm::dot(viewForward, engine->getCamera()->getCameraFront());
-    //printf("Dot product: %f\n", dot);
-
-    glm::vec3 moveTarget = glm::normalize(levelPath->getNextTarget() - follower->getTransform()->getPosition()) *
-                           (float) engine->getDeltaTime() * 30.0f;
-    if (run && !follower->getMeshRenderer()->getRenderStatus()) {
-        float roty = glm::atan((playerP.z - origin.z) / (playerP.x - origin.x));
-
-        if ((playerP.x - origin.x) > 0){
-            roty = roty - glm::radians(180.0f);
-        }
-        roty = (-roty - glm::radians(90.0f));
-        follower->getActor()->setRotation(glm::quat(glm::vec3(0.0f,roty,0.0f)));
-
-        if (glm::distance(follower->getTransform()->getPosition(), levelPath->getNextTarget()) > 1.0f) {
-            follower->getActor()->translate(moveTarget);
-        } else {
-            levelPath->advanceTarget();
-        }
-
-    }
 
 
     if (engine->getEvent()->getKeyDown(SDL_SCANCODE_M)){

@@ -17,7 +17,7 @@ namespace DNPC {
             return _path->at(_path->size() - 1)->getPosition();
         }
 
-        return _position;
+        return _destination;
     }
     void Path::advanceTarget(){
         if (!_path->empty()) {
