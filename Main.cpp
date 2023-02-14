@@ -24,7 +24,6 @@ DNPC::Level *npcWorld;
 float health = 100.0f;
 
 
-Protal::npc_173 *scp;
 Protal::cl_player *player;
 
 
@@ -41,7 +40,8 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
         INFO_BRUSHDOOR_TARGET,
         INFO_BRUSHPROP,
         INFO_SCRIPTED_PROP,
-        INFO_NODE
+        INFO_NODE,
+        NPC_173
     };
 
 #define INSERT(name, ent) entityList.insert(std::pair<std::string, BSP_ENTITIES>(name, ent))
@@ -58,6 +58,7 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
     INSERT("info_brushprop", INFO_BRUSHPROP);
     INSERT("info_scripted_prop", INFO_SCRIPTED_PROP);
     INSERT("info_node", INFO_NODE);
+    INSERT("npc_173", NPC_173);
 
     glm::vec3 realPos = glm::vec3(_info.pos.x, _info.pos.z, -_info.pos.y);
 
@@ -124,6 +125,13 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
                 npcWorld->addNode(realPos);
             }
                 break;
+            case NPC_173:
+            {
+                auto newNPC = new Protal::npc_173("173/173.fbx", realPos, npcWorld, engine);
+                newNPC->init();
+                engine->addClient(newNPC);
+            }
+                break;
             default:
                 break;
         }
@@ -160,21 +168,12 @@ void init(){
     bspLoader->setBSPCreationCallback([](DemonEngine::BSP_EntityCreateInfo _info){
         bspCallback(_info);
     });
-    bspLoader->loadBSP("worlds/flat");
+    bspLoader->loadBSP("worlds/maze");
 
-
-
-    scp = new Protal::npc_173("173/173.fbx", npcWorld->getNodeNear(glm::vec3(100.0f))->getPosition(), npcWorld, engine);
-    scp->init();
-    engine->addClient(scp);
 
 }
 
-double currentTime = 0.0f;
-
 int  loop(){
-    currentTime += engine->getDeltaTime();
-
     if (engine->getEvent()->getKeyDown(SDL_SCANCODE_V)){
         engine->setGameState("noclip", !engine->getGameState("noclip"));
     }
