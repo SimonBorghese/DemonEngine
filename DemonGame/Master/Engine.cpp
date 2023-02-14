@@ -91,6 +91,10 @@ namespace DemonEngine {
 
 
     void Engine::destroyEngine() {
+        for (auto client : _clients){
+            client->destroy();
+        }
+
         delete _mainPlayer;
 
         _mainPhysicsManager->closePhysics();

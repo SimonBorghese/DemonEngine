@@ -6,6 +6,7 @@
 #include <DemonPhysics/DP_CharacterController.h>
 #include <cmath>
 #include <GameClients/Protal/npc_173.h>
+#include <GameClients/Protal/cl_player.h>
 
 #include <PathFinder.h>
 #include <DemonNPC/Level.h>
@@ -16,43 +17,15 @@
 DemonEngine::Engine *engine;
 DemonEngine::BSPLoader *bspLoader;
 DemonEngine::World *world;
-DemonPhysics::DP_CharacterController *player;
 DG::Lua::LuaInterface luaInterface;
 DNPC::Level *npcWorld;
 
 
 float health = 100.0f;
 
-void keyCallback(int SCANCODE){
-    switch (SCANCODE){
-        case SDL_SCANCODE_W:
-            player->move(engine->getCamera()->getFPSFront());
-            break;
-        case SDL_SCANCODE_S:
-            player->move(-engine->getCamera()->getFPSFront());
-            break;
-        case SDL_SCANCODE_A:
-            player->move(-engine->getCamera()->getCameraRight());
-            break;
-        case SDL_SCANCODE_D:
-            player->move(engine->getCamera()->getCameraRight());
-            break;
-        default:
-            break;
 
-    }
-}
-
-void keyDownCallback(int SCANCODE){
-    switch (SCANCODE){
-        case SDL_SCANCODE_E:
-            auto projectile = engine->createWorldEntity();
-            projectile->createEntityFromMesh("block.obj", player->getPosition() + (engine->getCamera()->getCameraFront() * 5.0f));
-            projectile->setMass(100.0f);
-            projectile->getActor()->applyForce(engine->getCamera()->getCameraFront() * 5000.0f);
-            break;
-    }
-}
+Protal::npc_173 *scp;
+Protal::cl_player *player;
 
 
 void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
@@ -95,7 +68,7 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
         switch (lookingEntity->second){
             case INFO_PLAYER_START:
             {
-                player->translate(realPos);
+                player->getController()->translate(realPos);
             }
                 break;
             case INFO_BRUSHPROP:
@@ -157,9 +130,6 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
     }
 }
 
-
-Protal::npc_173 *scp;
-
 void init(){
     // Init Engine
     engine = new DemonEngine::Engine(1600, 900);
@@ -170,7 +140,10 @@ void init(){
     bspLoader = new DemonEngine::BSPLoader(engine);
 
     // Create the player's character controller
-    player = engine->createFPSController(glm::vec3(0.0f, 100.0f, 0.0f), 6.0f, 1.0f);
+    //player = engine->createFPSController(glm::vec3(0.0f, 100.0f, 0.0f), 6.0f, 1.0f);
+    player = new Protal::cl_player(glm::vec3(0.0f, 100.0f, 0.0f), 6.0f, 1.0f, engine);
+    player->init();
+    engine->addClient(player);
 
 
     //luaInterface.registerFunction("createBlockAtPlayer", &Protal::createBlockAtPlayer);
@@ -187,17 +160,8 @@ void init(){
     bspLoader->setBSPCreationCallback([](DemonEngine::BSP_EntityCreateInfo _info){
         bspCallback(_info);
     });
-    bspLoader->loadBSP("worlds/maze");
+    bspLoader->loadBSP("worlds/flat");
 
-
-
-    // Add the event key callback
-    engine->getEvent()->addKeyCallback([](int scancode){
-        keyCallback(scancode);
-    });
-    engine->getEvent()->addKeyDownCallback([](int scancode){
-        keyDownCallback(scancode);
-    });
 
 
     scp = new Protal::npc_173("173/173.fbx", npcWorld->getNodeNear(glm::vec3(100.0f))->getPosition(), npcWorld, engine);
@@ -224,11 +188,6 @@ int  loop(){
     ImGui::Text("FPS: %f\n", ImGui::GetIO().Framerate);
     ImGui::Text("Health: %f\n", health);
     ImGui::End();
-
-    // Apply gravity to player
-    if (!engine->getGameState("noclip")) {
-        player->move(glm::vec3(0.0f, -9.81f * engine->getDeltaTime(), 0.0f));
-    }
 
     return !engine->gameLoop((float) fmin(engine->getDeltaTime(), 0.016f));
 }
