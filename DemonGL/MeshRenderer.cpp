@@ -34,7 +34,7 @@ namespace DGL {
                 _shader->bindGlobals();
                 for (uint32_t m = 0; m < _numMeshes; m++) {
                     _meshes[m]->getTexture()->bindTextures();
-                    _shader->remakeTextures();
+                    DGL::Shader::remakeTextures();
                     _shader->uniformInt("_diffuse", 0);
                     _shader->uniformInt("_normal", 1);
                     _meshes[m]->renderMesh();
@@ -45,7 +45,7 @@ namespace DGL {
                 overrideShader->bindGlobals();
                 for (uint32_t m = 0; m < _numMeshes; m++) {
                     _meshes[m]->getTexture()->bindTextures();
-                    overrideShader->remakeTextures();
+                    DGL::Shader::remakeTextures();
                     overrideShader->uniformInt("_diffuse", 0);
                     overrideShader->uniformInt("_normal", 1);
                     overrideShader->uniformInt("_shadowMap", 2);
@@ -60,7 +60,7 @@ namespace DGL {
             bindTransform();
             for (uint32_t m = 0; m < _numMeshes; m++) {
                 _meshes[m]->getTexture()->bindTextures();
-                _globalShader->remakeTextures();
+                DGL::Shader::remakeTextures();
                 _globalShader->uniformInt("_diffuse", 0);
                 _globalShader->uniformInt("_normal", 1);
                 _globalShader->uniformInt("_shadowMap", 2);
@@ -70,7 +70,7 @@ namespace DGL {
 
         _isRendered = false;
         for (uint32_t m = 0; m < _numMeshes; m++){
-            if (_meshes[m]->_enableOcculusion && _meshes[m]->getNumSamples() > 0){
+            if (DGL::Mesh::_enableOcculusion && _meshes[m]->getNumSamples() > 0){
                 _isRendered = true;
             }
         }
@@ -82,10 +82,10 @@ namespace DGL {
         }
     }
     std::vector<Mesh*> MeshRenderer::getMeshes(){
-        return std::vector<Mesh*>(&_meshes[0], &_meshes[_numMeshes]);
+        return {&_meshes[0], &_meshes[_numMeshes]};
     }
 
-    bool MeshRenderer::getRenderStatus(){
+    bool MeshRenderer::getRenderStatus() const {
         return _isRendered;
     }
 } // DGL

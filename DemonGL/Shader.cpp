@@ -26,13 +26,13 @@ namespace DGL {
         _shaders[2] = geometry;
     }
 
-    Shader::~Shader(){}
+    Shader::~Shader() = default;
 
     void Shader::createShader(){
         FILE *file = fopen(_shaders[0].c_str(), "r");
         int fLength;
         fseek(file, 0, SEEK_END);
-        fLength = ftell(file);
+        fLength = (int) ftell(file);
         fseek(file, 0, SEEK_SET);
         char *vertexShaderSource = (char *) malloc(sizeof(char) * fLength + 1);
         fread(vertexShaderSource, 1, fLength, file);
@@ -41,7 +41,7 @@ namespace DGL {
 
         file = fopen(_shaders[1].c_str(), "r");
         fseek(file, 0, SEEK_END);
-        fLength = ftell(file);
+        fLength = (int) ftell(file);
         fseek(file, 0, SEEK_SET);
         char *fragmentShaderSource = (char *) malloc(sizeof(char) * fLength + 1);
         fread(fragmentShaderSource, 1, fLength, file);
@@ -50,10 +50,10 @@ namespace DGL {
 
         char *geometryShaderSource = nullptr;
 
-        if (strcmp(_shaders[2].c_str(), "")){
+        if (strcmp(_shaders[2].c_str(), "") != 0){
             file = fopen(_shaders[2].c_str(), "r");
             fseek(file, 0, SEEK_END);
-            fLength = ftell(file);
+            fLength = (int) ftell(file);
             fseek(file, 0, SEEK_SET);
             geometryShaderSource = (char *) malloc(sizeof(char) * fLength + 1);
             fread(geometryShaderSource, 1, fLength, file);
@@ -69,10 +69,10 @@ namespace DGL {
         }
         _shaderProgram = glCreateProgram();
 
-        glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-        glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+        glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
+        glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
         if (geometryShader){
-            glShaderSource(geometryShader, 1, &geometryShaderSource, NULL);
+            glShaderSource(geometryShader, 1, &geometryShaderSource, nullptr);
         }
 
 
@@ -87,7 +87,7 @@ namespace DGL {
 
         glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
         if (!success) {
-            glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+            glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
             ALERT("FAILED TO BUILD VERTEX SHADER!\n");
             ALERT(infoLog);
             assert(0);
@@ -95,7 +95,7 @@ namespace DGL {
 
         glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
         if (!success) {
-            glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+            glGetShaderInfoLog(fragmentShader, 512, nullptr, infoLog);
             ALERT("FAILED TO BUILD FRAGMENT SHADER!\n");
             ALERT(infoLog);
             assert(0);
@@ -104,7 +104,7 @@ namespace DGL {
         if (geometryShader) {
             glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &success);
             if (!success) {
-                glGetShaderInfoLog(geometryShader, 512, NULL, infoLog);
+                glGetShaderInfoLog(geometryShader, 512, nullptr, infoLog);
                 ALERT("FAILED TO BUILD GEOMETRY SHADER!\n");
                 ALERT(infoLog);
                 assert(0);
@@ -122,7 +122,7 @@ namespace DGL {
 
         glGetProgramiv(_shaderProgram, GL_LINK_STATUS, &success);
         if (!success) {
-            glGetProgramInfoLog(_shaderProgram, 512, NULL, infoLog);
+            glGetProgramInfoLog(_shaderProgram, 512, nullptr, infoLog);
             ALERT("FAILED TO LINK SHADER!\n");
             ALERT(infoLog);
             assert(0);
@@ -165,11 +165,11 @@ namespace DGL {
 
 
     }
-    void Shader::useShader(){
+    void Shader::useShader() const{
         glUseProgram(_shaderProgram);
 
     }
-    void Shader::destroyShader(){
+    void Shader::destroyShader() const{
         glUseProgram(0);
         glDeleteProgram(_shaderProgram);
     }
@@ -228,20 +228,20 @@ namespace DGL {
 
     void Shader::uniformMat4(std::string location, glm::mat4 target){
         useShader();
-        glUniformMatrix4fv(getUniformLocation(location), 1, GL_FALSE, glm::value_ptr(target));
+        glUniformMatrix4fv((int) getUniformLocation(location), 1, GL_FALSE, glm::value_ptr(target));
     }
     void Shader::uniformInt(std::string location, glm::int32 target){
         useShader();
-        glUniform1i(getUniformLocation(location), target);
+        glUniform1i((int) getUniformLocation(location), target);
     }
 
     void Shader::uniformVec3(std::string location, glm::vec3 target){
         useShader();
-        glUniform3fv(getUniformLocation(location), 1, glm::value_ptr(target));
+        glUniform3fv((int) getUniformLocation(location), 1, glm::value_ptr(target));
     }
     void Shader::uniformFloat(std::string location, glm::float32 target){
         useShader();
-        glUniform1f(getUniformLocation(location), target);
+        glUniform1f((int) getUniformLocation(location), target);
     }
 
     GLuint Shader::getUniformLocation(std::string uniform){

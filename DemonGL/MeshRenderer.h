@@ -28,7 +28,7 @@ namespace DGL {
 
         std::vector<Mesh*> getMeshes();
 
-        bool getRenderStatus();
+        bool getRenderStatus() const;
     private:
         Shader *_shader;
         Mesh **_meshes;

@@ -4,8 +4,7 @@
 #include <DemonGame/Master/World.h>
 #include <DemonGame/Shared/Lua/LuaInterface.h>
 #include <DemonPhysics/DP_CharacterController.h>
-#include <math.h>
-#include <GameClients/Protal/npc_charger.h>
+#include <cmath>
 #include <GameClients/Protal/npc_173.h>
 
 #include <PathFinder.h>
@@ -19,11 +18,7 @@ DemonEngine::BSPLoader *bspLoader;
 DemonEngine::World *world;
 DemonPhysics::DP_CharacterController *player;
 DG::Lua::LuaInterface luaInterface;
-DNPC::Level *_npcWorld;
-
-std::vector<Protal::npc_charger*> chargers;
-uint32_t maxChargers = 200.0f;
-uint32_t radius = 20.0f;
+DNPC::Level *npcWorld;
 
 
 float health = 100.0f;
@@ -41,6 +36,8 @@ void keyCallback(int SCANCODE){
             break;
         case SDL_SCANCODE_D:
             player->move(engine->getCamera()->getCameraRight());
+            break;
+        default:
             break;
 
     }
@@ -107,8 +104,8 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
                     auto newProp = engine->createWorldEntity();
                     auto objMass = CBSP_getKeyFromEntity(_info.currentEntity, "mass");
                     float mass = 0.0f;
-                    if (strcmp(objMass, CBSP_getKeyFromEntity_FAILURE)) {
-                        mass = atof(objMass);
+                    if (strcmp(objMass, CBSP_getKeyFromEntity_FAILURE) != 0) {
+                        mass = (float) strtod(objMass, nullptr);
                     }
 
                     newProp->createEntityFromExistingMesh(_info.brushMeshes, _info.numBrushMesh, _info.origin,
@@ -117,19 +114,18 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
                     if (mass > 0.0f) {
                         //newProp->setMass(mass);
                     }
-                    DemonPhysics::DP_PhysicsMaterial *newMat = new DemonPhysics::DP_PhysicsMaterial(0.8f, 0.5f,
+                    auto *newMat = new DemonPhysics::DP_PhysicsMaterial(0.8f, 0.5f,
                                                                                                     0.8f);
-                    newMat->createMaterial(engine->getPhysicsManager()->getPhysics());;
+                    newMat->createMaterial(engine->getPhysicsManager()->getPhysics());
                     newProp->setMaterial(newMat);
                 }
             }
                 break;
             case INFO_POINT_LIGHT:
             {
-                float distance = 0.0f;
-                distance = atof(CBSP_getKeyFromEntity(_info.currentEntity, "distance")) * 1.0f;
-                float intensity = 0.0f;
-                intensity = atoi(CBSP_getKeyFromEntity(_info.currentEntity, "intensity")) / 100.0f;
+                
+                auto distance = (float) strtod(CBSP_getKeyFromEntity(_info.currentEntity, "distance"), nullptr);
+                auto intensity = (float) strtol(CBSP_getKeyFromEntity(_info.currentEntity, "intensity"), nullptr, 10) / 100.0f;
 
 #define SHADOW_HELL 1.0f
 #define SHADOW_RES 512
@@ -141,7 +137,7 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
             case INFO_SCRIPTED_PROP:
             {
                 const char *script = CBSP_getKeyFromEntity(_info.currentEntity, "script");
-                if (strcmp(script, CBSP_getKeyFromEntity_FAILURE)){
+                if (strcmp(script, CBSP_getKeyFromEntity_FAILURE) != 0){
                     luaInterface.initFile(script);
                     luaInterface.callFunction("onInit");
                     //assert(0);
@@ -152,7 +148,7 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
                 break;
             case INFO_NODE:
             {
-                _npcWorld->addNode(realPos);
+                npcWorld->addNode(realPos);
             }
                 break;
             default:
@@ -183,7 +179,7 @@ void init(){
         return 0;
     });
 
-    _npcWorld = new DNPC::Level(engine->getPhysicsManager());
+    npcWorld = new DNPC::Level(engine->getPhysicsManager());
 
 
 
@@ -204,13 +200,13 @@ void init(){
     });
 
 
-    scp = new Protal::npc_173("173/173.fbx", _npcWorld->getNodeNear(glm::vec3(100.0f))->getPosition(), _npcWorld, engine);
+    scp = new Protal::npc_173("173/173.fbx", npcWorld->getNodeNear(glm::vec3(100.0f))->getPosition(), npcWorld, engine);
     scp->init();
     engine->addClient(scp);
 
 }
 
-float currentTime = 0.0f;
+double currentTime = 0.0f;
 
 int  loop(){
     currentTime += engine->getDeltaTime();
@@ -234,7 +230,7 @@ int  loop(){
         player->move(glm::vec3(0.0f, -9.81f * engine->getDeltaTime(), 0.0f));
     }
 
-    return !engine->gameLoop(fmin(engine->getDeltaTime(), 0.016f));
+    return !engine->gameLoop((float) fmin(engine->getDeltaTime(), 0.016f));
 }
 void close(){
     //charger->destroy();

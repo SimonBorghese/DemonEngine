@@ -41,7 +41,7 @@ namespace DGL {
         glBindTexture(GL_TEXTURE_CUBE_MAP, _shadowTexture);
         for (unsigned int i = 0; i < 6; ++i)
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT,
-                         _shadowWidth, _shadowHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+                         (int) _shadowWidth, (int) _shadowHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -79,7 +79,7 @@ namespace DGL {
     void Light::renderShadowBuffer(DGL::Shader *shadowShader, std::function<void()> renderFunction){
         if (!*_lightConfig.enableShadow) { return; }
         // 1. first render to depth map
-        glViewport(0, 0, _shadowWidth, _shadowHeight);
+        glViewport(0, 0, (int) _shadowWidth, (int) _shadowHeight);
         glBindFramebuffer(GL_FRAMEBUFFER, _shadowBuffer);
         glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -106,7 +106,7 @@ namespace DGL {
         shadowShader->uniformVec3("lightPos", getPosition());
         shadowShader->uniformFloat("far_plane", getDistance());
         for (uint s = 0; s < 6; s++){
-            shadowShader->uniformMat4(fmt::format("shadowMatrices[{}]", s).c_str(), shadowTransforms.at(s));
+            shadowShader->uniformMat4(fmt::format("shadowMatrices[{}]", s), shadowTransforms.at(s));
         }
 
         //glCullFace(GL_FRONT);

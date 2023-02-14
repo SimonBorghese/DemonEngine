@@ -7,7 +7,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
-#include <stdio.h>
+#include <cstdio>
 #include <string>
 #include <DemonMacro/DemonLog.h>
 #include <map>
@@ -60,8 +60,8 @@ namespace DGL {
         virtual ~Shader();
 
         void createShader();
-        void useShader();
-        void destroyShader();
+        void useShader() const;
+        void destroyShader() const;
 
         void bindGlobals();
         static void setView(glm::mat4 view);

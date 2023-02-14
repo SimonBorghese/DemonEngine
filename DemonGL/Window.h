@@ -23,8 +23,8 @@ namespace DGL {
         void setVsync(int vsync);
         void setMouseGrab(int enable);
 
-        uint32_t getWidth() { return _width; }
-        uint32_t getHeight() { return _height; }
+        uint32_t getWidth() const { return _width; }
+        uint32_t getHeight() const { return _height; }
 
         SDL_Window *getWindow();
         SDL_GLContext getContext();

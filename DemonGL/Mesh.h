@@ -13,7 +13,7 @@ namespace DGL {
 
     class Mesh {
     public:
-        Mesh(DemonBase::b_Mesh mesh);
+        explicit Mesh(DemonBase::b_Mesh mesh);
         Mesh(std::vector<Vertex> vertex, std::vector<uint32_t> indice, std::string diffuse, std::string normal = "");
         virtual ~Mesh();
 
@@ -22,7 +22,7 @@ namespace DGL {
         void destroyMesh();
 
         Texture* getTexture() { return _primaryTexture; }
-        GLuint getNumSamples() { return numSamples; }
+        GLuint getNumSamples() const { return numSamples; }
         static int _enableOcculusion;
         int _displaySamples = 0;
     private:
@@ -33,7 +33,7 @@ namespace DGL {
 
         Texture *_primaryTexture;
 
-        GLuint _VAO = 0;
+        GLuint VAO = 0;
         uint32_t _numElements = 0;
 
         GLuint numSamples = 1;

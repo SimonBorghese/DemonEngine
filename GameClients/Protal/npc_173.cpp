@@ -39,6 +39,7 @@ namespace Protal {
 
         glm::vec3 moveTarget = glm::normalize(_path->getNextTarget() - _entity->getTransform()->getPosition()) *
                                (float) _engine->getDeltaTime() * 30.0f;
+        moveTarget.y = 0.0f;
         if (!_entity->getMeshRenderer()->getRenderStatus()) {
             float roty = glm::atan((playerP.z - origin.z) / (playerP.x - origin.x));
 

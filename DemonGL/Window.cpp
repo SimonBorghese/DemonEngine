@@ -46,6 +46,9 @@ namespace DGL {
                 case GL_DEBUG_SOURCE_OTHER:
                     std::cout << "Source: Other";
                     break;
+                default:
+                    std::cout << "Source: Unknown";
+                    break;
             }
             std::cout << std::endl;
 
@@ -79,6 +82,9 @@ namespace DGL {
                 case GL_DEBUG_TYPE_OTHER:
                     std::cout << "Type: Other";
                     break;
+                default:
+                    std::cout << "Type: Unknown";
+                    break;
             }
             std::cout << std::endl;
 
@@ -97,6 +103,9 @@ namespace DGL {
                 case GL_DEBUG_SEVERITY_NOTIFICATION:
                     std::cout << "Severity: notification";
                     break;
+                default:
+                    std::cout << "Severity: Unknown";
+                    break;
             }
             std::cout << std::endl;
             std::cout << std::endl;
@@ -114,7 +123,7 @@ namespace DGL {
 
         // Create the window
         _window = SDL_CreateWindow(_windowTitle.c_str(), SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,
-                                   _width,_height,
+                                   (int) _width,(int) _height,
                                    SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
         LOG("SDL WINDOW CREATION FAILED!", _window);
 
@@ -135,7 +144,7 @@ namespace DGL {
         SDL_GL_SetSwapInterval(vsync);
 
         gladLoadGLLoader((GLADloadproc) SDL_GL_GetProcAddress);
-        glViewport(0,0, _width, _height);
+        glViewport(0,0, (int) _width, (int) _height);
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_MULTISAMPLE);

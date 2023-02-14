@@ -13,12 +13,12 @@ namespace DGL {
             _bMesh(vertex.data(), vertex.size(), indice.data(), indice.size()){
         _primaryTexture = new Texture(diffuse.c_str(), normal.c_str());
     }
-    Mesh::~Mesh(){}
+    Mesh::~Mesh() = default;
 
     void Mesh::createMesh(){
         GLuint VBO, EBO;
         _numElements = _bMesh.getIndexLength();
-        glCreateVertexArrays(1, &_VAO);
+        glCreateVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
 
         /*
@@ -32,17 +32,17 @@ namespace DGL {
 } Vertex;
          */
 
-        glBindVertexArray(_VAO);
+        glBindVertexArray(VAO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * _bMesh.getVertexLength(), _bMesh.getVertices(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, (long) sizeof(Vertex) * _bMesh.getVertexLength(), _bMesh.getVertices(), GL_STATIC_DRAW);
 
         glGenBuffers(1, &EBO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * _bMesh.getIndexLength(), _bMesh.getIndices(), GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, (long) sizeof(uint32_t) * _bMesh.getIndexLength(), _bMesh.getIndices(), GL_STATIC_DRAW);
 
 
-        glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);
+        glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
         glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (sizeof(float) * 3));
         glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (sizeof(float) * 6));
         glVertexAttribIPointer(3, 4, GL_INT,             sizeof(Vertex), (void *) (sizeof(float) * 8));
@@ -64,8 +64,8 @@ namespace DGL {
             glGenQueries(1, query);
             glBeginQuery(GL_SAMPLES_PASSED, query[0]);
         }
-        glBindVertexArray(_VAO);
-        glDrawElements(GL_TRIANGLES, _numElements, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, (int) _numElements, GL_UNSIGNED_INT, nullptr);
         if (_enableOcculusion){
             glEndQuery(GL_SAMPLES_PASSED);
             glGetQueryObjectuiv(query[0], GL_QUERY_RESULT, &numSamples);
@@ -76,6 +76,6 @@ namespace DGL {
         }
     }
     void Mesh::destroyMesh(){
-        glDeleteVertexArrays(1, &_VAO);
+        glDeleteVertexArrays(1, &VAO);
     }
 } // DGL

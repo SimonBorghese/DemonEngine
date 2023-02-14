@@ -18,7 +18,7 @@ namespace DGL {
         virtual ~Texture();
 
         void createTexture();
-        void bindTextures();
+        void bindTextures() const;
         void destroyTextures();
 
         void setDiffuse(GLuint diffuse){

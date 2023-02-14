@@ -7,10 +7,10 @@
 
 namespace DGL {
     Texture::Texture(const char *diffuse, const char *normal) : _diffuseFile(diffuse), _normalFile(normal){}
-    Texture::~Texture(){}
+    Texture::~Texture() = default;
 
     void Texture::createTexture(){
-        if (strcmp(_diffuseFile.c_str(), "")){
+        if (strcmp(_diffuseFile.c_str(), "") != 0){
             glGenTextures(1, &_diffuseTexture);
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, _diffuseTexture);
@@ -37,7 +37,7 @@ namespace DGL {
 
 
             if (!data) {
-                if (strcmp(_diffuseFile.c_str(), "")) {
+                if (strcmp(_diffuseFile.c_str(), "") != 0) {
                     ALERT("MESH");
                     printf("Failed to load image: %s\n", _diffuseFile.c_str());
                 }
@@ -47,7 +47,7 @@ namespace DGL {
                     printf("CRITICAL ERROR: UN-ABLE TO LOAD ESSENTIAL FILE!\n");
                 }
             }
-            glTexImage2D(GL_TEXTURE_2D, 0, targetFormat, width, height, 0, targetFormat, GL_UNSIGNED_BYTE, data);
+            glTexImage2D(GL_TEXTURE_2D, 0, (int) targetFormat, width, height, 0, targetFormat, GL_UNSIGNED_BYTE, data);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -58,7 +58,7 @@ namespace DGL {
             _diffuseTexture = (GLuint) -1;
         }
 
-        if (strcmp(_normalFile.c_str(), "")){
+        if (strcmp(_normalFile.c_str(), "") != 0){
             glGenTextures(1, &_normalTexture);
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, _normalTexture);
@@ -86,7 +86,7 @@ namespace DGL {
 
 
             if (!data) {
-                if (strcmp(_normalFile.c_str(), "")) {
+                if (strcmp(_normalFile.c_str(), "") != 0) {
                     ALERT("MESH");
                     printf("Failed to load image: %s\n", _normalFile.c_str());
                 }
@@ -96,7 +96,7 @@ namespace DGL {
                     printf("CRITICAL ERROR: UN-ABLE TO LOAD ESSENTIAL FILE!\n");
                 }
             }
-            glTexImage2D(GL_TEXTURE_2D, 0, targetFormat, width, height, 0, targetFormat, GL_UNSIGNED_BYTE, data);
+            glTexImage2D(GL_TEXTURE_2D, 0, (int) targetFormat, width, height, 0, targetFormat, GL_UNSIGNED_BYTE, data);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -108,7 +108,7 @@ namespace DGL {
         }
 
     }
-    void Texture::bindTextures(){
+    void Texture::bindTextures() const{
         if (_diffuseTexture != (GLuint) -1){
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, _diffuseTexture);

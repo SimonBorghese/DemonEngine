@@ -14,7 +14,7 @@ namespace DGL {
 
     class Camera {
     public:
-        Camera() {}
+        Camera() = default;
 
         void configureProjection(float FOV, float twitterRatio, float zClose, float zFar) {
             projectionMat = glm::perspective(glm::radians(FOV), twitterRatio, zClose, zFar);
@@ -28,12 +28,6 @@ namespace DGL {
 
         void configureOrtho(float xRange, float yRange, float zClose, float zFar){
             projectionMat = glm::ortho(-xRange, xRange, -yRange, yRange, zClose, zFar);
-            //projectionMat = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 100.0f);
-            /*
-            viewLocation = _targetShader->getUniformLocation("view");
-            projectionLocation = _targetShader->getUniformLocation("projection");
-            viewPosLocation = _targetShader->getUniformLocation("viewPos");
-             */
         }
 
 
@@ -63,9 +57,9 @@ namespace DGL {
 
         void regenerateFPS(int yMultiplier){
             cameraFrontFPS = glm::vec3(0.0f);
-            cameraFrontFPS.x = cos(glm::radians(lastXE)) * cos(glm::radians(UP_ANGLE * yMultiplier));
-            cameraFrontFPS.y = sin(glm::radians(UP_ANGLE * yMultiplier));
-            cameraFrontFPS.z = sin(glm::radians(lastXE)) * cos(glm::radians(UP_ANGLE * yMultiplier));
+            cameraFrontFPS.x = cos(glm::radians(lastXE)) * cos(glm::radians(UP_ANGLE * (float) yMultiplier));
+            cameraFrontFPS.y = sin(glm::radians(UP_ANGLE * (float) yMultiplier));
+            cameraFrontFPS.z = sin(glm::radians(lastXE)) * cos(glm::radians(UP_ANGLE * (float) yMultiplier));
             cameraFrontFPS = glm::normalize(cameraFrontFPS);
         }
 
@@ -106,17 +100,14 @@ namespace DGL {
                     glm::cross(cameraFrontFPS, cameraUp)) * 2.0f); }
         glm::vec3 getLeft() { return -getRight(); }
 
-        float getXRotation() { return lastXE; }
-        float getYRotation() { return lastYE; }
+        float getXRotation() const { return lastXE; }
+        float getYRotation() const { return lastYE; }
 
         glm::mat4 getProjectionMat() {return projectionMat; }
 
     private:
-        GLuint viewLocation = 0;
-        GLuint projectionLocation = 0;
-        GLuint viewPosLocation = 0;
         // Last X & Y Euler angle
-        float lastXE, lastYE;
+        float lastXE = 0.0f, lastYE = 0.0f;
         glm::mat4 viewMat = glm::mat4(1.0f);
         glm::mat4 projectionMat = glm::mat4(1.0f);
         glm::vec3 cameraPos = glm::vec3(0.0f);
