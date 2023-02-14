@@ -21,7 +21,8 @@ namespace Protal {
         void loop();
         void destroy();
     private:
-        DG_RigidEntity *_entity;
+        DG_Entity *_entity;
+        DemonPhysics::DP_CharacterController *_controller;
         DNPC::Level *_level;
         DNPC::Path *_path;
         DemonEngine::Engine *_engine;

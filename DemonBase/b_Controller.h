@@ -41,7 +41,7 @@ namespace DemonBase {
                                   pControlFilter);
             if (realTarget != glm::vec3(0.0f)) {
                 forceTarget = glm::normalize(realTarget);
-                pMainController->move(physx::PxVec3(forceTarget.x, forceTarget.y * 33.0f, forceTarget.z), 0.0f,
+                pMainController->move(physx::PxVec3(forceTarget.x, forceTarget.y * 33.0f, forceTarget.z), 0.1f,
                                       (SDL_GetTicks() - pLastTime), pControlFilter);
                 realTarget -= glm::normalize(realTarget);
                 //glm::clamp(realTarget, glm::vec3(0.0f), glm::vec3(2000.0f));
@@ -62,22 +62,6 @@ namespace DemonBase {
                                   pControlFilter);
             pLastTime = SDL_GetTicks();
         }
-        /*
-         *
-         * case SDL_SCANCODE_W:
-            controller->move(FPSFront * engine->getDeltaTime() * SPEED);
-            break;
-        case SDL_SCANCODE_S:
-            controller->move(-FPSFront * engine->getDeltaTime() * SPEED);
-            break;
-        case SDL_SCANCODE_A:
-            controller->move(-(glm::normalize(
-                    glm::cross(FPSFront, engine->getCamera()->getCameraUp())) * 2.0f) * engine->getDeltaTime() * SPEED);
-            break;
-        case SDL_SCANCODE_D:
-            controller->move((glm::normalize(
-                    glm::cross(FPSFront, engine->getCamera()->getCameraUp())) * 2.0f) * engine->getDeltaTime() * SPEED);
-         */
 
         void translate(glm::vec3 pos) {
             pMainController->setPosition(physx::PxExtendedVec3(pos.x, pos.y, pos.z));
