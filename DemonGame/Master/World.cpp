@@ -34,17 +34,27 @@ namespace DemonEngine {
 
         // Update Generics
         for (unsigned int g = 0; g < _genericEntites.size(); g++) {
-            _genericEntites.at(g)->update(overrideShader);
+            //DemonBench::Benchmark("Render a generic", [this, overrideShader, g]()
+            //{
+                _genericEntites.at(g)->update(overrideShader);
+            //});
         }
 
         for (unsigned int g = 0; g < _worldObjects.size(); g++) {
-            _worldObjects.at(g)->update(overrideShader);
+            //_worldObjects.at(g)->update(overrideShader);
+            //DemonBench::Benchmark("Render a world object", [this, overrideShader, g]()
+            //{
+                _worldObjects.at(g)->update(overrideShader);
+            //});
         }
 
         for (unsigned int g = 0; g < _worldEntites.size(); g++) {
-            if (_worldEntites.at(g) != nullptr) {
-                _worldEntites.at(g)->update(overrideShader);
-            }
+            //if (_worldEntites.at(g) != nullptr) {
+                //DemonBench::Benchmark("Render a world entity", [this, overrideShader, g]()
+                //{
+                    _worldEntites.at(g)->update(overrideShader);
+                //});
+            //}
         }
     }
 

@@ -32,6 +32,7 @@ namespace DemonBench{
         }
         auto currentTime = getTime();
         func();
+        //assert(getTime() - currentTime < 5.0f);
         currentState->second->totalTime += getMilliseconds(currentTime);
         if (currentState->second->numCalls >= 60) {
             printf("%s Average Time: %f!\n", name, (double) currentState->second->totalTime / (double) currentState->second->numCalls);

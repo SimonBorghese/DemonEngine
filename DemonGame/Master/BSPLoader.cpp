@@ -60,6 +60,7 @@ namespace DemonEngine {
                             entityBrushes.at(e).size(),
                             glm::vec3(0.0f),
                             glm::vec3(0.0f, glm::radians(degreeAngle), 0.0f));
+                    targetEntityCreationInfo.worldBrush->setName("WORLD BRUSH");
                 }
             }
 

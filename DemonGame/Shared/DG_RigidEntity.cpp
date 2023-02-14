@@ -71,6 +71,7 @@ namespace DemonGame {
         rigidActor->updateActor();
         mainTransform->setPosition(rigidActor->getTransform()->getPosition());
         mainTransform->setRotation(rigidActor->getTransform()->getRotation());
+
     }
 
     PxSweepBuffer DG_RigidEntity::sweepCast(glm::vec3 origin, glm::vec3 direction, float distance, DemonPhysics::DP_PhysicsManager *manager){

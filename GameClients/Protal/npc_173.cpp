@@ -7,7 +7,7 @@
 namespace Protal {
     npc_173::npc_173(const char *model, glm::vec3 startPosition, DNPC::Level *level, DemonEngine::Engine *gameEngine) : _level(level), _engine(gameEngine){
         _entity = gameEngine->createWorldObject();
-        _entity->createEntityFromMesh(model, startPosition, glm::vec3(0.0f), glm::vec3(0.5f));
+        _entity->createEntityFromMesh(model, startPosition, glm::vec3(0.0f), glm::vec3(0.4));
 
     }
 
@@ -53,7 +53,6 @@ namespace Protal {
             } else {
                 _path->advanceTarget();
             }
-
         }
 
     }

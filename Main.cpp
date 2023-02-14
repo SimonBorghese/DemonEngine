@@ -113,6 +113,7 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
 
                     newProp->createEntityFromExistingMesh(_info.brushMeshes, _info.numBrushMesh, _info.origin,
                                                           glm::vec3(0.0f, glm::radians(_info.angle), 0.0f));
+                    newProp->setName("UNNAMED BUSH PROP");
                     if (mass > 0.0f) {
                         //newProp->setMass(mass);
                     }
@@ -203,40 +204,20 @@ void init(){
     });
 
 
-/*
-    glm::vec3 position = engine->getCamera()->getPosition();
-    glm::vec3 followerPos = follower->getTransform()->getPosition();
-
-    uint32_t start = SDL_GetTicks();
-    levelPath = _npcWorld->getPath(position, followerPos);
-    printf("Benchmark time: %d\n", SDL_GetTicks() - start);
-    assert(levelPath);
-    follower->setName("SCP 173");
-    */
     scp = new Protal::npc_173("173/173.fbx", _npcWorld->getNodeNear(glm::vec3(100.0f))->getPosition(), _npcWorld, engine);
     scp->init();
+    engine->addClient(scp);
 
 }
 
 float currentTime = 0.0f;
 
 int  loop(){
-
-    //for (auto mesh : follower->getMeshRenderer()->getMeshes()){
-    //    mesh->_displaySamples = 1;
-    //}
     currentTime += engine->getDeltaTime();
-
-    scp->loop();
-
-
 
     if (engine->getEvent()->getKeyDown(SDL_SCANCODE_V)){
         engine->setGameState("noclip", !engine->getGameState("noclip"));
     }
-
-
-
 
     if (engine->getEvent()->getKeyDown(SDL_SCANCODE_M)){
         engine->getWindow()->setMouseGrab(-1);

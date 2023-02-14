@@ -22,6 +22,7 @@
 #include <DemonGame/Shared/External/DG_EXT_PhysicsCallback.h>
 #include <DemonGame/Shared/DG_Trigger.h>
 #include <DemonUI/DU_Overlay.h>
+#include <GameClients/GameClient.h>
 
 namespace DemonEngine {
 
@@ -163,6 +164,8 @@ namespace DemonEngine {
         int* getGameStatePTR(std::string name);
         void setGameState(std::string name, int value);
         void setGameStatePTR(std::string name, int *ptr);
+
+        void addClient(GameClient *client);
     private:
         // Some fundimental variables
         unsigned int _width, _height, _fov, _zFar;
@@ -189,6 +192,8 @@ namespace DemonEngine {
 
         // Game state variables
         std::map<std::string, int*> _gameState;
+
+        std::vector<GameClient*> _clients;
 
 
     };

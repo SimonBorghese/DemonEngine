@@ -11,6 +11,7 @@
 #include <DemonGame/Shared/DG_PhysicsObject.h>
 #include <DemonBase/b_Light.h>
 #include <DemonGL/DemonGL.h>
+#include <DemonMacro/DemonBench.h>
 
 namespace DemonEngine {
 

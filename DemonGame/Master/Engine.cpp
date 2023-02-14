@@ -36,7 +36,6 @@ namespace DemonEngine {
         _currentTicks = SDL_GetTicks();
 
 
-
         //uint32_t startTicks = SDL_GetTicks();
         if (deltaTime <= 0.0f) {
             _mainPlayer->updateCamera();
@@ -70,9 +69,11 @@ namespace DemonEngine {
             }
             _defaultCamera->setMatrix();
             DGL::Mesh::_enableOcculusion = 1;
-            _world->updateAll(_debugShader);
-            midRenderFunc();
-            _mainOverlay->render();
+            DemonBench::Benchmark("Final Render", [this](){
+                _world->updateAll(_debugShader);
+                midRenderFunc();
+                _mainOverlay->render();
+            });
             _mainOverlay->newFrame();
             getCameraController()->updateCamera();
 
@@ -80,6 +81,10 @@ namespace DemonEngine {
             DemonBench::Benchmark("Flip Window", [this]() {_defaultWindow->flipWindow();});
         }
 
+
+        for (auto client : _clients){
+            client->loop();
+        }
 
         return _mainEvents->getCloseState() || _mainEvents->getKeyDown(SDL_SCANCODE_ESCAPE);
     }
@@ -285,5 +290,9 @@ namespace DemonEngine {
         } else{
             _gameState.insert(std::pair<std::string, int*>(name, ptr));
         }
+    }
+
+    void Engine::addClient(GameClient *client){
+        _clients.push_back(client);
     }
 } // DemonEngine

@@ -9,6 +9,7 @@
 #include <SDL2/SDL.h>
 #include <map>
 #include <string>
+#include <assert.h>
 
 
 namespace DemonBench{
