@@ -19,7 +19,7 @@ DemonEngine::BSPLoader *bspLoader;
 DemonEngine::World *world;
 DG::Lua::LuaInterface luaInterface;
 DNPC::Level *npcWorld;
-
+#define GET_SECONDS() (SDL_GetTicks() / 1000.0f)
 
 float health = 100.0f;
 
@@ -138,6 +138,9 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
     }
 }
 
+DG_AnimatedEntity *chicken;
+DemonPhysics::DP_CharacterController *_chickenController;
+
 void init(){
     // Init Engine
     engine = new DemonEngine::Engine(1600, 900);
@@ -170,10 +173,40 @@ void init(){
     });
     bspLoader->loadBSP("worlds/maze");
 
+    chicken = engine->createAnimatedEntity();
+    chicken->createEntityFromMesh("chicken.fbx", glm::vec3(0.0f, -60.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
+    chicken->setAnimation(12);
+    chicken->playOnce(GET_SECONDS());
+    chicken->getMeshRenderer()->removeFlag(DGL::MeshRenderer::MESH_FLAGS::MESH_RENDER_SHADOW);
+
+    _chickenController = engine->createCharacterController(glm::vec3(0.0f, -60.0f, 0.0f), 1.0f, 1.0f);
+
 
 }
 
 int  loop(){
+    chicken->getTransform()->setPosition(_chickenController->getPosition() - glm::vec3(0.0f, 2.0f, 0.0f));
+    chicken->playAnimation(GET_SECONDS());
+    if (chicken->isAnimationFinished(GET_SECONDS())){
+        chicken->playOnce(GET_SECONDS());
+    }
+
+    glm::vec3 moveTarget = glm::normalize(engine->getCamera()->getPosition() - chicken->getTransform()->getPosition()) *
+                           (float) 0.016f * 3.0f;
+    _chickenController->move(moveTarget);
+    glm::vec3 playerP = engine->getCamera()->getPosition();
+    glm::vec3 origin = chicken->getTransform()->getPosition();
+
+    float roty = glm::atan((playerP.z - origin.z) / (playerP.x - origin.x));
+
+    if ((playerP.x - origin.x) > 0){
+        roty = roty - glm::radians(180.0f);
+    }
+    roty = (-roty - glm::radians(90.0f));
+    chicken->getTransform()->setRotation(glm::vec3(0.0f, roty, 0.0f));
+
+    _chickenController->move(glm::vec3(0.0f, -9.81f, 0.0f));
+    //chicken->
     if (engine->getEvent()->getKeyDown(SDL_SCANCODE_V)){
         engine->setGameState("noclip", !engine->getGameState("noclip"));
     }

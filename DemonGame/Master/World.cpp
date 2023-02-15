@@ -26,35 +26,44 @@ namespace DemonEngine {
         return _lightEntites.size() - 1;
     }
 
-    void World::updateAll(DGL::Shader *overrideShader, glm::mat4 view, glm::mat4 projection) {
+    void World::updateAll(DGL::Shader *overrideShader, glm::mat4 view, glm::mat4 projection,  DGL::MeshRenderer::MESH_FLAGS flagCheck) {
         if (view != glm::mat4(0.0f)){
             overrideShader->setView(view);
             overrideShader->setProjection(projection);
         }
 
-        // Update Generics
-        for (unsigned int g = 0; g < _genericEntites.size(); g++) {
-            //DemonBench::Benchmark("Render a generic", [this, overrideShader, g]()
-            //{
+        if (flagCheck == DGL::MeshRenderer::MESH_FLAGS::NO_FLAG) {
+            // Update Generics
+            for (unsigned int g = 0; g < _genericEntites.size(); g++) {
                 _genericEntites.at(g)->update(overrideShader);
-            //});
-        }
+            }
 
-        for (unsigned int g = 0; g < _worldObjects.size(); g++) {
-            //_worldObjects.at(g)->update(overrideShader);
-            //DemonBench::Benchmark("Render a world object", [this, overrideShader, g]()
-            //{
+            for (unsigned int g = 0; g < _worldObjects.size(); g++) {
                 _worldObjects.at(g)->update(overrideShader);
-            //});
-        }
+            }
 
-        for (unsigned int g = 0; g < _worldEntites.size(); g++) {
-            //if (_worldEntites.at(g) != nullptr) {
-                //DemonBench::Benchmark("Render a world entity", [this, overrideShader, g]()
-                //{
+            for (unsigned int g = 0; g < _worldEntites.size(); g++) {
+                _worldEntites.at(g)->update(overrideShader);
+            }
+        } else{
+            // Update Generics
+            for (unsigned int g = 0; g < _genericEntites.size(); g++) {
+                if (_genericEntites.at(g)->getMeshRenderer()->compareFlag(flagCheck)) {
+                    _genericEntites.at(g)->update(overrideShader);
+                }
+            }
+
+            for (unsigned int g = 0; g < _worldObjects.size(); g++) {
+                if  (_worldObjects.at(g)->getMeshRenderer()->compareFlag(flagCheck)) {
+                    _worldObjects.at(g)->update(overrideShader);
+                }
+            }
+
+            for (unsigned int g = 0; g < _worldEntites.size(); g++) {
+                if  (_worldEntites.at(g)->getMeshRenderer()->compareFlag(flagCheck)) {
                     _worldEntites.at(g)->update(overrideShader);
-                //});
-            //}
+                }
+            }
         }
     }
 

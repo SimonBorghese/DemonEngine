@@ -25,6 +25,7 @@ namespace DGL {
         GLuint getNumSamples() const { return numSamples; }
         static int _enableOcculusion;
         int _displaySamples = 0;
+
     private:
         DemonBase::b_Mesh _bMesh;
 
@@ -37,7 +38,6 @@ namespace DGL {
         uint32_t _numElements = 0;
 
         GLuint numSamples = 1;
-
         
 
     };

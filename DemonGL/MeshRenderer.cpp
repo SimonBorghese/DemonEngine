@@ -88,4 +88,24 @@ namespace DGL {
     bool MeshRenderer::getRenderStatus() const {
         return _isRendered;
     }
+
+    ushort MeshRenderer::getFlags(){
+        return _meshFlags;
+    }
+    void MeshRenderer::setFlags(ushort flags){
+        _meshFlags = flags;
+    }
+    int MeshRenderer::compareFlag(MESH_FLAGS testFlag){
+        return _meshFlags & testFlag;
+    }
+    int MeshRenderer::addFlag(MESH_FLAGS flag){
+        int previousStatus = _meshFlags & flag;
+        _meshFlags |= flag;
+        return previousStatus;
+    }
+    int MeshRenderer::removeFlag(MESH_FLAGS flag){
+        int previousStatus = _meshFlags & flag;
+        _meshFlags ^= flag;
+        return previousStatus;
+    }
 } // DGL

@@ -29,12 +29,26 @@ namespace DGL {
         std::vector<Mesh*> getMeshes();
 
         bool getRenderStatus() const;
+
+        enum MESH_FLAGS{
+            NO_FLAG = 0,
+            MESH_RENDERED = 1,
+            MESH_RENDER_SHADOW = 2
+        };
+
+        ushort getFlags();
+        void setFlags(ushort flags);
+        int compareFlag(MESH_FLAGS testFlag);
+        int addFlag(MESH_FLAGS flag);
+        int removeFlag(MESH_FLAGS flag);
     private:
         Shader *_shader;
         Mesh **_meshes;
         uint32_t _numMeshes;
         DemonWorld::DW_Transform _transform;
         bool _isRendered = false;
+
+        ushort _meshFlags = MESH_RENDERED | MESH_RENDER_SHADOW;
     };
 
 } // DGL

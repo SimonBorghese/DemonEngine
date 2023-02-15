@@ -53,7 +53,7 @@ namespace DemonEngine {
                 DGL::Mesh::_enableOcculusion = 0;
                 for (auto light: _lightEntities) {
                     light->renderShadowBuffer(_shadowShader, [this]() {
-                        _world->updateAll(_shadowShader, glm::mat4(1.0f), glm::mat4(1.0f));
+                        _world->updateAll(_shadowShader, glm::mat4(1.0f), glm::mat4(1.0f), DGL::MeshRenderer::MESH_FLAGS::MESH_RENDER_SHADOW);
                     });
                 }
             });

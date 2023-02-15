@@ -27,7 +27,7 @@ namespace DemonEngine {
 
         int addLightEntity(DGL::Light *light);
 
-        void updateAll(DGL::Shader *overrideShader = nullptr, glm::mat4 view = glm::mat4(0.0f), glm::mat4 projection = glm::mat4(0.0f));
+        void updateAll(DGL::Shader *overrideShader = nullptr, glm::mat4 view = glm::mat4(0.0f), glm::mat4 projection = glm::mat4(0.0f), DGL::MeshRenderer::MESH_FLAGS flagCheck = DGL::MeshRenderer::MESH_FLAGS::NO_FLAG);
 
         void clearAll();
 
