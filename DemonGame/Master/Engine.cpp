@@ -70,7 +70,7 @@ namespace DemonEngine {
             _defaultCamera->setMatrix();
             DGL::Mesh::_enableOcculusion = 1;
             DemonBench::Benchmark("Final Render", [this](){
-                _world->updateAll(_debugShader);
+                _world->updateAll(_debugShader, glm::mat4(0.0f), glm::mat4(0.0f), DGL::MeshRenderer::MESH_FLAGS::MESH_RENDERED);
                 midRenderFunc();
                 _mainOverlay->render();
             });

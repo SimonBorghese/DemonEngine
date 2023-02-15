@@ -68,10 +68,10 @@ namespace DGL {
             }
         }
 
-        _isRendered = false;
+        removeFlag(MESH_FLAGS::MESH_IN_VIEW);
         for (uint32_t m = 0; m < _numMeshes; m++){
             if (DGL::Mesh::_enableOcculusion && _meshes[m]->getNumSamples() > 0){
-                _isRendered = true;
+                addFlag(MESH_FLAGS::MESH_IN_VIEW);
             }
         }
     }
@@ -85,9 +85,6 @@ namespace DGL {
         return {&_meshes[0], &_meshes[_numMeshes]};
     }
 
-    bool MeshRenderer::getRenderStatus() const {
-        return _isRendered;
-    }
 
     ushort MeshRenderer::getFlags(){
         return _meshFlags;

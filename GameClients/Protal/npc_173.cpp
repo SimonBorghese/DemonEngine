@@ -9,6 +9,7 @@ namespace Protal {
         _entity = gameEngine->createVisualEntity();
         _entity->createEntityFromMesh(model, startPosition, glm::vec3(0.0f), glm::vec3(0.4));
         _controller = gameEngine->createCharacterController(startPosition, 6.0f, 1.0f);
+        _entity->getMeshRenderer()->removeFlag(DGL::MeshRenderer::MESH_FLAGS::MESH_RENDER_SHADOW);
 
     }
 
@@ -37,7 +38,7 @@ namespace Protal {
         glm::vec3 moveTarget = glm::normalize(_path->getNextTarget() - _entity->getTransform()->getPosition()) *
                                (float) 0.016f * 30.0f;
         //moveTarget.y = 0.0f;
-        if (!_entity->getMeshRenderer()->getRenderStatus()) {
+        if (!_entity->getMeshRenderer()->compareFlag(DGL::MeshRenderer::MESH_IN_VIEW)) {
             float roty = glm::atan((playerP.z - origin.z) / (playerP.x - origin.x));
 
             if ((playerP.x - origin.x) > 0){
