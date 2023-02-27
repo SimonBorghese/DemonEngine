@@ -95,6 +95,8 @@ namespace DemonAnimation {
 
         int animationFinished(float time);
 
+        int getAnimation();
+
 
     private:
 
@@ -119,6 +121,8 @@ namespace DemonAnimation {
         // These hold the pointers we can destroy later
         std::map<unsigned int, aiAnimation*> *_PTRanimationMap;
         std::map<std::string, BoneInfo*> *_PTRboneMap;
+
+        int currentAnimation = 0;
 
 
     };

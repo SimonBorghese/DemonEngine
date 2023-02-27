@@ -65,4 +65,11 @@ namespace DemonGame {
         }
         return 1;
     }
+    int DG_AnimatedEntity::getAnimationIndex(){
+        return animMeshes[0]->getAnimation();
+    }
+
+    std::vector<DemonAnimation::DA_riggedMesh*> DG_AnimatedEntity::getMeshes(){
+        return {animMeshes[0], animMeshes[numMeshes-1]};
+    }
 } // DemonGame

@@ -52,10 +52,11 @@ namespace DemonPhysics {
 
         void releaseParticles(std::vector<uint32_t> indices);
 
-        physx::PxParticleFluid *getFluid() { return _fluid; }
+        physx::PxParticleBuffer *getFluid() { return _fluid; }
 
     private:
-        physx::PxParticleFluid *_fluid = nullptr;
+        physx::PxPBDParticleSystem *_particleSystem = nullptr;
+        physx::PxParticleBuffer *_fluid = nullptr;
         particleDescription _currentDescription;
         uint32_t _maxParticle;
         std::vector<uint32_t> _availableIndices;

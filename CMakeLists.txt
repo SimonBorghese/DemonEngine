@@ -7,7 +7,7 @@ file(GLOB_RECURSE SOURCES ${CMAKE_SOURCE_DIR} *.cpp)
 
 add_executable(DemonEngine ${SOURCES} GLAD/src/glad.c DemonMacro/DemonBench.h)
 
-set(OpenGL_GL_PREFERENCE LEGACY)
+set(OpenGL_GL_PREFERENCE GLVND)
 
 # Find all the packages we need
 find_package(SDL2 REQUIRED)

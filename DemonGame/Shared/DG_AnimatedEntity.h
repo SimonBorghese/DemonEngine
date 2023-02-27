@@ -37,7 +37,11 @@ namespace DemonGame {
 
         int isAnimationFinished(float currentTime);
 
+        int getAnimationIndex();
+
         int enableDepth = 1;
+
+        std::vector<DemonAnimation::DA_riggedMesh*> getMeshes();
     private:
         DemonAnimation::DA_riggedMesh **animMeshes;
         DemonBase::b_Mesh **renderMesh;

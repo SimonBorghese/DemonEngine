@@ -70,6 +70,13 @@ namespace DemonPhysics {
             return;
         }
 
+#ifndef DEMON_NO_GPU_PHYSX
+        PxCudaContextManagerDesc cudaContextManagerDesc;
+
+        pCudaContextManager = PxCreateCudaContextManager(*pFoundation, cudaContextManagerDesc, PxGetProfilerCallback());
+
+#endif
+
         // Begin creating our scene
         pPhysDec = new physx::PxSceneDesc(physx::PxTolerancesScale());
         // Assign gravity to our assigned one
@@ -87,12 +94,19 @@ namespace DemonPhysics {
             pPhysDec->filterShader = NotifyAllFilterShader;
 
         pPhysDec->broadPhaseType = physx::PxBroadPhaseType::eSAP;
+        pPhysDec->flags |= PxSceneFlag::eENABLE_STABILIZATION;
+
+#ifndef DEMON_NO_GPU_PHYSX
+      pPhysDec->cudaContextManager = pCudaContextManager;
+      pPhysDec->flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
+      pPhysDec->broadPhaseType = physx::PxBroadPhaseType::eGPU;
+#endif
+
 
 
 
         // Create our scene
         pScene = pPhysics->createScene(*pPhysDec);
-        pScene->setFlag(PxSceneFlag::eENABLE_STABILIZATION, true);
         if (pScene == NULL) {
             printf("Failed to create scene\n");
             return;

@@ -83,11 +83,11 @@ namespace DGL {
         }
 
         int success;
-        char infoLog[512];
+        char infoLog[4096];
 
         glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
         if (!success) {
-            glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
+            glGetShaderInfoLog(vertexShader, 4096, nullptr, infoLog);
             ALERT("FAILED TO BUILD VERTEX SHADER!\n");
             ALERT(infoLog);
             assert(0);
@@ -95,7 +95,7 @@ namespace DGL {
 
         glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
         if (!success) {
-            glGetShaderInfoLog(fragmentShader, 512, nullptr, infoLog);
+            glGetShaderInfoLog(fragmentShader, 4096, nullptr, infoLog);
             ALERT("FAILED TO BUILD FRAGMENT SHADER!\n");
             ALERT(infoLog);
             assert(0);
@@ -104,7 +104,7 @@ namespace DGL {
         if (geometryShader) {
             glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &success);
             if (!success) {
-                glGetShaderInfoLog(geometryShader, 512, nullptr, infoLog);
+                glGetShaderInfoLog(geometryShader, 4096, nullptr, infoLog);
                 ALERT("FAILED TO BUILD GEOMETRY SHADER!\n");
                 ALERT(infoLog);
                 assert(0);
@@ -122,7 +122,7 @@ namespace DGL {
 
         glGetProgramiv(_shaderProgram, GL_LINK_STATUS, &success);
         if (!success) {
-            glGetProgramInfoLog(_shaderProgram, 512, nullptr, infoLog);
+            glGetProgramInfoLog(_shaderProgram, 4096, nullptr, infoLog);
             ALERT("FAILED TO LINK SHADER!\n");
             ALERT(infoLog);
             assert(0);
@@ -144,14 +144,14 @@ namespace DGL {
         if (!_transformBlock){
             glGenBuffers(1, &_transformBlock);
             glBindBuffer(GL_UNIFORM_BUFFER, _transformBlock);
-            glBufferData(GL_UNIFORM_BUFFER, sizeof(struct transformBlock), &_globalTransform, GL_STREAM_DRAW);
+            glBufferData(GL_UNIFORM_BUFFER, sizeof(struct transformBlock), &_globalTransform, GL_DYNAMIC_DRAW);
             glBindBuffer(GL_UNIFORM_BUFFER, 0);
         }
 
         if (!_dynamicLightUBO){
             glGenBuffers(1, &_dynamicLightUBO);
             glBindBuffer(GL_SHADER_STORAGE_BUFFER, _dynamicLightUBO);
-            glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(struct dynamicLights), &_dynamicLights, GL_DYNAMIC_COPY);
+            glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(struct dynamicLights), &_dynamicLights, GL_DYNAMIC_DRAW);
             glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, _dynamicLightUBO);
             glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
         }
@@ -159,7 +159,7 @@ namespace DGL {
         if (!_texturesUBO){
             glGenBuffers(1, &_texturesUBO);
             glBindBuffer(GL_UNIFORM_BUFFER, _texturesUBO);
-            glBufferData(GL_UNIFORM_BUFFER, sizeof(struct _textureStruct), &_textures, GL_STREAM_DRAW);
+            glBufferData(GL_UNIFORM_BUFFER, sizeof(struct _textureStruct), &_textures, GL_DYNAMIC_DRAW);
             glBindBuffer(GL_UNIFORM_BUFFER, 0);
         }
 

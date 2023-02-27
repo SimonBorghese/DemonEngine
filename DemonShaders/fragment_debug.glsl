@@ -19,7 +19,7 @@ struct _lightSpec{
     int  specValue;
 };
 
-layout (std430) readonly buffer dynamicLights {
+layout (std430, binding=1) readonly buffer dynamicLights {
     int numLights;
 
     float _viewPos[3];
@@ -38,7 +38,7 @@ layout (std430) readonly buffer dynamicLights {
     int enableShadow[20];
 };
 
-layout (std140) uniform Textures{
+layout (std140, binding=2) uniform Textures{
     int _enableDiffuse;
     int _enableNormal;
 };
@@ -193,10 +193,12 @@ void main(){
 
     if (_enableDiffuse == 1){
         outputText = vec4( (ambient + diffuse + specular) , 1.0f) * texture(_diffuse, iTextCord);
+        //outputText = vec4(normalize(viewPos) * normalize(iFragPos), 1.0f);
     } else {
         outputText = vec4(normalize(viewPos) * normalize(iFragPos), 1.0f);
     }
 
 
     FragColor = outputText;
+    //FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f)
 }

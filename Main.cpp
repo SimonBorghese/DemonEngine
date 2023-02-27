@@ -103,13 +103,14 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
 
 #define SHADOW_HELL 1.0f
 #define SHADOW_RES 512
-                engine->createEasyPointLight(realPos, distance, intensity)->createShadowBuffer(
-                        SHADOW_RES * SHADOW_HELL, SHADOW_RES * SHADOW_HELL);
+                //engine->createEasyPointLight(realPos, distance, intensity)->createShadowBuffer(
+                //        SHADOW_RES * SHADOW_HELL, SHADOW_RES * SHADOW_HELL);
                 engine->createEasyPointLight(realPos, distance, intensity);
             }
                 break;
             case INFO_SCRIPTED_PROP:
             {
+                /*
                 const char *script = CBSP_getKeyFromEntity(_info.currentEntity, "script");
                 if (strcmp(script, CBSP_getKeyFromEntity_FAILURE) != 0){
                     luaInterface.initFile(script);
@@ -118,6 +119,7 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
                 } else{
                     assert(0);
                 }
+                 */
             }
                 break;
             case INFO_NODE:
@@ -141,7 +143,7 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
 DG_AnimatedEntity *chicken;
 DemonPhysics::DP_CharacterController *_chickenController;
 
-void init(){
+void init() {
     // Init Engine
     engine = new DemonEngine::Engine(1600, 900);
     engine->createEngine();
@@ -168,44 +170,66 @@ void init(){
 
 
     // Load the BSP map
-    bspLoader->setBSPCreationCallback([](DemonEngine::BSP_EntityCreateInfo _info){
+    bspLoader->setBSPCreationCallback([](DemonEngine::BSP_EntityCreateInfo _info) {
         bspCallback(_info);
     });
-    bspLoader->loadBSP("worlds/maze");
+    bspLoader->loadBSP("levels/tower");
 
-    chicken = engine->createAnimatedEntity();
-    chicken->createEntityFromMesh("chicken.fbx", glm::vec3(0.0f, -60.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-    chicken->setAnimation(12);
+    /*chicken = engine->createAnimatedEntity();
+    chicken->createEntityFromMesh("person.fbx", glm::vec3(0.0f, -60.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
+    chicken->setAnimation(10);
     chicken->playOnce(GET_SECONDS());
     chicken->getMeshRenderer()->removeFlag(DGL::MeshRenderer::MESH_FLAGS::MESH_RENDER_SHADOW);
 
     _chickenController = engine->createCharacterController(glm::vec3(0.0f, -60.0f, 0.0f), 1.0f, 1.0f);
 
 
+    //chicken->getTransform()->setScale(glm::vec3(1.0f));
+     */
+
 }
 
 int  loop(){
-    chicken->getTransform()->setPosition(_chickenController->getPosition() - glm::vec3(0.0f, 2.0f, 0.0f));
-    chicken->playAnimation(GET_SECONDS());
-    if (chicken->isAnimationFinished(GET_SECONDS())){
-        chicken->playOnce(GET_SECONDS());
-    }
+    /*
+    //chicken->getTransform()->setPosition(_chickenController->getPosition() - glm::vec3(0.0f, -1.0f, 0.0f));
+    //chicken->playAnimation(GET_SECONDS());
+    //if (chicken->isAnimationFinished(GET_SECONDS())){
+    //    chicken->playOnce(GET_SECONDS());
+    //}
 
     glm::vec3 moveTarget = glm::normalize(engine->getCamera()->getPosition() - chicken->getTransform()->getPosition()) *
-                           (float) 0.016f * 3.0f;
-    _chickenController->move(moveTarget);
-    glm::vec3 playerP = engine->getCamera()->getPosition();
-    glm::vec3 origin = chicken->getTransform()->getPosition();
+                           (float) 0.016f * 30.0f;
+   //if (chicken->getAnimationIndex() == 12) {
+        _chickenController->move(moveTarget);
 
-    float roty = glm::atan((playerP.z - origin.z) / (playerP.x - origin.x));
+        glm::vec3 playerP = engine->getCamera()->getPosition();
+        glm::vec3 origin = chicken->getTransform()->getPosition();
 
-    if ((playerP.x - origin.x) > 0){
-        roty = roty - glm::radians(180.0f);
+        float roty = glm::atan((playerP.z - origin.z) / (playerP.x - origin.x));
+
+        if ((playerP.x - origin.x) > 0) {
+            roty = roty - glm::radians(180.0f);
+        }
+        roty = (-roty - glm::radians(90.0f));
+        //chicken->getTransform()->setRotation(glm::vec3(0.0f, roty, 0.0f));
+    //}
+
+
+    if (glm::distance(chicken->getTransform()->getPosition(), engine->getCamera()->getPosition() - glm::vec3(0.0f, 5.0f, 0.0f)) < 5.0f){
+
+        if (chicken->isAnimationFinished(GET_SECONDS()) || chicken->getAnimationIndex() == 12) {
+            chicken->setAnimation(7);
+            chicken->playOnce(GET_SECONDS());
+        }
+    } else{
+        if (chicken->isAnimationFinished(GET_SECONDS())) {
+            chicken->setAnimation(12);
+            chicken->playOnce(GET_SECONDS());
+        }
     }
-    roty = (-roty - glm::radians(90.0f));
-    chicken->getTransform()->setRotation(glm::vec3(0.0f, roty, 0.0f));
+     */
 
-    _chickenController->move(glm::vec3(0.0f, -9.81f, 0.0f));
+    //_chickenController->move(glm::vec3(0.0f, -9.81f, 0.0f));
     //chicken->
     if (engine->getEvent()->getKeyDown(SDL_SCANCODE_V)){
         engine->setGameState("noclip", !engine->getGameState("noclip"));

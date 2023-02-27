@@ -8,7 +8,7 @@ namespace DemonPhysics {
 
     DP_Fluid::DP_Fluid(DP_PhysicsManager *physicsManager, uint32_t particleMax, particleDescription description) :
             _currentDescription(description), _maxParticle(particleMax){
-        _fluid = physicsManager->getPhysics()->createParticleFluid(_maxParticle, false);
+        _particleSystem = physicsManager->getPhysics()->createPBDParticleSystem(*physicsManager->getCudaContext());
 
         /*
         ps->setGridSize(3.0);
@@ -28,6 +28,8 @@ namespace DemonPhysics {
         //ps->setExternalAcceleration(PxVec3(0.0f, -98.1f, 0.0f));
         //ps->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
          */
+
+        /*
         _fluid->setParticleMass(_currentDescription.mass);
         _fluid->setGridSize(_currentDescription.gridSize);
         _fluid->setMaxMotionDistance(_currentDescription.maxMotion);
@@ -36,6 +38,8 @@ namespace DemonPhysics {
             physicsManager->getScene()->addActor(*_fluid);
         }
         _availableIndices = std::vector<uint32_t>(_maxParticle, 1);
+         */
+        _fluid = physicsManager->getPhysics()->createParticleBuffer(particleMax, 10, physicsManager->getCudaContext());
     }
 
     DP_Fluid::~DP_Fluid() {}

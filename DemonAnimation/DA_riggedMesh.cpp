@@ -16,6 +16,7 @@ namespace DemonAnimation {
 
 void DA_riggedMesh::setAnimation(unsigned int index){
         currentAnim = _animationMap.at(index);
+        currentAnimation = index;
 }
 
     std::vector<std::string> split(const std::string& s, char seperator)
@@ -114,6 +115,7 @@ void DA_riggedMesh::assignTransformations(float currentTime, aiNode *currentNode
         glm::mat4 rotationMat = glm::mat4(1.0f);
         glm::mat4 scalingMat = glm::mat4(1.0f);
 
+
         if (currentCurve->mNumScalingKeys > 1) {
             unsigned int index = GetPositionIndex(currentTime, currentCurve->mNumScalingKeys,
                                                   currentCurve->mScalingKeys);
@@ -209,4 +211,8 @@ void DA_riggedMesh::playOnce(float currentTime){
 int DA_riggedMesh::animationFinished(float time){
     return (((time * currentAnim->mTicksPerSecond) - (referenceTime)) >= currentAnim->mDuration) || referenceTime == 0.0f;
 }
+
+    int DA_riggedMesh::getAnimation(){
+        return currentAnimation;
+    }
 } // DemonAnimation

@@ -59,6 +59,7 @@ namespace DGL {
 
     }
     void Mesh::renderMesh(){
+        /*
         GLuint query[1];
         if (_enableOcculusion){
             glGenQueries(1, query);
@@ -74,6 +75,10 @@ namespace DGL {
             }
 
         }
+         */
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, (int) _numElements, GL_UNSIGNED_INT, nullptr);
+        _displaySamples = 1;
     }
     void Mesh::destroyMesh(){
         glDeleteVertexArrays(1, &VAO);

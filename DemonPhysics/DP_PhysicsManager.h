@@ -64,6 +64,8 @@ namespace DemonPhysics {
 
         physx::PxControllerManager *getControllerManager() { return pControlManager; }
 
+        physx::PxCudaContextManager *getCudaContext() { return pCudaContextManager; }
+
     private:
         physx::PxDefaultErrorCallback pError;
         physx::PxDefaultAllocator pAllocate;
@@ -82,6 +84,8 @@ namespace DemonPhysics {
         physx::PxSceneDesc *pPhysDec;
 
         physx::PxControllerManager *pControlManager;
+
+        physx::PxCudaContextManager *pCudaContextManager;
     };
 
 } // DemonPhysics

@@ -110,13 +110,13 @@ namespace DGL {
             std::cout << std::endl;
             std::cout << std::endl;
         } else{
-            //if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
+            if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
             std::cout << "[OPENGL] Debug message (" << id << "): " << message << std::endl;
 
         }
     }
 
-    Window::Window(const char *windowTitle, uint32_t width, uint32_t height, int vsync) : _windowTitle(windowTitle),
+    Window::Window(const char *windowTitle, uint32_t width, uint32_t height, int ) : _windowTitle(windowTitle),
     _width(width), _height(height){
         // Init SDL with *all* of the works
         LOG("SDL_INIT FAILED", !SDL_Init(SDL_INIT_EVERYTHING));
@@ -135,13 +135,13 @@ namespace DGL {
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 1);
 
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
+        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
         _context = SDL_GL_CreateContext(_window);
         LOG("SDL CONTEXT CREATION FAILED", _context);
 
         SDL_GL_MakeCurrent(_window, _context);
-        SDL_GL_SetSwapInterval(vsync);
+        SDL_GL_SetSwapInterval(0);
 
         gladLoadGLLoader((GLADloadproc) SDL_GL_GetProcAddress);
         glViewport(0,0, (int) _width, (int) _height);

@@ -7,23 +7,25 @@ layout (location=3) in ivec4 boneIds;
 layout (location=4) in vec4 weights;
 layout (location=5) in int body;
 
-layout (std140) uniform Transform{
+layout (std140, binding=0) uniform Transform{
     mat4 view;
     mat4 projection;
 };
 
 uniform mat4 model;
 
-const int MAX_BONES = 100;
+
+const int MAX_BONES = 50;
 const int MAX_BODIES = 10;
 const int MAX_BONE_INFLUENCE = 4;
-uniform mat4 bodyTransforms[MAX_BODIES][MAX_BONES];
+//uniform mat4 bodyTransforms[MAX_BODIES][MAX_BONES];
+
 
 out vec3 vertex;
 
 out vec3 iNormal;
 out vec3 iFragPos;
-flat out vec2 iTextCord;
+out vec2 iTextCord;
 
 
 
@@ -36,7 +38,6 @@ void main(){
 
     vec4 totalPosition = vec4(0.0f);
     vec3 totalNormal = vec3(0.0f);
-    mat4 boneTransform = mat4(1.0f);
 
 
     for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
@@ -50,9 +51,11 @@ void main(){
             break;
         }
 
-        vec4 localPosition = bodyTransforms[body][boneIds[i]] * vec4(aPos, 1.0f);
+        //vec4 localPosition = bodyTransforms[body][boneIds[i]] * vec4(aPos, 1.0f);
+        vec4 localPosition = vec4(aPos, 1.0f);
         totalPosition += localPosition * weights[i];
-        vec3 localNormal = mat3(bodyTransforms[body][boneIds[i]]) * aNormal;
+        //vec3 localNormal = mat3(bodyTransforms[body][boneIds[i]]) * aNormal;
+        vec3 localNormal = aNormal;
         totalNormal += localNormal * weights[i];
     }
 
@@ -66,5 +69,5 @@ void main(){
     iFragPos = vec3(model * totalPosition);
     //totalPosition.y += sin(totalPosition.x) + cos(totalPosition.z);
     iTextCord = aTextCords;
-    gl_Position = (projection * view * boneTransform * model * totalPosition);
+    gl_Position = (projection * (view * model) * totalPosition);
 }
