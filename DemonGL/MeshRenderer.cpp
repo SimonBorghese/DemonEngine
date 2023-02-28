@@ -32,23 +32,27 @@ namespace DGL {
                 _shader->useShader();
                 bindTransform();
                 _shader->bindGlobals();
+                if (!_diffuseLocation){
+                    _diffuseLocation = _shader->UniformLocation("_diffuse");
+                    _normalLocation = _shader->UniformLocation("_normal");
+                }
+                _shader->uniformInt(_diffuseLocation, 0);
+                _shader->uniformInt(_normalLocation, 1);
                 for (uint32_t m = 0; m < _numMeshes; m++) {
                     _meshes[m]->getTexture()->bindTextures();
                     DGL::Shader::remakeTextures();
-                    _shader->uniformInt("_diffuse", 0);
-                    _shader->uniformInt("_normal", 1);
                     _meshes[m]->renderMesh();
                 }
             } else{
                 overrideShader->useShader();
                 overrideShader->uniformMat4("model", _transform.getModel());
                 overrideShader->bindGlobals();
+                overrideShader->uniformInt("_diffuse", 0);
+                overrideShader->uniformInt("_normal", 1);
+                overrideShader->uniformInt("_shadowMap", 2);
                 for (uint32_t m = 0; m < _numMeshes; m++) {
                     _meshes[m]->getTexture()->bindTextures();
                     DGL::Shader::remakeTextures();
-                    overrideShader->uniformInt("_diffuse", 0);
-                    overrideShader->uniformInt("_normal", 1);
-                    overrideShader->uniformInt("_shadowMap", 2);
                     _meshes[m]->renderMesh();
                 }
             }
@@ -58,12 +62,12 @@ namespace DGL {
             bindTransform();
             _globalShader->bindGlobals();
             bindTransform();
+            _globalShader->uniformInt("_diffuse", 0);
+            _globalShader->uniformInt("_normal", 1);
+            _globalShader->uniformInt("_shadowMap", 2);
             for (uint32_t m = 0; m < _numMeshes; m++) {
                 _meshes[m]->getTexture()->bindTextures();
                 DGL::Shader::remakeTextures();
-                _globalShader->uniformInt("_diffuse", 0);
-                _globalShader->uniformInt("_normal", 1);
-                _globalShader->uniformInt("_shadowMap", 2);
                 _meshes[m]->renderMesh();
             }
         }

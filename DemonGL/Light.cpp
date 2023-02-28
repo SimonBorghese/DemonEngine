@@ -78,6 +78,11 @@ namespace DGL {
     }
 
     void Light::renderShadowBuffer(DGL::Shader *shadowShader, std::function<void()> renderFunction){
+        if (*_lightConfig.enableShadow && !enableShadows){
+            glActiveTexture(GL_TEXTURE2 + _lightNumber);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, _shadowTexture);
+            return;
+        }
         if (!*_lightConfig.enableShadow) { return; }
         // 1. first render to depth map
         glViewport(0, 0, (int) _shadowWidth, (int) _shadowHeight);
@@ -119,6 +124,7 @@ namespace DGL {
         glActiveTexture(GL_TEXTURE2 + _lightNumber);
         glBindTexture(GL_TEXTURE_CUBE_MAP, _shadowTexture);
         *_lightConfig.enableShadow = 1;
+        //enableShadows = 0;
     }
 
     glm::vec3 Light::getPosition() { return *_lightConfig.position; }

@@ -42,6 +42,7 @@ namespace DGL {
         int removeFlag(MESH_FLAGS flag);
     private:
         Shader *_shader;
+        GLuint _diffuseLocation = 0, _normalLocation = 0;
         Mesh **_meshes;
         uint32_t _numMeshes;
         DemonWorld::DW_Transform _transform;

@@ -103,9 +103,9 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
 
 #define SHADOW_HELL 1.0f
 #define SHADOW_RES 512
-                //engine->createEasyPointLight(realPos, distance, intensity)->createShadowBuffer(
-                //        SHADOW_RES * SHADOW_HELL, SHADOW_RES * SHADOW_HELL);
-                engine->createEasyPointLight(realPos, distance, intensity);
+                engine->createEasyPointLight(realPos, distance, intensity)->createShadowBuffer(
+                        SHADOW_RES * SHADOW_HELL, SHADOW_RES * SHADOW_HELL);
+                //engine->createEasyPointLight(realPos, distance, intensity);
             }
                 break;
             case INFO_SCRIPTED_PROP:
@@ -173,7 +173,7 @@ void init() {
     bspLoader->setBSPCreationCallback([](DemonEngine::BSP_EntityCreateInfo _info) {
         bspCallback(_info);
     });
-    bspLoader->loadBSP("levels/tower");
+    bspLoader->loadBSP("worlds/flat");
 
     /*chicken = engine->createAnimatedEntity();
     chicken->createEntityFromMesh("person.fbx", glm::vec3(0.0f, -60.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));

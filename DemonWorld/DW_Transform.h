@@ -51,8 +51,12 @@ namespace DemonWorld {
         glm::vec3 getScale() { return _scale; }
 
         glm::mat4 getModel() {
-                currentModel = defaultModel;
-                if (enableTransformations) {
+                if (enableTransformations && ((_oldposition != position) || (_oldrotation != rotation) || (_oldscale !=
+                        _scale))) {
+                    currentModel = defaultModel;
+                    _oldposition = position;
+                    _oldrotation = rotation;
+                    _oldscale = _scale;
                     currentModel = glm::translate(currentModel, position);
                     if (rotation != glm::quat(0.0f, 0.0f, 0.0f, 0.0f)){
                         currentModel = glm::rotate(currentModel, glm::angle(rotation), glm::axis(rotation));
@@ -89,6 +93,10 @@ namespace DemonWorld {
         glm::vec3 position = glm::vec3(0.0f);
         glm::quat rotation = glm::quat(0.0f, 0.0f, 0.0f, 0.0f);
         glm::vec3 _scale = glm::vec3(1.0f);
+
+        glm::vec3 _oldposition = glm::vec3(0.0f);
+        glm::quat _oldrotation = glm::quat(0.0f, 0.0f, 0.0f, 0.0f);
+        glm::vec3 _oldscale = glm::vec3(1.0f);
 
         glm::mat4 currentModel = glm::mat4(1.0f);
         glm::mat4 defaultModel = glm::mat4(1.0f);

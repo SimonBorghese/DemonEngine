@@ -74,6 +74,12 @@ namespace DGL {
         void uniformVec3(std::string location, glm::vec3 target);
         void uniformFloat(std::string location, glm::float32 target);
 
+        void uniformMat4(GLuint location, glm::mat4 target);
+        void uniformInt(GLuint location, glm::int32 target);
+        void uniformVec3(GLuint location, glm::vec3 target);
+        void uniformFloat(GLuint location, glm::float32 target);
+        GLuint UniformLocation(std::string name);
+
         static GLuint _transformBlock;
         static struct transformBlock _globalTransform;
 
@@ -82,8 +88,10 @@ namespace DGL {
 
         static GLuint _texturesUBO;
         static struct _textureStruct _textures;
-    private:
 
+
+    private:
+        static struct _textureStruct _oldTextures;
         GLuint getUniformLocation(std::string uniform);
 
         std::string _shaders[3] = {"", "", ""};

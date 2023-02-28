@@ -68,6 +68,7 @@ namespace DGL {
         uint32_t _shadowWidth = 0, _shadowHeight = 0;
         std::vector<glm::mat4> shadowTransforms;
         _lightSpec _lightConfig;
+        int enableShadows = 1;
 
     };
 

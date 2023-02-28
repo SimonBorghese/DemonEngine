@@ -13,6 +13,7 @@ namespace DGL {
 
     GLuint Shader::_texturesUBO = 0;
     struct _textureStruct Shader::_textures;
+    struct _textureStruct Shader::_oldTextures;
 
 
     Shader::Shader(const char *vertex, const char *fragment){
@@ -163,6 +164,8 @@ namespace DGL {
             glBindBuffer(GL_UNIFORM_BUFFER, 0);
         }
 
+        memcpy(&_oldTextures, &_textures, sizeof(struct _textureStruct));
+
 
     }
     void Shader::useShader() const{
@@ -220,9 +223,11 @@ namespace DGL {
     }
 
     void Shader::remakeTextures(){
-        glBindBuffer(GL_UNIFORM_BUFFER, _texturesUBO);
-        glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(struct _textureStruct), &_textures);
-        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+        if (memcmp(&_oldTextures, &_textures, sizeof(struct _textureStruct)) != 0) {
+            glBindBuffer(GL_UNIFORM_BUFFER, _texturesUBO);
+            glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(struct _textureStruct), &_textures);
+            glBindBuffer(GL_UNIFORM_BUFFER, 0);
+        }
 
     }
 
@@ -242,6 +247,26 @@ namespace DGL {
     void Shader::uniformFloat(std::string location, glm::float32 target){
         useShader();
         glUniform1f((int) getUniformLocation(location), target);
+    }
+
+    void Shader::uniformMat4(GLuint location, glm::mat4 target){
+        useShader();
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(target));
+    }
+    void Shader::uniformInt(GLuint location, glm::int32 target){
+        useShader();
+        glUniform1i(location, target);
+    }
+    void Shader::uniformVec3(GLuint location, glm::vec3 target){
+        useShader();
+        glUniform3fv(location, 1, glm::value_ptr(target));
+    }
+    void Shader::uniformFloat(GLuint location, glm::float32 target){
+        useShader();
+        glUniform1f(location, target);
+    }
+    GLuint Shader::UniformLocation(std::string name){
+        return glGetUniformLocation(_shaderProgram, name.c_str());
     }
 
     GLuint Shader::getUniformLocation(std::string uniform){
