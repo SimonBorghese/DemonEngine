@@ -152,6 +152,7 @@ namespace DGL {
         glEnable(GL_FRAMEBUFFER_SRGB);
         glEnable(GL_PROGRAM_POINT_SIZE);
         glEnable(GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset(1.5, 4.0);
         //glEnable(GL_CULL_FACE);
         //glCullFace(GL_BACK);
         //glFrontFace(GL_CW);
