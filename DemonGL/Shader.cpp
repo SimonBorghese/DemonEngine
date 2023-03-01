@@ -15,6 +15,8 @@ namespace DGL {
     struct _textureStruct Shader::_textures;
     struct _textureStruct Shader::_oldTextures;
 
+    GLuint Shader::_currentlyEnabledShader =0;
+
 
     Shader::Shader(const char *vertex, const char *fragment){
         _shaders[0] = vertex;
@@ -169,7 +171,10 @@ namespace DGL {
 
     }
     void Shader::useShader() const{
-        glUseProgram(_shaderProgram);
+        if (_currentlyEnabledShader != _shaderProgram) {
+            _currentlyEnabledShader = _shaderProgram;
+            glUseProgram(_shaderProgram);
+        }
 
     }
     void Shader::destroyShader() const{

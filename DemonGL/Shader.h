@@ -89,6 +89,8 @@ namespace DGL {
         static GLuint _texturesUBO;
         static struct _textureStruct _textures;
 
+        static GLuint _currentlyEnabledShader;
+
 
     private:
         static struct _textureStruct _oldTextures;

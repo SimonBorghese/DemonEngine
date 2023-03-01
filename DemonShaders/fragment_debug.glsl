@@ -62,7 +62,7 @@ vec3( 1,  1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1,  1,  0),
 vec3( 1,  0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1,  0, -1),
 vec3( 0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0,  1, -1)
 );
-
+/*
 float ShadowCalculation(vec3 fragPos, vec3 lightPos, float planarCutOff, samplerCube targetShadow)
 {
     float shadow = 0.0f;
@@ -81,7 +81,24 @@ float ShadowCalculation(vec3 fragPos, vec3 lightPos, float planarCutOff, sampler
     shadow /= float(samples);
     return shadow;
 }
+*/
 
+float ShadowCalculation(vec3 fragPos, vec3 lightPos, float planarCutOff, samplerCube targetShadow)
+{
+    float shadow = 0.0f;
+    float shadow_bias = max(0.05 * (1.0 - dot(iNormal, (fragPos - lightPos))) * max(length(fragPos - lightPos)*0.1, 1), 0.001);
+    float vDistance = length(viewPos - fragPos);
+    float disk = (1.0 + (vDistance / planarCutOff)) / 25.0f;
+
+    float depth = texture(targetShadow, (fragPos - lightPos) * disk).r;
+    depth *= planarCutOff;
+    if (length(fragPos - lightPos) - shadow_bias > depth){
+        shadow += 1.0f;
+    } else{
+        shadow -= 1.0f;
+    }
+    return shadow;
+}
 
 
 void main(){
@@ -201,4 +218,6 @@ void main(){
 
     FragColor = outputText;
     //FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f)
+
+
 }
