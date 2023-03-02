@@ -7,6 +7,7 @@
 #include <DemonGame/Master/Engine.h>
 #include <GameClients/GameClient.h>
 #include <DemonPhysics/DP_CharacterController.h>
+#include <DemonGL/Light.h>
 
 namespace Protal {
 
@@ -22,6 +23,8 @@ namespace Protal {
     private:
         DemonPhysics::DP_CharacterController *_controller;
         DemonEngine::Engine *_engine;
+        DGL::Light *_personalLight;
+        float speed = 1.0f;
 
     };
 
