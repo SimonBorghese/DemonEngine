@@ -60,6 +60,8 @@ namespace DGL {
         _lightSpec* getConfig();
 
         void setShadowResolution(uint32_t width, uint32_t height);
+        void destroyLight();
+        static void resetAllLights();
 
     private:
         GLuint _lightNumber;

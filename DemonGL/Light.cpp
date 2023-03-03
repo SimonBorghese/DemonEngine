@@ -158,4 +158,15 @@ namespace DGL {
         glDeleteTextures(1, &_shadowTexture);
         createShadowBuffer(width, height);
     }
+
+    void Light::destroyLight(){
+        if (_shadowTexture){
+            glDeleteTextures(1, &_shadowTexture);
+            glDeleteFramebuffers(1, &_shadowBuffer);
+        }
+    }
+
+    void Light::resetAllLights(){
+        DGL::Shader::_dynamicLights.numLights = 0;
+    }
 } // DGL

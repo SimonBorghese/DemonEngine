@@ -6,14 +6,14 @@
 
 namespace Protal {
 
-    cl_player::cl_player(glm::vec3 startPosition, float height, float radius, DemonEngine::Engine *engine) : _engine(engine){
-        _controller = engine->createFPSController(startPosition, height, radius);
-        _personalLight = engine->createEasyPointLight(startPosition, 50.0f, 1.0f);
-    }
+    cl_player::cl_player(glm::vec3 startPosition, float height, float radius, DemonEngine::Engine *engine) :
+    _startPosition(startPosition), _height(height), _radius(radius), _engine(engine){}
 
     void cl_player::init(){
-        _controller->setName("Player");
-        _engine->getEvent()->addKeyCallback([this](int scancode){
+        _controller = _engine->createFPSController(_startPosition, _height, _radius);
+        _personalLight = _engine->createEasyPointLight(_startPosition, 50.0f, 1.0f);
+        _controller->setName("character");
+        _keyCallback = _engine->getEvent()->addKeyCallback([this](int scancode){
             if (!_engine->getGameState("noclip")) {
                 switch (scancode) {
                     case SDL_SCANCODE_W:
@@ -53,7 +53,7 @@ namespace Protal {
             }
         });
 
-        _engine->getEvent()->addKeyDownCallback([this](int scancode){
+        _keyDownCallback = _engine->getEvent()->addKeyDownCallback([this](int scancode){
             switch (scancode){
                 case SDL_SCANCODE_E:
                     auto projectile = _engine->createWorldEntity();
@@ -76,6 +76,10 @@ namespace Protal {
 
     }
     void cl_player::destroy(){
+        //_controller->getController()->release();
+        //_personalLight->destroyLight();
+        _engine->getEvent()->removeKeyCallback(_keyCallback);
+        _engine->getEvent()->removeKeyDownCallback(_keyDownCallback);
 
     }
     DemonPhysics::DP_CharacterController *cl_player::getController(){

@@ -48,8 +48,10 @@ namespace DemonEngine {
         } else{
             // Update Generics
             for (unsigned int g = 0; g < _genericEntites.size(); g++) {
-                if (_genericEntites.at(g)->getMeshRenderer()->compareFlag(flagCheck)) {
-                    _genericEntites.at(g)->update(overrideShader);
+                if (_genericEntites.at(g)->getRender()) {
+                    if (_genericEntites.at(g)->getMeshRenderer()->compareFlag(flagCheck)) {
+                        _genericEntites.at(g)->update(overrideShader);
+                    }
                 }
             }
 

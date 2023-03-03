@@ -26,8 +26,9 @@ float health = 100.0f;
 
 Protal::cl_player *player;
 
-int destroyWorld = 0;
+float destroyWorld = 0;
 std::string newWorld;
+int totalFrames = 0;
 
 void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
     enum BSP_ENTITIES{
@@ -140,18 +141,19 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
                 break;
             case TRIGGER_LEVELCHANGE:
             {
+                destroyWorld = 0.0f;
                 auto newTrigger = engine->createTrigger();
                 newTrigger->createEntityFromExistingMesh(_info.brushMeshes, _info.numBrushMesh, _info.origin);
                 newTrigger->toggleRender(0);
-                newTrigger->setCallback([_info](DG_Object *, bool isPlayer){
-                    printf("Activating!...\n");
-                    if (isPlayer || engine->getEvent()->getKey(SDL_SCANCODE_N)) {
-                        destroyWorld = 1;
-                        newWorld = CBSP_getKeyFromEntity(_info.currentEntity, "level");
-                        //engine->getWorld()->destroyWorld();
-                        //bspLoader->loadBSP(CBSP_getKeyFromEntity(_info.currentEntity, "level"));
+                std::string newLevel = CBSP_getKeyFromEntity(_info.currentEntity, "level");
+                newTrigger->setCallback([newLevel](DG_Object *, bool isPlayer){
+                    // In order to prevent premature activation, 5 frames must render before it can be triggered
+                    if (isPlayer  && totalFrames > 5) {
+                        destroyWorld += 1.0;
+                        newWorld = newLevel;
                     }
                 });
+
 
 
             }
@@ -201,11 +203,14 @@ void init() {
 }
 
 int  loop(){
-    if (destroyWorld){
-        engine->getWorld()->destroyWorld();
-        engine->getWorld()->clearAll();
+    if (destroyWorld >= 1.0f){
+        engine->destroyScene();
+        //delete player;
+        player->init();
+        engine->addClient(player);
         bspLoader->loadBSP(newWorld.c_str());
-        destroyWorld = 0;
+        destroyWorld = 0.0f;
+        totalFrames = 0;
     }
     //_chickenController->move(glm::vec3(0.0f, -9.81f, 0.0f));
     //chicken->
@@ -222,7 +227,7 @@ int  loop(){
     ImGui::Text("FPS: %f\n", ImGui::GetIO().Framerate);
     ImGui::Text("Health: %f\n", health);
     ImGui::End();
-
+    totalFrames++;
     return !engine->gameLoop((float) fmin(engine->getDeltaTime(), 0.016f));
 }
 void close(){

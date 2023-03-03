@@ -166,6 +166,8 @@ namespace DemonEngine {
         void setGameStatePTR(std::string name, int *ptr);
 
         void addClient(GameClient *client);
+
+        void destroyScene();
     private:
         // Some fundimental variables
         unsigned int _width, _height, _fov, _zFar;

@@ -36,9 +36,12 @@ namespace DemonGame {
 
         int getCloseState();
 
-        void addKeyUpCallback( std::function<void(int)> target) { _keyUpFunc.push_back(target); }
-        void addKeyDownCallback( std::function<void(int)> target) { _keyDownFunc.push_back(target); }
-        void addKeyCallback( std::function<void(int)> target) { _keyFunc.push_back(target); }
+        int addKeyUpCallback( std::function<void(int)> target) { _keyUpFunc.push_back(target); return _keyUpFunc.size() - 1;}
+        int addKeyDownCallback( std::function<void(int)> target) { _keyDownFunc.push_back(target); return _keyDownFunc.size() - 1;}
+        int addKeyCallback( std::function<void(int)> target) { _keyFunc.push_back(target); return _keyFunc.size() - 1;}
+        void removeKeyUpCallback(int index) { _keyUpFunc.erase(_keyUpFunc.begin() + index); }
+        void removeKeyDownCallback(int index) { _keyDownFunc.erase(_keyDownFunc.begin() + index); }
+        void removeKeyCallback(int index) { _keyFunc.erase(_keyFunc.begin() + index); }
 
         SDL_Event* getEvent() { return &e; }
 

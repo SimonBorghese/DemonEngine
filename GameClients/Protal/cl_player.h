@@ -14,6 +14,7 @@ namespace Protal {
     class cl_player : public GameClient{
     public:
         cl_player(glm::vec3 startPosition, float height, float radius, DemonEngine::Engine *engine);
+        virtual ~cl_player() = default;
 
         void init();
         void loop();
@@ -22,9 +23,16 @@ namespace Protal {
         DemonPhysics::DP_CharacterController *getController();
     private:
         DemonPhysics::DP_CharacterController *_controller;
-        DemonEngine::Engine *_engine;
         DGL::Light *_personalLight;
         float speed = 1.0f;
+
+        glm::vec3 _startPosition;
+        float _height;
+        float _radius;
+        DemonEngine::Engine *_engine;
+
+        int _keyCallback = 0;
+        int _keyDownCallback = 0;
 
     };
 

@@ -141,7 +141,7 @@ namespace DGL {
         LOG("SDL CONTEXT CREATION FAILED", _context);
 
         SDL_GL_MakeCurrent(_window, _context);
-        SDL_GL_SetSwapInterval(vsync-1);
+        SDL_GL_SetSwapInterval(vsync);
 
         gladLoadGLLoader((GLADloadproc) SDL_GL_GetProcAddress);
         glViewport(0,0, (int) _width, (int) _height);

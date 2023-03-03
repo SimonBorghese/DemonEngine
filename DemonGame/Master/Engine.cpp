@@ -299,4 +299,24 @@ namespace DemonEngine {
     void Engine::addClient(GameClient *client){
         _clients.push_back(client);
     }
+
+    void Engine::destroyScene(){
+        _world->destroyWorld();
+        _world->clearAll();
+        for (auto client : _clients){
+            client->destroy();
+            //delete client;
+        }
+        _clients.clear();
+        for (auto light : _lightEntities){
+            light->destroyLight();
+            delete light;
+        }
+        _lightEntities.clear();
+        DGL::Light::resetAllLights();
+
+        _mainPhysicsManager->getControllerManager()->purgeControllers();
+
+        _gameState = std::map<std::string, int*>();
+    }
 } // DemonEngine
