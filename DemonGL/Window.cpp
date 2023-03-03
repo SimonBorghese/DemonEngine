@@ -116,7 +116,7 @@ namespace DGL {
         }
     }
 
-    Window::Window(const char *windowTitle, uint32_t width, uint32_t height, int ) : _windowTitle(windowTitle),
+    Window::Window(const char *windowTitle, uint32_t width, uint32_t height, int vsync) : _windowTitle(windowTitle),
     _width(width), _height(height){
         // Init SDL with *all* of the works
         LOG("SDL_INIT FAILED", !SDL_Init(SDL_INIT_EVERYTHING));
@@ -141,7 +141,7 @@ namespace DGL {
         LOG("SDL CONTEXT CREATION FAILED", _context);
 
         SDL_GL_MakeCurrent(_window, _context);
-        SDL_GL_SetSwapInterval(0);
+        SDL_GL_SetSwapInterval(vsync-1);
 
         gladLoadGLLoader((GLADloadproc) SDL_GL_GetProcAddress);
         glViewport(0,0, (int) _width, (int) _height);

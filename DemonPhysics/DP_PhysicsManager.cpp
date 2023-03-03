@@ -3,6 +3,9 @@
 //
 
 #include "DP_PhysicsManager.h"
+// Private include?
+#include <DemonGame/Shared/External/DG_EXT_PhysicsCallback.h>
+
 
 namespace DemonPhysics {
 
@@ -95,6 +98,8 @@ namespace DemonPhysics {
 
         pPhysDec->broadPhaseType = physx::PxBroadPhaseType::eSAP;
         pPhysDec->flags |= PxSceneFlag::eENABLE_STABILIZATION;
+
+        pPhysDec->simulationEventCallback = new DemonGame::DG_EXT_PhysicsCallback;
 
 #ifndef DEMON_NO_GPU_PHYSX
       pPhysDec->cudaContextManager = pCudaContextManager;

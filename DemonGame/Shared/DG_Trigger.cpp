@@ -44,6 +44,40 @@ namespace DemonGame {
         rigidActor->setEmbedData(&generalStruct);
     }
 
+    void DG_Trigger::createEntityFromExistingMesh(DemonBase::b_Mesh **meshes, uint32_t numMesh,
+                                      glm::vec3 pos,
+                                      glm::vec3 rotation){
+        mainTransform = new DemonWorld::DW_Transform();
+        enableRender = 0;
+
+        //mainMeshRenderer = new DemonRender::DR_MeshRenderer();
+        //mainMeshRenderer->setShader(meshShader);
+
+        mainTransform->createTransform(pos, rotation, glm::vec3(1.0f));
+
+        //mainMeshRenderer->loadExistingMeshes(normalMesh, outLen);
+
+        //renderManager->addMeshGroup(mainMeshRenderer);
+
+        std::vector<DemonBase::b_RigidMesh*> arr_meshes;
+        for (unsigned int m = 0; m < numMesh; m++) {
+            arr_meshes.push_back((DemonBase::b_RigidMesh*) new DemonPhysics::DP_RigidConvexMesh(meshes[m]));
+            physicsManager->cookMesh(arr_meshes.at(arr_meshes.size()-1));
+        }
+
+        rigidActor = new DemonPhysics::DP_RigidTriggerActor(arr_meshes);
+
+        DemonPhysics::DP_PhysicsMaterial matgood(1.0f, 1.0f, 0.0f);
+        physicsManager->cookMaterial(&matgood);
+
+        rigidActor->createActor(physicsManager->getPhysics(), matgood.getMaterial());
+        physicsManager->addActor(rigidActor);
+        rigidActor->setTransform(*mainTransform);
+        //mainMeshRenderer->bindTransform(&mainTransform);
+
+        rigidActor->setEmbedData(&generalStruct);
+    }
+
     void DG_Trigger::destroyEntity() {
         physicsManager->removeActor(rigidActor);
         rigidActor->destroyActor();

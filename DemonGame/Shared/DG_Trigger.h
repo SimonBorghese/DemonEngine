@@ -38,6 +38,10 @@ namespace DemonGame {
                                   glm::vec3 rotation = glm::vec3(0.0f),
                                   glm::vec3 scale = glm::vec3(1.0f));
 
+        void createEntityFromExistingMesh(DemonBase::b_Mesh **meshes, uint32_t numMesh,
+                                          glm::vec3 pos = glm::vec3(0.0f),
+                                          glm::vec3 rotation = glm::vec3(0.0f));
+
         void destroyEntity();
 
         void update();

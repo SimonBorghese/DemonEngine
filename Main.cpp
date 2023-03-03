@@ -26,6 +26,8 @@ float health = 100.0f;
 
 Protal::cl_player *player;
 
+int destroyWorld = 0;
+std::string newWorld;
 
 void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
     enum BSP_ENTITIES{
@@ -41,7 +43,8 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
         INFO_BRUSHPROP,
         INFO_SCRIPTED_PROP,
         INFO_NODE,
-        NPC_173
+        NPC_173,
+        TRIGGER_LEVELCHANGE
     };
 
 #define INSERT(name, ent) entityList.insert(std::pair<std::string, BSP_ENTITIES>(name, ent))
@@ -59,6 +62,7 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
     INSERT("info_scripted_prop", INFO_SCRIPTED_PROP);
     INSERT("info_node", INFO_NODE);
     INSERT("npc_173", NPC_173);
+    INSERT("trigger_levelChange", TRIGGER_LEVELCHANGE);
 
     glm::vec3 realPos = glm::vec3(_info.pos.x, _info.pos.z, -_info.pos.y);
 
@@ -134,6 +138,24 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
                 engine->addClient(newNPC);
             }
                 break;
+            case TRIGGER_LEVELCHANGE:
+            {
+                auto newTrigger = engine->createTrigger();
+                newTrigger->createEntityFromExistingMesh(_info.brushMeshes, _info.numBrushMesh, _info.origin);
+                newTrigger->toggleRender(0);
+                newTrigger->setCallback([_info](DG_Object *, bool isPlayer){
+                    printf("Activating!...\n");
+                    if (isPlayer || engine->getEvent()->getKey(SDL_SCANCODE_N)) {
+                        destroyWorld = 1;
+                        newWorld = CBSP_getKeyFromEntity(_info.currentEntity, "level");
+                        //engine->getWorld()->destroyWorld();
+                        //bspLoader->loadBSP(CBSP_getKeyFromEntity(_info.currentEntity, "level"));
+                    }
+                });
+
+
+            }
+                break;
             default:
                 break;
         }
@@ -173,12 +195,18 @@ void init() {
     bspLoader->setBSPCreationCallback([](DemonEngine::BSP_EntityCreateInfo _info) {
         bspCallback(_info);
     });
-    bspLoader->loadBSP("worlds/flat");
+    bspLoader->loadBSP("levels/level0");
 
 
 }
 
 int  loop(){
+    if (destroyWorld){
+        engine->getWorld()->destroyWorld();
+        engine->getWorld()->clearAll();
+        bspLoader->loadBSP(newWorld.c_str());
+        destroyWorld = 0;
+    }
     //_chickenController->move(glm::vec3(0.0f, -9.81f, 0.0f));
     //chicken->
     if (engine->getEvent()->getKeyDown(SDL_SCANCODE_V)){
