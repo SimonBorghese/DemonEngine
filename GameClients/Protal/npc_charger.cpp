@@ -37,6 +37,6 @@ namespace Protal {
         }
     }
     void npc_charger::destroy(){
-        _controller->destroyEntity();
+        //_controller->destroyEntity();
     }
 } // Protal

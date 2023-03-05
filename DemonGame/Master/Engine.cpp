@@ -49,6 +49,13 @@ namespace DemonEngine {
 
             _mainEvents->pollEvents();
 
+            if (!getGameState("noclip")) {
+                glEnable(GL_POLYGON_OFFSET_FILL);
+                glPolygonOffset(0,100);
+            } else{
+                printf("not running depth!\n");
+                glDisable(GL_POLYGON_OFFSET_FILL);
+            }
             DemonBench::Benchmark("Shadows", [this]() {
                 DGL::Mesh::_enableOcculusion = 0;
                 for (auto light: _lightEntities) {
@@ -57,6 +64,11 @@ namespace DemonEngine {
                     });
                 }
             });
+            if (!getGameState("noclip")) {
+                glDisable(GL_POLYGON_OFFSET_FILL);
+            } else{
+                glDisable(GL_POLYGON_OFFSET_FILL);
+            }
 
             glViewport(0, 0, _defaultWindow->getWidth(), _defaultWindow->getHeight());
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

@@ -7,6 +7,7 @@
 #include <cmath>
 #include <GameClients/Protal/npc_173.h>
 #include <GameClients/Protal/cl_player.h>
+#include <GameClients/Protal/npc_charger.h>
 
 #include <PathFinder.h>
 #include <DemonNPC/Level.h>
@@ -45,7 +46,8 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
         INFO_SCRIPTED_PROP,
         INFO_NODE,
         NPC_173,
-        TRIGGER_LEVELCHANGE
+        TRIGGER_LEVELCHANGE,
+        NPC_CHARGER
     };
 
 #define INSERT(name, ent) entityList.insert(std::pair<std::string, BSP_ENTITIES>(name, ent))
@@ -64,6 +66,7 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
     INSERT("info_node", INFO_NODE);
     INSERT("npc_173", NPC_173);
     INSERT("trigger_levelChange", TRIGGER_LEVELCHANGE);
+    INSERT("npc_charger", NPC_CHARGER);
 
     glm::vec3 realPos = glm::vec3(_info.pos.x, _info.pos.z, -_info.pos.y);
 
@@ -139,6 +142,13 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
                 engine->addClient(newNPC);
             }
                 break;
+            case NPC_CHARGER:
+            {
+                auto charger = new Protal::npc_charger(engine, realPos, new float(100.0f));
+                charger->init();
+                engine->addClient(charger);
+            }
+                break;
             case TRIGGER_LEVELCHANGE:
             {
                 destroyWorld = 0.0f;
@@ -153,9 +163,6 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
                         newWorld = newLevel;
                     }
                 });
-
-
-
             }
                 break;
             default:
@@ -226,6 +233,7 @@ int  loop(){
     ImGui::Begin("Debug");
     ImGui::Text("FPS: %f\n", ImGui::GetIO().Framerate);
     ImGui::Text("Health: %f\n", health);
+    ImGui::Text("Frames: %d\n", totalFrames);
     ImGui::End();
     totalFrames++;
     return !engine->gameLoop((float) fmin(engine->getDeltaTime(), 0.016f));

@@ -117,8 +117,7 @@ namespace DGL {
 
         //glCullFace(GL_FRONT);
         //glPolygonOffset(2.0, 2.0);
-        glEnable(GL_POLYGON_OFFSET_FILL);
-        glPolygonOffset(1.0,2.0);
+
         renderFunction();
         //glCullFace(GL_BACK);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
