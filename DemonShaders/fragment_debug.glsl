@@ -92,7 +92,7 @@ float ShadowCalculation(vec3 fragPos, vec3 lightPos, float planarCutOff, sampler
 
     float depth = texture(targetShadow, (fragPos - lightPos) * disk).r;
     depth *= planarCutOff;
-    if ((length(fragPos - lightPos) > depth) || (length(fragPos - lightPos) >= planarCutOff)){
+    if ((length(fragPos - lightPos) - shadow_bias > depth) || (length(fragPos - lightPos) >= planarCutOff)){
         shadow += 1.0f;
     } else{
         shadow -= 1.0f;

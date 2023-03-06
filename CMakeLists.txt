@@ -54,3 +54,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Werror -g -O0 -Wno-unknown-pragmas -DBENCHMARK")
 
 add_compile_definitions(_DEBUG)
+add_compile_definitions(DEMON_NO_GPU_PHYSX)
