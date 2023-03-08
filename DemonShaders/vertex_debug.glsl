@@ -15,7 +15,7 @@ layout (std140, binding=0) uniform Transform{
 uniform mat4 model;
 
 
-const int MAX_BONES = 50;
+const int MAX_BONES = 100;
 const int MAX_BODIES = 10;
 const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 bodyTransforms[MAX_BODIES][MAX_BONES];
@@ -36,7 +36,7 @@ vec3 qrot(vec4 q, vec3 v)
 
 void main(){
 
-    vec4 totalPosition = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+    vec4 totalPosition = vec4(0.0f);
     vec3 totalNormal = vec3(0.0f, 0.0f, 0.0f);
 
 
@@ -47,20 +47,19 @@ void main(){
         }
         if (boneIds[i] >=MAX_BONES)
         {
-            totalPosition = vec4(aPos, 1.0f);
+            //totalPosition = vec4(aPos, 1.0f);
+            //totalNormal = aNormal;
             break;
         }
 
         vec4 localPosition = bodyTransforms[body][boneIds[i]] * vec4(aPos, 1.0f);
-        //vec4 localPosition = vec4(aPos, 1.0f);
         totalPosition += localPosition * weights[i];
         vec3 localNormal = mat3(bodyTransforms[body][boneIds[i]]) * aNormal;
-        //vec3 localNormal = aNormal;
         totalNormal += localNormal * weights[i];
     }
 
     //if (boneIds.x < 0){
-    //    localPosition = vec4(aPos, 1.0f);
+    //    totalPosition = vec4(aPos, 1.0f);
     //    totalNormal = aNormal;
     //}
 

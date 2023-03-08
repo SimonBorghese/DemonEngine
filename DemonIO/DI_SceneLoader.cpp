@@ -76,6 +76,7 @@ namespace DemonIO {
                     m_vertices[v].iTextCord.x = 0.0f;
                     m_vertices[v].iTextCord.y = 0.0f;
                 }
+                m_vertices[v].iBoneIds = glm::ivec4(65535);
             }
 
 
@@ -86,6 +87,7 @@ namespace DemonIO {
                     m_indices.push_back(face.mIndices[i]);
                 }
             }
+
             /*
             Vertex m_REALvertices[m_indices.size()];
             for (unsigned int i = 0; i < m_indices.size(); i++){

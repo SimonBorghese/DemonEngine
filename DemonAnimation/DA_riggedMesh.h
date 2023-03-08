@@ -83,6 +83,9 @@ namespace DemonAnimation {
         static glm::mat4 guessRotation(float time, glm::quat pos1, double pos1time,
                                 glm::quat pos2, double pos2time);
 
+        static glm::mat4 guessScale(float time, glm::vec3 pos1, double pos1time,
+                                       glm::vec3 pos2, double pos2time);
+
         static unsigned int GetPositionIndex(float animationTime, unsigned int numPositions, aiVectorKey *keys);
 
         static unsigned int GetPositionIndex(float animationTime, unsigned int numPositions, aiQuatKey *keys);
@@ -96,6 +99,7 @@ namespace DemonAnimation {
         int animationFinished(float time);
 
         int getAnimation();
+
 
 
     private:

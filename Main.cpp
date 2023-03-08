@@ -173,12 +173,13 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
 
 DG_AnimatedEntity *chicken;
 DemonPhysics::DP_CharacterController *_chickenController;
+DemonGame::DG_AnimatedEntity *animatedPerson;
 
 void init() {
     // Init Engine
     engine = new DemonEngine::Engine(1600, 900);
     engine->createEngine();
-    engine->getWindow()->setMouseGrab(-1);
+    engine->getWindow()->setMouseGrab(0);
 
     // Init BSP Loader
     bspLoader = new DemonEngine::BSPLoader(engine);
@@ -206,10 +207,23 @@ void init() {
     });
     bspLoader->loadBSP("levels/level0");
 
+    chicken = engine->createAnimatedEntity();
+    chicken->createEntityFromMesh("chicken.fbx", glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
+    chicken->setAnimation(12);
+    chicken->playOnce(GET_SECONDS());
+    chicken->getMeshRenderer()->removeFlag(DGL::MeshRenderer::MESH_FLAGS::MESH_RENDER_SHADOW);
+
+
 
 }
 
 int  loop(){
+
+    chicken->playAnimation(GET_SECONDS());
+    if (chicken->isAnimationFinished(GET_SECONDS())){
+        chicken->playOnce(GET_SECONDS());
+    }
+
     if (destroyWorld >= 1.0f){
         engine->destroyScene();
         //delete player;

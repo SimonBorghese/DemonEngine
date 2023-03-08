@@ -60,6 +60,15 @@ double DA_riggedMesh::GetScaleFactor(double last, double next, double currentTim
     return middle / timeDelay;
 }
 
+glm::mat4 DA_riggedMesh::guessScale(float time, glm::vec3 pos1, double pos1time,
+                         glm::vec3 pos2, double pos2time) {
+    double scaleFactor = GetScaleFactor(pos1time,
+                                        pos2time, time);
+    glm::vec3 finalPosition = glm::mix(pos1,
+                                       pos2, scaleFactor);
+    return glm::scale(glm::mat4(1.0f), finalPosition);
+}
+
 glm::mat4 DA_riggedMesh::guessPosition(float time, glm::vec3 pos1, double pos1time,
                                glm::vec3 pos2, double pos2time){
     double scaleFactor = GetScaleFactor(pos1time,
@@ -120,7 +129,7 @@ void DA_riggedMesh::assignTransformations(float currentTime, aiNode *currentNode
             unsigned int index = GetPositionIndex(currentTime, currentCurve->mNumScalingKeys,
                                                   currentCurve->mScalingKeys);
             if (index < currentCurve->mNumScalingKeys - 1) {
-                scalingMat = guessPosition(currentTime, GetGLMVec(currentCurve->mScalingKeys[index].mValue),
+                scalingMat = guessScale(currentTime, GetGLMVec(currentCurve->mScalingKeys[index].mValue),
                                            currentCurve->mScalingKeys[index].mTime,
                                            GetGLMVec(currentCurve->mScalingKeys[index + 1].mValue),
                                            currentCurve->mScalingKeys[index + 1].mTime);
@@ -212,7 +221,9 @@ int DA_riggedMesh::animationFinished(float time){
     return (((time * currentAnim->mTicksPerSecond) - (referenceTime)) >= currentAnim->mDuration) || referenceTime == 0.0f;
 }
 
-    int DA_riggedMesh::getAnimation(){
-        return currentAnimation;
-    }
+int DA_riggedMesh::getAnimation() {
+    return currentAnimation;
+}
+
+
 } // DemonAnimation
