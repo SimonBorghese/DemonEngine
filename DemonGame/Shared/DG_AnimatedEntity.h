@@ -42,6 +42,8 @@ namespace DemonGame {
         int enableDepth = 1;
 
         std::vector<DemonAnimation::DA_riggedMesh*> getMeshes();
+
+        void update(DGL::Shader *overrideShader);
     private:
         DemonAnimation::DA_riggedMesh **animMeshes;
         DemonBase::b_Mesh **renderMesh;

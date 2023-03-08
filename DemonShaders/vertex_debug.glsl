@@ -47,8 +47,8 @@ void main(){
         }
         if (boneIds[i] >=MAX_BONES)
         {
-            //totalPosition = vec4(aPos, 1.0f);
-            //totalNormal = aNormal;
+            totalPosition = vec4(aPos, 1.0f);
+            totalNormal = aNormal;
             break;
         }
 

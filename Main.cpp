@@ -109,7 +109,7 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
                 auto distance = (float) strtod(CBSP_getKeyFromEntity(_info.currentEntity, "distance"), nullptr);
                 auto intensity = (float) strtol(CBSP_getKeyFromEntity(_info.currentEntity, "intensity"), nullptr, 10) / 100.0f;
 
-#define SHADOW_HELL 1.0f
+#define SHADOW_HELL 4.0f
 #define SHADOW_RES 512
                 engine->createEasyPointLight(realPos, distance, intensity)->createShadowBuffer(
                         SHADOW_RES * SHADOW_HELL, SHADOW_RES * SHADOW_HELL);
@@ -179,7 +179,7 @@ void init() {
     // Init Engine
     engine = new DemonEngine::Engine(1600, 900);
     engine->createEngine();
-    engine->getWindow()->setMouseGrab(0);
+    engine->getWindow()->setMouseGrab(-0);
 
     // Init BSP Loader
     bspLoader = new DemonEngine::BSPLoader(engine);
@@ -208,10 +208,15 @@ void init() {
     bspLoader->loadBSP("levels/level0");
 
     chicken = engine->createAnimatedEntity();
-    chicken->createEntityFromMesh("chicken.fbx", glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
+    chicken->createEntityFromMesh("chicken.fbx", glm::vec3(5.0f, 2.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
     chicken->setAnimation(12);
-    chicken->playOnce(GET_SECONDS());
-    chicken->getMeshRenderer()->removeFlag(DGL::MeshRenderer::MESH_FLAGS::MESH_RENDER_SHADOW);
+    chicken->setUpdateFunc([](DG_Entity *aChicken){
+        DG_AnimatedEntity *realChicken = (DG_AnimatedEntity*) aChicken;
+
+        realChicken->playAnimation(GET_SECONDS());
+    });
+
+    chicken->getMeshRenderer()->addFlag(DGL::MeshRenderer::MESH_FLAGS::MESH_RENDER_SHADOW);
 
 
 
@@ -219,7 +224,7 @@ void init() {
 
 int  loop(){
 
-    chicken->playAnimation(GET_SECONDS());
+    //chicken->playAnimation(GET_SECONDS());
     if (chicken->isAnimationFinished(GET_SECONDS())){
         chicken->playOnce(GET_SECONDS());
     }

@@ -34,7 +34,7 @@ namespace DemonGame {
 
     void DG_AnimatedEntity::playAnimation(float currentTime){
         for (unsigned int m = 0; m < numMeshes; m++){
-            animMeshes[m]->setShader(_shader);
+            //animMeshes[m]->setShader(_shader);
             animMeshes[m]->doAnimation(currentTime);
         }
     }
@@ -52,7 +52,7 @@ namespace DemonGame {
 
     void DG_AnimatedEntity::playOnce(float currentTime){
         for (unsigned int m = 0; m < numMeshes; m++){
-            animMeshes[m]->setShader(_shader);
+            //animMeshes[m]->setShader(_shader);
             animMeshes[m]->playOnce(currentTime);
         }
     }
@@ -71,5 +71,23 @@ namespace DemonGame {
 
     std::vector<DemonAnimation::DA_riggedMesh*> DG_AnimatedEntity::getMeshes(){
         return {animMeshes[0], animMeshes[numMeshes-1]};
+    }
+
+    void DG_AnimatedEntity::update(DGL::Shader *overrideShader){
+        if (overrideShader) {
+            for (unsigned int m = 0; m < numMeshes; m++){
+                animMeshes[m]->setShader(overrideShader);
+            }
+        } else{
+            for (unsigned int m = 0; m < numMeshes; m++){
+                animMeshes[m]->setShader(_shader);
+            }
+        }
+        if (_preRender) { _preRender(); }
+        if (_updateFunc) {_updateFunc((DG_Entity*) this);}
+        if (enableRender) {
+            _primaryMesh->render(overrideShader);
+        }
+        if (_postRender) { _postRender();}
     }
 } // DemonGame

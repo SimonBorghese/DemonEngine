@@ -1,3 +1,4 @@
+/*
 #version 330 core
 
 layout (location = 0) in vec3 aPos;
@@ -10,9 +11,16 @@ void main()
 {
     gl_Position = model * vec4(aPos, 1.0f);
 }
+*/
+#version 430 core
 
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec2 aTextCords;
+layout (location=3) in ivec4 boneIds;
+layout (location=4) in vec4 weights;
+layout (location=5) in int body;
 
-/*
 uniform mat4 model;
 
 const int MAX_BONES = 100;
@@ -32,7 +40,6 @@ vec3 qrot(vec4 q, vec3 v)
 void main(){
 
     vec4 totalPosition = vec4(0.0f);
-    mat4 boneTransform = mat4(1.0f);
 
 
     for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
@@ -50,13 +57,13 @@ void main(){
         totalPosition += localPosition * weights[i];
     }
 
-    if (boneIds.x < 0){
-        totalPosition = vec4(aPos, 1.0f);
-    }
+    //if (boneIds.x < 0){
+    //    totalPosition = vec4(aPos, 1.0f);
+    //}
 
 
     FragPos = vec3(model * totalPosition);
 
-    gl_Position = (boneTransform * model * totalPosition);
+    gl_Position = ( model * totalPosition);
 }
-*/
+
