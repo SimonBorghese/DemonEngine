@@ -173,12 +173,6 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
     }
 }
 
-DG_AnimatedEntity *chicken;
-DemonPhysics::DP_CharacterController *_chickenController;
-DemonGame::DG_AnimatedEntity *animatedPerson;
-
-int dead=0;
-
 void init() {
     // Init Engine
     engine = new DemonEngine::Engine(1600, 900);
