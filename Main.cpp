@@ -1,3 +1,4 @@
+#define GET_SECONDS() (SDL_GetTicks() / 1000.0f)
 
 #include <DemonGame/Master/Engine.h>
 #include <DemonGame/Master/BSPLoader.h>
@@ -8,6 +9,7 @@
 #include <GameClients/Protal/npc_173.h>
 #include <GameClients/Protal/cl_player.h>
 #include <GameClients/Protal/npc_charger.h>
+#include <GameClients/Protal/npc_knight.h>
 
 #include <PathFinder.h>
 #include <DemonNPC/Level.h>
@@ -20,7 +22,7 @@ DemonEngine::BSPLoader *bspLoader;
 DemonEngine::World *world;
 DG::Lua::LuaInterface luaInterface;
 DNPC::Level *npcWorld;
-#define GET_SECONDS() (SDL_GetTicks() / 1000.0f)
+
 
 float health = 100.0f;
 
@@ -175,11 +177,13 @@ DG_AnimatedEntity *chicken;
 DemonPhysics::DP_CharacterController *_chickenController;
 DemonGame::DG_AnimatedEntity *animatedPerson;
 
+int dead=0;
+
 void init() {
     // Init Engine
     engine = new DemonEngine::Engine(1600, 900);
     engine->createEngine();
-    engine->getWindow()->setMouseGrab(-0);
+    engine->getWindow()->setMouseGrab(-1);
 
     // Init BSP Loader
     bspLoader = new DemonEngine::BSPLoader(engine);
@@ -207,16 +211,7 @@ void init() {
     });
     bspLoader->loadBSP("levels/level0");
 
-    chicken = engine->createAnimatedEntity();
-    chicken->createEntityFromMesh("chicken.fbx", glm::vec3(5.0f, 2.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-    chicken->setAnimation(12);
-    chicken->setUpdateFunc([](DG_Entity *aChicken){
-        DG_AnimatedEntity *realChicken = (DG_AnimatedEntity*) aChicken;
-
-        realChicken->playAnimation(GET_SECONDS());
-    });
-
-    chicken->getMeshRenderer()->addFlag(DGL::MeshRenderer::MESH_FLAGS::MESH_RENDER_SHADOW);
+    engine->addClient(new Protal::npc_knight(glm::vec3(0.0f, 5.0f, 0.0f), nullptr, engine));
 
 
 
@@ -224,10 +219,6 @@ void init() {
 
 int  loop(){
 
-    //chicken->playAnimation(GET_SECONDS());
-    if (chicken->isAnimationFinished(GET_SECONDS())){
-        chicken->playOnce(GET_SECONDS());
-    }
 
     if (destroyWorld >= 1.0f){
         engine->destroyScene();
@@ -238,8 +229,7 @@ int  loop(){
         destroyWorld = 0.0f;
         totalFrames = 0;
     }
-    //_chickenController->move(glm::vec3(0.0f, -9.81f, 0.0f));
-    //chicken->
+
     if (engine->getEvent()->getKeyDown(SDL_SCANCODE_V)){
         engine->setGameState("noclip", !engine->getGameState("noclip"));
     }
