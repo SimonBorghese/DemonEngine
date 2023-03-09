@@ -5,17 +5,18 @@
 
 namespace DemonEngine {
     DemonGame::DG_RigidEntity* BSPLoader::loadBSP(const char *map){
-       //auto bspMap = _targetEngine->createWorldObject();
-        std::string bsp = fmt::format("{}.bsp", map);
-        std::string obj = fmt::format("{}.obj", map);
-        auto bspFile = DemonIO::DI_BSPLoader::createBSP(bsp.c_str());
+        //auto bspMap = _targetEngine->createWorldObject();
+        //std::string bsp = fmt::format("{}.bsp", map);
+        //std::string obj = fmt::format("{}.obj", map);
+        auto bspFile = DemonIO::DI_BSPLoader::createBSP(DFS::FileSystem::getFS()->getMapBSPPath(map).c_str());
 
         unsigned int numMesh;
-        DemonBase::b_Mesh **objMeshes = DemonIO::DI_SceneLoader::loadMeshesFromFile(obj.c_str(), &numMesh, BSP_SCALE);
+        DemonBase::b_Mesh **objMeshes = DemonIO::DI_SceneLoader::loadMeshesFromFile(
+                DFS::FileSystem::getFS()->getMapGeometryPath(map).c_str(), &numMesh, BSP_SCALE);
 
-        std::vector<std::vector<DemonBase::b_Mesh*>> entityBrushes(bspFile->nEntityCount);
+        std::vector<std::vector<DemonBase::b_Mesh *>> entityBrushes(bspFile->nEntityCount);
         //std::fill(entityBrushes.begin(), entityBrushes.end() + bspFile->nEntityCount, 0);
-        for (uint m = 0; m < numMesh; m++){
+        for (uint m = 0; m < numMesh; m++) {
             DemonBase::b_Mesh *mesh = objMeshes[m];
             int entityNum = -1;
             sscanf(mesh->getModelName(), "entity%d", &entityNum);

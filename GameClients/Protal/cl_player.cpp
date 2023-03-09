@@ -57,7 +57,8 @@ namespace Protal {
             switch (scancode){
                 case SDL_SCANCODE_E:
                     auto projectile = _engine->createWorldEntity();
-                    projectile->createEntityFromMesh("block.obj", _controller->getPosition() + (_engine->getCamera()->getCameraFront() * 5.0f));
+                    projectile->createEntityFromMesh("block", _controller->getPosition() +
+                                                              (_engine->getCamera()->getCameraFront() * 5.0f));
                     projectile->setMass(10.0f);
                     projectile->getActor()->applyForce(_engine->getCamera()->getCameraFront() * 1000.0f);
                     break;

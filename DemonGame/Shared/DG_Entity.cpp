@@ -11,9 +11,10 @@ namespace DemonGame {
                                          glm::vec3 rotation,
                                          glm::vec3 scale) {
 
-        _loadedMesh = DemonIO::DI_SceneLoader::loadMeshesFromFile(meshFile,
-                                                                                     &_numMeshes,
-                                                                                     scale);
+        _loadedMesh = DemonIO::DI_SceneLoader::loadMeshesFromFile(
+                DFS::FileSystem::getFS()->getModelPath(meshFile).c_str(),
+                &_numMeshes,
+                scale);
 
         _primaryMesh = new DGL::MeshRenderer(_shader, _loadedMesh, _numMeshes);
         mainTransform = _primaryMesh->getTransform();

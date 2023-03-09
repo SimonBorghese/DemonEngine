@@ -17,7 +17,7 @@ namespace DemonEngine {
         _debugShader = new DGL::Shader(GAME_DEBUG_SHADER_VERTEX, GAME_DEBUG_SHADER_FRAGMENT);
         _debugShader->createShader();
 
-        _shadowShader = new DGL::Shader("DemonShaders/vertex_lightspace.glsl", "DemonShaders/geometry_lightspace.glsl","DemonShaders/fragment_empty.glsl");
+        _shadowShader = new DGL::Shader("vertex_lightspace.glsl", "geometry_lightspace.glsl", "fragment_empty.glsl");
         _shadowShader->createShader();
 
         _mainPhysicsManager->createPhysics(glm::vec3(0.0f, -9.81f * 2.0f, 0.0f));

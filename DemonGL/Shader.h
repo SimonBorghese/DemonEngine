@@ -11,6 +11,7 @@
 #include <string>
 #include <DemonMacro/DemonLog.h>
 #include <map>
+#include <DFileSystem/FileSystem.h>
 
 namespace DGL {
 

@@ -13,12 +13,13 @@ namespace DemonGame {
         //mainTransform = new DemonWorld::DW_Transform(pos, rotation, scale);
 
 
-        animMeshes = DemonIO::DI_AnimationSceneLoader::loadMeshesFromFile(meshFile,
-                                                                                     &numMeshes,
-                                                                                     scale);
+        animMeshes = DemonIO::DI_AnimationSceneLoader::loadMeshesFromFile(
+                DFS::FileSystem::getFS()->getModelPath(meshFile).c_str(),
+                &numMeshes,
+                scale);
 
-        DGL::Mesh **_renderMesh = (DGL::Mesh**) malloc(sizeof(DGL::Mesh*) * numMeshes);
-        for (uint m = 0; m < numMeshes; m++){
+        DGL::Mesh **_renderMesh = (DGL::Mesh **) malloc(sizeof(DGL::Mesh *) * numMeshes);
+        for (uint m = 0; m < numMeshes; m++) {
             auto currentMesh = new DGL::Mesh(animMeshes[m]->getVerticesVector(), animMeshes[m]->getIndicesVector(),
                                              std::string(animMeshes[m]->getTextureDiffuse().C_Str()),
                                              std::string(animMeshes[m]->getTextureNormal().C_Str()));

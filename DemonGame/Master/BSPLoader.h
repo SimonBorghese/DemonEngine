@@ -12,6 +12,7 @@
 #include <DemonIO/DI_SceneLoader.h>
 #include <DemonBase/b_Mesh.h>
 #include <fmt/format.h>
+#include <DFileSystem/FileSystem.h>
 
 #define BSP_SCALE glm::vec3(1.0f/8.0f)
 

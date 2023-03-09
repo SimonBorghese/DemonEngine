@@ -102,9 +102,11 @@ namespace DemonPhysics {
         pPhysDec->simulationEventCallback = new DemonGame::DG_EXT_PhysicsCallback;
 
 #ifndef DEMON_NO_GPU_PHYSX
+#ifndef DEMON_NO_GPU_SOLVER
       pPhysDec->cudaContextManager = pCudaContextManager;
       pPhysDec->flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
       pPhysDec->broadPhaseType = physx::PxBroadPhaseType::eGPU;
+#endif
 #endif
 
 

@@ -79,6 +79,9 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
         switch (lookingEntity->second){
             case INFO_PLAYER_START:
             {
+                player = new Protal::cl_player(glm::vec3(0.0f, 100.0f, 0.0f), 6.0f, 1.0f, engine);
+                player->init();
+                engine->addClient(player);
                 player->getController()->translate(realPos);
             }
                 break;
@@ -184,10 +187,6 @@ void init() {
 
     // Create the player's character controller
     //player = engine->createFPSController(glm::vec3(0.0f, 100.0f, 0.0f), 6.0f, 1.0f);
-    player = new Protal::cl_player(glm::vec3(0.0f, 100.0f, 0.0f), 6.0f, 1.0f, engine);
-    player->init();
-    engine->addClient(player);
-
 
     //luaInterface.registerFunction("createBlockAtPlayer", &Protal::createBlockAtPlayer);
     luaInterface.registerFunction("createBlockAtPlayer", [](lua_State *)mutable {
@@ -203,9 +202,9 @@ void init() {
     bspLoader->setBSPCreationCallback([](DemonEngine::BSP_EntityCreateInfo _info) {
         bspCallback(_info);
     });
-    bspLoader->loadBSP("levels/level0");
+    bspLoader->loadBSP("level0");
 
-    engine->addClient(new Protal::npc_knight(glm::vec3(0.0f, 5.0f, 0.0f), nullptr, engine));
+    //engine->addClient(new Protal::npc_knight(glm::vec3(0.0f, 5.0f, 0.0f), nullptr, engine));
 
 
 
@@ -216,9 +215,7 @@ int  loop(){
 
     if (destroyWorld >= 1.0f){
         engine->destroyScene();
-        //delete player;
-        player->init();
-        engine->addClient(player);
+        delete player;
         bspLoader->loadBSP(newWorld.c_str());
         destroyWorld = 0.0f;
         totalFrames = 0;

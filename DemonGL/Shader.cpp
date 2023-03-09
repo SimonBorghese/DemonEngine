@@ -32,56 +32,34 @@ namespace DGL {
     Shader::~Shader() = default;
 
     void Shader::createShader(){
-        FILE *file = fopen(_shaders[0].c_str(), "r");
-        int fLength;
-        fseek(file, 0, SEEK_END);
-        fLength = (int) ftell(file);
-        fseek(file, 0, SEEK_SET);
-        char *vertexShaderSource = (char *) malloc(sizeof(char) * fLength + 1);
-        fread(vertexShaderSource, 1, fLength, file);
-        vertexShaderSource[fLength] = '\0';
-        fclose(file);
-
-        file = fopen(_shaders[1].c_str(), "r");
-        fseek(file, 0, SEEK_END);
-        fLength = (int) ftell(file);
-        fseek(file, 0, SEEK_SET);
-        char *fragmentShaderSource = (char *) malloc(sizeof(char) * fLength + 1);
-        fread(fragmentShaderSource, 1, fLength, file);
-        fragmentShaderSource[fLength] = '\0';
-        fclose(file);
-
-        char *geometryShaderSource = nullptr;
-
-        if (strcmp(_shaders[2].c_str(), "") != 0){
-            file = fopen(_shaders[2].c_str(), "r");
-            fseek(file, 0, SEEK_END);
-            fLength = (int) ftell(file);
-            fseek(file, 0, SEEK_SET);
-            geometryShaderSource = (char *) malloc(sizeof(char) * fLength + 1);
-            fread(geometryShaderSource, 1, fLength, file);
-            geometryShaderSource[fLength] = '\0';
-            fclose(file);
+        std::string _vertexShaderSource = DFS::FileSystem::getFS()->loadShader(_shaders[0]);
+        std::string _fragmentShaderSource = DFS::FileSystem::getFS()->loadShader(_shaders[1]);
+        std::string _geometryShaderSource = "";
+        if (strcmp(_shaders[2].c_str(), "") != 0) {
+            _geometryShaderSource = DFS::FileSystem::getFS()->loadShader(_shaders[2]);
         }
 
         GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
         GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
         GLuint geometryShader = 0;
-        if (geometryShaderSource){
+        if (strcmp(_geometryShaderSource.c_str(), "") != 0) {
             geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
         }
         _shaderProgram = glCreateProgram();
 
+        const char *vertexShaderSource = _vertexShaderSource.c_str();
+        const char *fragmentShaderSource = _fragmentShaderSource.c_str();
+        const char *geometryShaderSource = _geometryShaderSource.c_str();
         glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
         glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
-        if (geometryShader){
+        if (geometryShader) {
             glShaderSource(geometryShader, 1, &geometryShaderSource, nullptr);
         }
 
 
         glCompileShader(vertexShader);
         glCompileShader(fragmentShader);
-        if (geometryShader){
+        if (geometryShader) {
             glCompileShader(geometryShader);
         }
 
@@ -135,12 +113,6 @@ namespace DGL {
         glDeleteShader(fragmentShader);
         if (geometryShader){
             glDeleteShader(geometryShader);
-        }
-
-        free(vertexShaderSource);
-        free(fragmentShaderSource);
-        if (geometryShaderSource){
-            free(geometryShaderSource);
         }
 
         // Construct UBO if not already done so
