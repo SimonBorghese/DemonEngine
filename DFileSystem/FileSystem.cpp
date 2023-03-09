@@ -38,7 +38,11 @@ namespace DFS {
     }
 
     std::string FileSystem::getModelPath(std::string modelName) {
-        return fmt::format("{}/Models/{}/model.fbx", _gamePrefix, modelName);
+        return fmt::format("{}/Models/{}/{}.fbx", _gamePrefix, modelName, modelName);
+    }
+
+    std::string FileSystem::getTexturePath(std::string modelName, std::string textureName) {
+        return fmt::format("{}/Models/{}/{}", _gamePrefix, modelName, textureName);
     }
 
     FileSystem *FileSystem::getFS() {

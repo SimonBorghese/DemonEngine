@@ -7,7 +7,7 @@
 namespace Protal {
     npc_knight::npc_knight(glm::vec3 startPosition, DNPC::Level *level, DemonEngine::Engine *gameEngine) : _level(level), _engine(gameEngine){
         _entity = gameEngine->createAnimatedEntity();
-        _entity->createEntityFromMesh("knight.fbx", startPosition, glm::vec3(0.0f), glm::vec3(1.0));
+        _entity->createEntityFromMesh("knight", startPosition, glm::vec3(0.0f), glm::vec3(1.0));
         _entity->getTransform()->setScale(glm::vec3(0.005));
         _entity->setAnimation(5);
         _entity->setUpdateFunc([this](DG_Entity *aChicken){

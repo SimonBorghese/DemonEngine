@@ -204,7 +204,7 @@ void init() {
     });
     bspLoader->loadBSP("level0");
 
-    //engine->addClient(new Protal::npc_knight(glm::vec3(0.0f, 5.0f, 0.0f), nullptr, engine));
+    engine->addClient(new Protal::npc_knight(glm::vec3(0.0f, 5.0f, 0.0f), nullptr, engine));
 
 
 

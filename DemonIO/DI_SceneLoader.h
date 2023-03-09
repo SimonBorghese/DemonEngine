@@ -15,6 +15,7 @@
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <fmt/printf.h>
+#include <DFileSystem/FileSystem.h>
 
 namespace DemonIO {
 

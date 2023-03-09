@@ -102,8 +102,21 @@ namespace DemonIO {
 
             if (matSafe != NULL) {
                 aiString tex_loc;
+                std::string cFileName(fileName);
+                std::string baseName;
+                std::string textureName;
+
+                baseName = cFileName.substr(0, cFileName.find_last_of("/\\"));
+                baseName = baseName.substr(baseName.find_last_of("/\\") + 1);
+
                 matSafe->GetTexture(aiTextureType_DIFFUSE, 0, &tex_loc);
-                meshes[m]->setTextureDiffuse(tex_loc);
+                std::string texturePath = std::string(tex_loc.C_Str());
+                textureName = texturePath.substr(texturePath.find_last_of("/\\") + 1);
+
+                //printf("Got Path: %s\n", DFS::FileSystem::getFS()->getTexturePath(baseName, textureName).c_str());
+                meshes[m]->setTextureDiffuse(
+                        aiString(DFS::FileSystem::getFS()->getTexturePath(baseName, textureName).c_str()));
+
 
                 //matSafe->GetTexture(aiTextureType_NORMALS, 0, &tex_loc);
                 //meshes[m]->setTextureDiffuse(tex_loc);

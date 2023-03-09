@@ -30,6 +30,8 @@ namespace DFS {
 
         std::string getModelPath(std::string modelName);
 
+        std::string getTexturePath(std::string modelName, std::string textureName);
+
         static FileSystem *getFS();
 
     private:
