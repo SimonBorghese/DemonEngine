@@ -17,10 +17,22 @@
 #include <extensions/PxDefaultAllocator.h>
 #include <extensions/PxDefaultCpuDispatcher.h>
 #include <characterkinematic/PxController.h>
+#include <DemonBase/b_PhysUserData.h>
 
 using namespace physx;
 
 namespace DemonPhysics {
+    typedef struct {
+        DG_Object *object;
+        glm::vec3 position;
+        glm::vec3 normal;
+        float distance;
+    } RayCastHit;
+
+    typedef struct {
+        uint32_t numberHits;
+        RayCastHit *hits;
+    } RayCastResults;
 
     class DP_PhysicsManager {
     public:
@@ -30,7 +42,7 @@ namespace DemonPhysics {
 
         //void beginSimulationTiming();
         void simulate(float simulationTime) {
-            if (simulationTime < 0.0f){
+            if (simulationTime < 0.0f) {
                 printf("Got simulation time less than 0: %f\n", simulationTime);
                 assert(simulationTime > 0.0f);
             }
@@ -53,7 +65,10 @@ namespace DemonPhysics {
         void cookMaterial(DP_PhysicsMaterial *targetMat) { targetMat->createMaterial(pPhysics); }
 
         physx::PxRaycastBuffer rayCast(glm::vec3 origin, glm::vec3 direction, float distance);
-        physx::PxSweepBuffer   sweepCube(glm::vec3 origin, glm::vec3 direction, float distance, glm::vec3 cubeScale);
+
+        RayCastResults rayCastd(glm::vec3 origin, glm::vec3 direction, float distance);
+
+        physx::PxSweepBuffer sweepCube(glm::vec3 origin, glm::vec3 direction, float distance, glm::vec3 cubeScale);
 
 
         physx::PxPhysics *getPhysics() { return pPhysics; }

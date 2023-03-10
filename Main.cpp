@@ -49,7 +49,8 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
         INFO_NODE,
         NPC_173,
         TRIGGER_LEVELCHANGE,
-        NPC_CHARGER
+        NPC_CHARGER,
+        DOOR_BARS
     };
 
 #define INSERT(name, ent) entityList.insert(std::pair<std::string, BSP_ENTITIES>(name, ent))
@@ -69,16 +70,16 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
     INSERT("npc_173", NPC_173);
     INSERT("trigger_levelChange", TRIGGER_LEVELCHANGE);
     INSERT("npc_charger", NPC_CHARGER);
+    INSERT("door_bars", DOOR_BARS);
 
     glm::vec3 realPos = glm::vec3(_info.pos.x, _info.pos.z, -_info.pos.y);
 
     auto lookingEntity = entityList.find(_info.name);
     //printf("Ent Name: %s and %d\n", info.name, info.entityNumber);
 
-    if (lookingEntity != entityList.end()){
-        switch (lookingEntity->second){
-            case INFO_PLAYER_START:
-            {
+    if (lookingEntity != entityList.end()) {
+        switch (lookingEntity->second) {
+            case INFO_PLAYER_START: {
                 player = new Protal::cl_player(glm::vec3(0.0f, 100.0f, 0.0f), 6.0f, 1.0f, engine);
                 player->init();
                 engine->addClient(player);
@@ -161,13 +162,23 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
                 newTrigger->createEntityFromExistingMesh(_info.brushMeshes, _info.numBrushMesh, _info.origin);
                 newTrigger->toggleRender(0);
                 std::string newLevel = CBSP_getKeyFromEntity(_info.currentEntity, "level");
-                newTrigger->setCallback([newLevel](DG_Object *, bool isPlayer){
+                newTrigger->setCallback([newLevel](DG_Object *, bool isPlayer) {
                     // In order to prevent premature activation, 5 frames must render before it can be triggered
-                    if (isPlayer  && totalFrames > 5) {
+                    if (isPlayer && totalFrames > 5) {
                         destroyWorld += 1.0;
                         newWorld = newLevel;
                     }
                 });
+            }
+                break;
+            case DOOR_BARS: {
+                auto theBars = engine->createWorldObject();
+                theBars->createEntityFromExistingMesh(_info.brushMeshes, _info.numBrushMesh, _info.origin);
+                theBars->setUpdateFunc([](DG_Entity *ent) {
+                    DG_RigidEntity *realEnt = (DG_RigidEntity *) ent;
+                    realEnt->getActor()->translate(glm::vec3(0.0f, 5.0f, 0.0f) * (float) engine->getDeltaTime());
+                });
+
             }
                 break;
             default:
@@ -202,9 +213,9 @@ void init() {
     bspLoader->setBSPCreationCallback([](DemonEngine::BSP_EntityCreateInfo _info) {
         bspCallback(_info);
     });
-    bspLoader->loadBSP("level0");
+    bspLoader->loadBSP("level99");
 
-    engine->addClient(new Protal::npc_knight(glm::vec3(0.0f, 5.0f, 0.0f), nullptr, engine));
+    //engine->addClient(new Protal::npc_knight(glm::vec3(0.0f, 5.0f, 0.0f), nullptr, engine));
 
 
 

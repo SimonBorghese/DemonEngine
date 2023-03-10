@@ -34,6 +34,8 @@ namespace Protal {
         int _keyCallback = 0;
         int _keyDownCallback = 0;
 
+        DemonGame::DG_PhysicsObject *_heldObject = nullptr;
+
     };
 
 } // Protal

@@ -55,7 +55,7 @@ namespace Protal {
 
         _keyDownCallback = _engine->getEvent()->addKeyDownCallback([this](int scancode){
             switch (scancode){
-                case SDL_SCANCODE_E:
+                case SDL_SCANCODE_R:
                     auto projectile = _engine->createWorldEntity();
                     projectile->createEntityFromMesh("block", _controller->getPosition() +
                                                               (_engine->getCamera()->getCameraFront() * 5.0f));
@@ -65,14 +65,41 @@ namespace Protal {
             }
         });
     }
-    void cl_player::loop(){
+    void cl_player::loop() {
         _personalLight->setPosition(_engine->getCamera()->getPosition());
         if (!_engine->getGameState("noclip")) {
             speed = 1.0f;
-            _controller->move(glm::vec3(0.0f, -9.81f, 0.0f));
-        }
-        else{
+            _controller->move(glm::vec3(0.0f, -9.81f * 2.0f, 0.0f) * (float) _engine->getDeltaTime());
+        } else {
             speed = 5.0f;
+        }
+
+        // pickup
+        // Move currently held object
+        if (_heldObject) {
+            glm::vec3 targetPosition =
+                    _engine->getCamera()->getPosition() + (_engine->getCamera()->getCameraFront() * 10.0f);
+            glm::vec3 currentPositon = _heldObject->getActor()->getPosition();
+            _heldObject->getActor()->setVelocity(
+                    ((targetPosition - currentPositon) * (glm::distance(targetPosition, currentPositon) * 1.0f)));
+            _heldObject->getActor()->setRotation(glm::quat(1.0f, 0.0f, 0.0f, 0.0f));
+        }
+        if (_engine->getEvent()->getKeyDown(SDL_SCANCODE_E)) {
+            if (!_heldObject) {
+                auto rayCastCall = _engine->getPhysicsManager()->rayCastd(
+                        _engine->getCamera()->getPosition() + (_engine->getCamera()->getCameraFront() * 2.0f),
+                        _engine->getCamera()->getCameraFront(), 30.0f);
+                if (rayCastCall.numberHits > 0) {
+                    auto firstHit = rayCastCall.hits[0];
+                    if (firstHit.object && firstHit.object->type == DemonGame::DYNAMIC) {
+                        _heldObject = firstHit.object->physObj;
+                    }
+                }
+            } else {
+                if (_heldObject) { _heldObject->enableGravity(); }
+                _heldObject = nullptr;
+            }
+
         }
 
     }

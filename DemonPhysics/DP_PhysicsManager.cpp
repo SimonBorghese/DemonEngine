@@ -146,7 +146,7 @@ namespace DemonPhysics {
         bool success = pScene->raycast(physx::PxVec3(origin.x, origin.y, origin.z),
                                        physx::PxVec3(direction.x, direction.y, direction.z),
                                        distance, hit);
-        if (!success){
+        if (!success) {
             //printf("[Physics] RAY CAST FAILED!\n");
             hit.nbTouches = 0;
             hit.hasBlock = false;
@@ -155,14 +155,58 @@ namespace DemonPhysics {
 
     }
 
-    physx::PxSweepBuffer DP_PhysicsManager::sweepCube(glm::vec3 origin, glm::vec3 direction, float distance, glm::vec3 cubeScale){
+    RayCastResults DP_PhysicsManager::rayCastd(glm::vec3 origin, glm::vec3 direction, float distance) {
+        RayCastResults dHit;
+        PxRaycastBuffer hit;
+        bool success = pScene->raycast(physx::PxVec3(origin.x, origin.y, origin.z),
+                                       physx::PxVec3(direction.x, direction.y, direction.z),
+                                       distance, hit);
+        if (!success) {
+            //printf("[Physics] RAY CAST FAILED!\n");
+            dHit.numberHits = 0;
+            dHit.hits = nullptr;
+        } else {
+            dHit.numberHits = hit.getNbAnyHits();
+            dHit.hits = (RayCastHit *) malloc(sizeof(RayCastHit) * dHit.numberHits);
+            for (uint h = 0; h < hit.getNbAnyHits(); h++) {
+                DemonBase::DemonUserData::generalStruct *touchedActorDesc =
+                        (DemonBase::DemonUserData::generalStruct *) hit.getAnyHit(h).actor->userData;
+                dHit.hits[h].position = glm::vec3(DemonWorld::DW_Transform::PhysToGlm(hit.getAnyHit(h).position));
+                dHit.hits[h].normal = glm::vec3(DemonWorld::DW_Transform::PhysToGlm(hit.getAnyHit(h).normal));
+                dHit.hits[h].distance = hit.getAnyHit(h).distance;
+                if (!strncmp(touchedActorDesc->magicString, "IOBJ", 4)) {
+                    DG_Object *hitObject = new DG_Object;
+                    hitObject->type = touchedActorDesc->type;
+                    if (hitObject->type == DemonGame::DYNAMIC) {
+                        DemonBase::DemonUserData::DP_PHYSICS_OBJ_DESC *physicsObjDesc =
+                                (DemonBase::DemonUserData::DP_PHYSICS_OBJ_DESC *) touchedActorDesc->structReference;
+                        hitObject->physObj = physicsObjDesc->reference;
+                        dHit.hits[h].object = hitObject;
+                    } else if (hitObject->type == DemonGame::STATIC) {
+                        DemonBase::DemonUserData::DP_RIGID_OBJ_DESC *rigidObjDesc =
+                                (DemonBase::DemonUserData::DP_RIGID_OBJ_DESC *) touchedActorDesc->structReference;
+                        hitObject->rigidObj = rigidObjDesc->reference;
+                        dHit.hits[h].object = hitObject;
+                    } else {
+                        dHit.hits[h].object = nullptr;
+                    }
+                } else {
+                    dHit.hits[h].object = nullptr;
+                }
+            }
+        }
+        return dHit;
+    }
+
+    physx::PxSweepBuffer
+    DP_PhysicsManager::sweepCube(glm::vec3 origin, glm::vec3 direction, float distance, glm::vec3 cubeScale) {
         physx::PxSweepBuffer hit;
 
         PxBoxGeometry sweepGeo = PxBoxGeometry(physx::PxVec3(cubeScale.x, cubeScale.y, cubeScale.z));
         bool success = pScene->sweep(sweepGeo, physx::PxTransform(physx::PxVec3(origin.x, origin.y, origin.z)),
                                      physx::PxVec3(direction.x, direction.y, direction.z),
                                      distance, hit);
-        if (!success){
+        if (!success) {
             //printf("[Physics] SWEEP CAST FAILED!\n");
             hit.nbTouches = 0;
             hit.hasBlock = false;
