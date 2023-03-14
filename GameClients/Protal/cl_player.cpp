@@ -7,7 +7,7 @@
 namespace Protal {
 
     cl_player::cl_player(glm::vec3 startPosition, float height, float radius, DemonEngine::Engine *engine) :
-    _startPosition(startPosition), _height(height), _radius(radius), _engine(engine){}
+            _startPosition(startPosition), _height(height), _radius(radius), _engine(engine), pl_height(height) {}
 
     void cl_player::init(){
         _controller = _engine->createFPSController(_startPosition, _height, _radius);
@@ -54,13 +54,20 @@ namespace Protal {
         });
 
         _keyDownCallback = _engine->getEvent()->addKeyDownCallback([this](int scancode){
-            switch (scancode){
-                case SDL_SCANCODE_R:
+            switch (scancode) {
+                case SDL_SCANCODE_R: {
                     auto projectile = _engine->createWorldEntity();
                     projectile->createEntityFromMesh("block", _controller->getPosition() +
                                                               (_engine->getCamera()->getCameraFront() * 5.0f));
                     projectile->setMass(10.0f);
                     projectile->getActor()->applyForce(_engine->getCamera()->getCameraFront() * 1000.0f);
+                }
+                    break;
+                case SDL_SCANCODE_SPACE: {
+                    if (_controller->onGround()) {
+                        gravity = (- PL_GRAVITY) * 0.3f;
+                    }
+                }
                     break;
             }
         });
@@ -69,16 +76,31 @@ namespace Protal {
         _personalLight->setPosition(_engine->getCamera()->getPosition());
         if (!_engine->getGameState("noclip")) {
             speed = 1.0f;
-            _controller->move(glm::vec3(0.0f, -9.81f * 2.0f, 0.0f) * (float) _engine->getDeltaTime());
+            if (gravity != PL_GRAVITY) {
+                gravity += PL_GRAVITY * _engine->getDeltaTime();
+                gravity = glm::clamp(gravity, PL_GRAVITY, - PL_GRAVITY);
+            }
+            if (pl_height != _height && !_engine->getEvent()->getKey(SDL_SCANCODE_LCTRL)) {
+                float addedHeight = _height * _engine->getDeltaTime() * (1 / DUCK_MULTIPLIER);
+                pl_height += addedHeight;
+                pl_height = glm::clamp(pl_height, _height * DUCK_MULTIPLIER, _height);
+                _controller->move(glm::vec3(0.0f, addedHeight, 0.0f));
+            }
+            _controller->move(glm::vec3(0.0f, gravity * 10.0f, 0.0f) * (float) _engine->getDeltaTime());
+            _controller->setHeight(pl_height);
         } else {
             speed = 5.0f;
+        }
+
+        if (_engine->getEvent()->getKey(SDL_SCANCODE_LCTRL)) {
+            pl_height = _height * DUCK_MULTIPLIER;
         }
 
         // pickup
         // Move currently held object
         if (_heldObject) {
             glm::vec3 targetPosition =
-                    _engine->getCamera()->getPosition() + (_engine->getCamera()->getCameraFront() * 10.0f);
+                    _engine->getCamera()->getPosition() + (_engine->getCamera()->getCameraFront() * 5.0f);
             glm::vec3 currentPositon = _heldObject->getActor()->getPosition();
             _heldObject->getActor()->setVelocity(
                     ((targetPosition - currentPositon) * (glm::distance(targetPosition, currentPositon) * 1.0f)));

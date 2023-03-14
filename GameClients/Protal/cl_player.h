@@ -4,19 +4,25 @@
 
 #ifndef DEMONENGINE_CL_PLAYER_H
 #define DEMONENGINE_CL_PLAYER_H
+
 #include <DemonGame/Master/Engine.h>
 #include <GameClients/GameClient.h>
 #include <DemonPhysics/DP_CharacterController.h>
 #include <DemonGL/Light.h>
 
+#define PL_GRAVITY -9.81f
+#define DUCK_MULTIPLIER 0.3f
+
 namespace Protal {
 
-    class cl_player : public GameClient{
+    class cl_player : public GameClient {
     public:
         cl_player(glm::vec3 startPosition, float height, float radius, DemonEngine::Engine *engine);
+
         virtual ~cl_player() = default;
 
         void init();
+
         void loop();
         void destroy();
 
@@ -35,6 +41,8 @@ namespace Protal {
         int _keyDownCallback = 0;
 
         DemonGame::DG_PhysicsObject *_heldObject = nullptr;
+        float gravity = PL_GRAVITY;
+        float pl_height = 0.0f;
 
     };
 

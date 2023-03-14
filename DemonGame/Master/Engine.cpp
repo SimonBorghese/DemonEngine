@@ -20,7 +20,7 @@ namespace DemonEngine {
         _shadowShader = new DGL::Shader("vertex_lightspace.glsl", "geometry_lightspace.glsl", "fragment_empty.glsl");
         _shadowShader->createShader();
 
-        _mainPhysicsManager->createPhysics(glm::vec3(0.0f, -9.81f, 0.0f));
+        _mainPhysicsManager->createPhysics(glm::vec3(0.0f, -9.81f * 3.0f, 0.0f));
         _mainPhysicsManager->getScene()->setSimulationEventCallback(new DemonGame::DG_EXT_PhysicsCallback);
 
         _defaultWindow->clearWindow();
