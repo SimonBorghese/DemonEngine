@@ -14,8 +14,8 @@ layout (std140, binding=0) uniform Transform{
 
 uniform mat4 model;
 
-
-const int MAX_BONES = 100;
+// TODO: MOVE THIS TO A SSBO AS NVIDIA DOESN'T LIKE BIG UNIFORMS
+const int MAX_BONES = 25;
 const int MAX_BODIES = 10;
 const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 bodyTransforms[MAX_BODIES][MAX_BONES];

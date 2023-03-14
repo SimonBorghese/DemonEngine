@@ -23,7 +23,7 @@ layout (location=5) in int body;
 
 uniform mat4 model;
 
-const int MAX_BONES = 100;
+const int MAX_BONES = 25;
 const int MAX_BODIES = 10;
 const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 bodyTransforms[MAX_BODIES][MAX_BONES];
