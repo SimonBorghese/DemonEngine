@@ -171,12 +171,28 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
                 });
             }
                 break;
+            case INFO_KEY: {
+                auto newTrigger = engine->createTrigger();
+                newTrigger->createEntityFromMesh("block", realPos, glm::vec3(0.0f), glm::vec3(2.0f));
+                newTrigger->toggleRender(0);
+                std::string newKey = CBSP_getKeyFromEntity(_info.currentEntity, "key");
+                newTrigger->setCallback([newKey](DG_Object *, bool isPlayer) {
+                    // In order to prevent premature activation, 5 frames must render before it can be triggered
+                    if (isPlayer && totalFrames > 5) {
+                        engine->setGameState(fmt::format("{}_active", newKey), 1);
+                    }
+                });
+            }
+                break;
             case DOOR_BARS: {
                 auto theBars = engine->createWorldObject();
                 theBars->createEntityFromExistingMesh(_info.brushMeshes, _info.numBrushMesh, _info.origin);
-                theBars->setUpdateFunc([](DG_Entity *ent) {
-                    DG_RigidEntity *realEnt = (DG_RigidEntity *) ent;
-                    realEnt->getActor()->translate(glm::vec3(0.0f, 5.0f, 0.0f) * (float) engine->getDeltaTime());
+                std::string newKey = CBSP_getKeyFromEntity(_info.currentEntity, "key");
+                theBars->setUpdateFunc([newKey](DG_Entity *ent) {
+                    if (engine->getGameState(fmt::format("{}_active", newKey))) {
+                        DG_RigidEntity *realEnt = (DG_RigidEntity *) ent;
+                        realEnt->getActor()->translate(glm::vec3(0.0f, 5.0f, 0.0f) * (float) engine->getDeltaTime());
+                    }
                 });
 
             }
@@ -222,6 +238,7 @@ void init() {
 }
 
 int  loop(){
+    //printf("State: %d\n", engine->getGameState("secret_key_active"));
 
 
     if (destroyWorld >= 1.0f){

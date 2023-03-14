@@ -17,7 +17,8 @@ namespace DemonGame {
 
 
         unsigned int outLen;
-        DemonBase::b_Mesh **normalMesh = DemonIO::DI_SceneLoader::loadMeshesFromFile(meshFile, &outLen, scale);
+        DemonBase::b_Mesh **normalMesh = DemonIO::DI_SceneLoader::loadMeshesFromFile(
+                DFS::FileSystem::getFS()->getModelPath(meshFile).c_str(), &outLen, scale);
 
         mainTransform->createTransform(pos, rotation, glm::vec3(1.0f));
 
