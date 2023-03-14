@@ -10,6 +10,7 @@
 #include <GameClients/Protal/cl_player.h>
 #include <GameClients/Protal/npc_charger.h>
 #include <GameClients/Protal/npc_knight.h>
+#include <GameClients/Protal/door_bars.h>
 
 #include <PathFinder.h>
 #include <DemonNPC/Level.h>
@@ -176,10 +177,12 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
                 newTrigger->createEntityFromMesh("block", realPos, glm::vec3(0.0f), glm::vec3(2.0f));
                 newTrigger->toggleRender(0);
                 std::string newKey = CBSP_getKeyFromEntity(_info.currentEntity, "key");
-                newTrigger->setCallback([newKey](DG_Object *, bool isPlayer) {
+                int *activated = new int(0);
+                newTrigger->setCallback([newKey, activated](DG_Object *, bool isPlayer) {
                     // In order to prevent premature activation, 5 frames must render before it can be triggered
-                    if (isPlayer && totalFrames > 5) {
-                        engine->setGameState(fmt::format("{}_active", newKey), 1);
+                    if (!(*activated) && isPlayer && totalFrames > 5) {
+                        ((Protal::door_bars *) engine->getClient(fmt::format("{}_door", newKey)))->openDoor();
+                        *activated = 1;
                     }
                 });
             }
@@ -188,12 +191,16 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
                 auto theBars = engine->createWorldObject();
                 theBars->createEntityFromExistingMesh(_info.brushMeshes, _info.numBrushMesh, _info.origin);
                 std::string newKey = CBSP_getKeyFromEntity(_info.currentEntity, "key");
+                Protal::door_bars *_door = new Protal::door_bars(engine, theBars, 5.0f);
+                engine->addClient(fmt::format("{}_door", newKey), _door);
+                /*
                 theBars->setUpdateFunc([newKey](DG_Entity *ent) {
                     if (engine->getGameState(fmt::format("{}_active", newKey))) {
                         DG_RigidEntity *realEnt = (DG_RigidEntity *) ent;
                         realEnt->getActor()->translate(glm::vec3(0.0f, 5.0f, 0.0f) * (float) engine->getDeltaTime());
                     }
                 });
+                 */
 
             }
                 break;

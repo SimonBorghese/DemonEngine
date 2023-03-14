@@ -87,7 +87,7 @@ namespace DemonEngine {
 
 
         for (auto client : _clients){
-            client->loop();
+            client.second->loop();
         }
 
         return _mainEvents->getCloseState() || _mainEvents->getKeyDown(SDL_SCANCODE_ESCAPE);
@@ -96,7 +96,7 @@ namespace DemonEngine {
 
     void Engine::destroyEngine() {
         for (auto client : _clients){
-            client->destroy();
+            client.second->destroy();
         }
 
         delete _mainPlayer;
@@ -293,26 +293,34 @@ namespace DemonEngine {
     }
     void Engine::setGameStatePTR(std::string name, int *ptr){
         auto state = _gameState.find(name);
-        if (state != _gameState.end()){
+        if (state != _gameState.end()) {
             _gameState.at(name) = ptr;
-        } else{
-            _gameState.insert(std::pair<std::string, int*>(name, ptr));
+        } else {
+            _gameState.insert(std::pair<std::string, int *>(name, ptr));
         }
     }
 
-    void Engine::addClient(GameClient *client){
-        _clients.push_back(client);
+    void Engine::addClient(GameClient *client) {
+        _clients.insert(std::pair<std::string, GameClient *>(fmt::format("UNNAMED_{}", _clients.size()), client));
     }
 
-    void Engine::destroyScene(){
+    void Engine::addClient(std::string name, GameClient *client) {
+        _clients.insert(std::pair<std::string, GameClient *>(name, client));
+    }
+
+    GameClient *Engine::getClient(std::string name) {
+        return _clients.at(name);
+    }
+
+    void Engine::destroyScene() {
         _world->destroyWorld();
         _world->clearAll();
-        for (auto client : _clients){
-            client->destroy();
+        for (auto client: _clients) {
+            client.second->destroy();
             //delete client;
         }
         _clients.clear();
-        for (auto light : _lightEntities){
+        for (auto light: _lightEntities) {
             light->destroyLight();
             delete light;
         }

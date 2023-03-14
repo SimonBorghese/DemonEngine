@@ -154,20 +154,29 @@ namespace DemonEngine {
         std::vector<DGL::Light*>* getLights() { return &_lightEntities; }
 
         DemonPhysics::DP_CharacterController* createCharacterController(glm::vec3 position, float height, float radius,
-                                                                       float stepOffset = 2.0f, float scaleCoeff = 1.0f,
-                                                                       float volumeGrowth = 1.0f, float density = 2.0f,
-                                                                       float slopeLimit = 50.0f,
+                                                                        float stepOffset = 2.0f, float scaleCoeff = 1.0f,
+                                                                        float volumeGrowth = 1.0f, float density = 2.0f,
+                                                                        float slopeLimit = 50.0f,
                                                                         DemonPhysics::DP_PhysicsMaterial *material = nullptr);
+
         std::function<void()> midRenderFunc = []() -> void {};
 
         int getGameState(std::string name);
-        int* getGameStatePTR(std::string name);
+
+        int *getGameStatePTR(std::string name);
+
         void setGameState(std::string name, int value);
+
         void setGameStatePTR(std::string name, int *ptr);
 
         void addClient(GameClient *client);
 
+        void addClient(std::string name, GameClient *client);
+
+        GameClient *getClient(std::string name);
+
         void destroyScene();
+
     private:
         // Some fundimental variables
         unsigned int _width, _height, _fov, _zFar;
@@ -193,9 +202,10 @@ namespace DemonEngine {
         unsigned int _currentTicks;
 
         // Game state variables
-        std::map<std::string, int*> _gameState;
+        std::map<std::string, int *> _gameState;
 
-        std::vector<GameClient*> _clients;
+        //std::vector<GameClient*> _clients;
+        std::map<std::string, GameClient *> _clients;
 
 
     };
