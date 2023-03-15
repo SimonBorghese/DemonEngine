@@ -152,7 +152,7 @@ void main(){
                     louterCutOff = cutOff[l];
                 }
 
-                float epsilon   = louterCutOff - cutOff[l];
+                float epsilon = louterCutOff - cutOff[l];
                 intensity = clamp((theta - louterCutOff) / epsilon, 0.0, 1.0);
 
                 if (theta > cutOff[l]){
@@ -162,7 +162,6 @@ void main(){
                     float aQuadratic = 75.0f / (distance[l] * distance[l]);
                     attenuation = 1.0 / (aConst + aLinear * ldistance + aQuadratic * (ldistance * ldistance));
                     attenuation *= intensity;
-
                 }
                 else {
                     attenuation = 0.0f;

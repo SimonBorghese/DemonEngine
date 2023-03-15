@@ -11,7 +11,7 @@ namespace Protal {
 
     void cl_player::init(){
         _controller = _engine->createFPSController(_startPosition, _height, _radius);
-        _personalLight = _engine->createEasyPointLight(_startPosition, 50.0f, 1.0f);
+        //_personalLight = _engine->createEasyPointLight(_startPosition, 50.0f, 1.0f);
         _controller->setName("character");
         _keyCallback = _engine->getEvent()->addKeyCallback([this](int scancode){
             if (!_engine->getGameState("noclip")) {
@@ -73,7 +73,7 @@ namespace Protal {
         });
     }
     void cl_player::loop() {
-        _personalLight->setPosition(_engine->getCamera()->getPosition());
+        //_personalLight->setPosition(_engine->getCamera()->getPosition());
         if (!_engine->getGameState("noclip")) {
             speed = 1.0f;
             if (gravity != PL_GRAVITY) {

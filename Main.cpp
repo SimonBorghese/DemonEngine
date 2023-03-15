@@ -51,7 +51,8 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
         NPC_173,
         TRIGGER_LEVELCHANGE,
         NPC_CHARGER,
-        DOOR_BARS
+        DOOR_BARS,
+        INFO_SPOT_LIGHT
     };
 
 #define INSERT(name, ent) entityList.insert(std::pair<std::string, BSP_ENTITIES>(name, ent))
@@ -72,6 +73,7 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
     INSERT("trigger_levelChange", TRIGGER_LEVELCHANGE);
     INSERT("npc_charger", NPC_CHARGER);
     INSERT("door_bars", DOOR_BARS);
+    INSERT("info_spot_light", INFO_SPOT_LIGHT);
 
     glm::vec3 realPos = glm::vec3(_info.pos.x, _info.pos.z, -_info.pos.y);
 
@@ -87,8 +89,7 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
                 player->getController()->translate(realPos);
             }
                 break;
-            case INFO_BRUSHPROP:
-            {
+            case INFO_BRUSHPROP: {
                 if (_info.brushMeshes) {
                     auto newProp = engine->createWorldEntity();
                     auto objMass = CBSP_getKeyFromEntity(_info.currentEntity, "mass");
@@ -104,27 +105,47 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
                         //newProp->setMass(mass);
                     }
                     auto *newMat = new DemonPhysics::DP_PhysicsMaterial(0.8f, 0.5f,
-                                                                                                    0.8f);
+                                                                        0.8f);
                     newMat->createMaterial(engine->getPhysicsManager()->getPhysics());
                     newProp->setMaterial(newMat);
                 }
             }
                 break;
-            case INFO_POINT_LIGHT:
-            {
-                
+            case INFO_POINT_LIGHT: {
+                // -2 is down, -1 is up, all other angles are on y axis
                 auto distance = (float) strtod(CBSP_getKeyFromEntity(_info.currentEntity, "distance"), nullptr);
-                auto intensity = (float) strtol(CBSP_getKeyFromEntity(_info.currentEntity, "intensity"), nullptr, 10) / 100.0f;
+                auto intensity =
+                        (float) strtol(CBSP_getKeyFromEntity(_info.currentEntity, "intensity"), nullptr, 10) / 100.0f;
 
 #define SHADOW_HELL 4.0f
 #define SHADOW_RES 512
-                engine->createEasyPointLight(realPos, distance, intensity)->createShadowBuffer(
-                        SHADOW_RES * SHADOW_HELL, SHADOW_RES * SHADOW_HELL);
-                //engine->createEasyPointLight(realPos, distance, intensity);
+                //engine->createEasyPointLight(realPos, distance, intensity)->createShadowBuffer(
+                //        SHADOW_RES * SHADOW_HELL, SHADOW_RES * SHADOW_HELL);
+                engine->createEasyPointLight(realPos, distance, intensity);
             }
                 break;
-            case INFO_SCRIPTED_PROP:
-            {
+
+            case INFO_SPOT_LIGHT: {
+                auto distance = (float) strtod(CBSP_getKeyFromEntity(_info.currentEntity, "distance"), nullptr);
+                auto intensity =
+                        (float) strtol(CBSP_getKeyFromEntity(_info.currentEntity, "intensity"), nullptr, 10) / 100.0f;
+                auto angle = (float) strtod(CBSP_getKeyFromEntity(_info.currentEntity, "angle"), nullptr);
+                float pitch = 0.0f;
+                float yaw = angle + 90.0f;
+                yaw = glm::radians(yaw);
+                pitch = glm::radians(pitch);
+                glm::vec3 direction = (glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch),
+                                                 glm::cos(yaw) * glm::cos(pitch)));
+                if (angle <= -2.0f) {
+                    direction = glm::vec3(0.0f, -1.0f, 0.0f);
+                } else if (angle <= -1.0f) {
+                    direction = glm::vec3(0.0f, 1.0f, 0.0f);
+                }
+
+                engine->createEasySpotLight(realPos, direction, glm::radians(45.0f), distance, intensity);
+            }
+                break;
+            case INFO_SCRIPTED_PROP: {
                 /*
                 const char *script = CBSP_getKeyFromEntity(_info.currentEntity, "script");
                 if (strcmp(script, CBSP_getKeyFromEntity_FAILURE) != 0){
@@ -214,7 +235,7 @@ void init() {
     // Init Engine
     engine = new DemonEngine::Engine(1600, 900);
     engine->createEngine();
-    engine->getWindow()->setMouseGrab(-1);
+    engine->getWindow()->setMouseGrab(0);
 
     // Init BSP Loader
     bspLoader = new DemonEngine::BSPLoader(engine);

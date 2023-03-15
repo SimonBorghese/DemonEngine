@@ -221,7 +221,7 @@ namespace DemonEngine {
         hardInfo.position = position;
         hardInfo.direction = direction;
         hardInfo.cutOffDegree = angle;
-        hardInfo.outerCutOffDegree = angle+2.0f;
+        hardInfo.outerCutOffDegree = angle + glm::radians(2.0f);
         hardInfo.distance = distance;
         hardInfo.ambientStrength = strength;
         hardInfo.specularStrength = strength;
