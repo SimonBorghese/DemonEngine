@@ -119,7 +119,7 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info) {
                 auto intensity =
                         (float) strtol(CBSP_getKeyFromEntity(_info.currentEntity, "intensity"), nullptr, 10) / 100.0f;
 
-#define SHADOW_HELL 4.0f
+#define SHADOW_HELL 1.0f
 #define SHADOW_RES 512
                 engine->createEasyPointLight(realPos, distance, intensity)->createShadowBuffer(
                         SHADOW_RES * SHADOW_HELL, SHADOW_RES * SHADOW_HELL);
