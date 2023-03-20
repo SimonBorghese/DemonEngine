@@ -169,6 +169,8 @@ namespace DemonEngine {
 
         void setGameStatePTR(std::string name, int *ptr);
 
+        void setGameStateCallback(std::string name, std::function<void(int)> function);
+
         void addClient(GameClient *client);
 
         void addClient(std::string name, GameClient *client);
@@ -204,6 +206,7 @@ namespace DemonEngine {
 
         // Game state variables
         std::map<std::string, int *> _gameState;
+        std::map<std::string, std::function<void(int)>> _stateCallbacks;
 
         //std::vector<GameClient*> _clients;
         std::map<std::string, GameClient *> _clients;

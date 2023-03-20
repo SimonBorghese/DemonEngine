@@ -12,6 +12,8 @@
 
 #define PL_GRAVITY -9.81f
 #define DUCK_MULTIPLIER 0.3f
+#define FLASHLIGHT_VAR "pl_flashlight"
+#define NOCLIP_VAR "noclip"
 
 namespace Protal {
 
@@ -43,6 +45,9 @@ namespace Protal {
         DemonGame::DG_PhysicsObject *_heldObject = nullptr;
         float gravity = PL_GRAVITY;
         float pl_height = 0.0f;
+
+        int pl_flashlight = 0;
+        int pl_noclip = 0;
 
     };
 

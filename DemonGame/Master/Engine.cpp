@@ -26,7 +26,7 @@ namespace DemonEngine {
                                                  "Lights/fragment_spotlight.glsl");
         _shadowShaderSpotLight->createShader();
 
-        _mainPhysicsManager->createPhysics(glm::vec3(0.0f, -9.81f * 3.0f, 0.0f));
+        _mainPhysicsManager->createPhysics(glm::vec3(0.0f, -9.81f, 0.0f));
         _mainPhysicsManager->getScene()->setSimulationEventCallback(new DemonGame::DG_EXT_PhysicsCallback);
 
         _defaultWindow->clearWindow();
@@ -322,20 +322,26 @@ namespace DemonEngine {
         }
         return nullptr;
     }
-    void Engine::setGameState(std::string name, int value){
+    void Engine::setGameState(std::string name, int value) {
         auto state = _gameState.find(name);
-        if (state != _gameState.end()){
+        if (state != _gameState.end()) {
             *_gameState.at(name) = value;
-        } else{
-            _gameState.insert(std::pair<std::string, int*>(name, new int(value)));
+        } else {
+            _gameState.insert(std::pair<std::string, int *>(name, new int(value)));
+        }
+        if (_stateCallbacks.find(name) != _stateCallbacks.end()) {
+            _stateCallbacks.at(name)(value);
         }
     }
-    void Engine::setGameStatePTR(std::string name, int *ptr){
+    void Engine::setGameStatePTR(std::string name, int *ptr) {
         auto state = _gameState.find(name);
         if (state != _gameState.end()) {
             _gameState.at(name) = ptr;
         } else {
             _gameState.insert(std::pair<std::string, int *>(name, ptr));
+        }
+        if (_stateCallbacks.find(name) != _stateCallbacks.end()) {
+            _stateCallbacks.at(name)(*ptr);
         }
     }
 
@@ -345,6 +351,10 @@ namespace DemonEngine {
 
     void Engine::addClient(std::string name, GameClient *client) {
         _clients.insert(std::pair<std::string, GameClient *>(name, client));
+    }
+
+    void Engine::setGameStateCallback(std::string name, std::function<void(int)> function) {
+        _stateCallbacks.insert(std::pair<std::string, std::function<void(int)>>(name, function));
     }
 
     GameClient *Engine::getClient(std::string name) {
