@@ -25,19 +25,25 @@ namespace DGL {
     };
 
     struct _lightSpec{
-        glm::vec3  *position;
-        glm::vec3  *direction;
-        float      *cutOff;
-        float      *outerCutOff;
-        float      *distance;
-        glm::vec3  *colour;
-        float      *ambient;
-        float      *specularStrength;
-        int        *specValue;
-        int        *enableShadow;
+        glm::vec3 *position;
+        glm::vec3 *direction;
+        float *cutOff;
+        float *outerCutOff;
+        float *distance;
+        glm::vec3 *colour;
+        float *ambient;
+        float *specularStrength;
+        int *specValue;
+        int *enableShadow;
+        int *lightType;
+    };
+
+    enum lightTypes {
+        POINT = 0,
+        SPOT = 1
     };
 #define NUM_LIGHTS 20
-    struct dynamicLights{
+    struct dynamicLights {
         int numLights;
         glm::vec3 viewPos;
         glm::vec3 position[NUM_LIGHTS];
@@ -51,7 +57,8 @@ namespace DGL {
         float ambient[NUM_LIGHTS];
         float specularStrength[NUM_LIGHTS];
         int  specValue[NUM_LIGHTS];
-        int  enableShadow[NUM_LIGHTS];
+        int enableShadow[NUM_LIGHTS];
+        int lightType[NUM_LIGHTS];
     };
 
     class Shader {

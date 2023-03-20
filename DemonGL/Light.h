@@ -38,22 +38,47 @@ namespace DGL {
         void renderShadowBuffer(DGL::Shader *shadowShader, std::function<void()> renderFunction);
 
         glm::vec3 getPosition();
+
         glm::vec3 getDirection();
+
         float getCutoff();
+
         float getOuterCutoff();
+
         float getDistance();
+
         glm::vec3 getColour();
+
         float getAmbient();
+
         float getSpecularStrength();
+
         int getSpecularValue();
 
+        uint32_t getShadowWidth();
+
+        uint32_t getShadowHeight();
+
+        glm::mat4 getLightSpace(); // TODO: Remove due to lack of function
+        glm::mat4 getLightProjection();
+
+        glm::mat4 getLightView();
+
+
         void setPosition(glm::vec3 newPos);
+
         void setDirection(glm::vec3 newDir);
+
         void setCutoff(float newCut);
+
         void setOuterCutoff(float newOutCut);
+
         void setDistance(float newDist);
+
         void setColor(glm::vec3 newColor);
+
         void setAmbient(float newAmbient);
+
         void setSpecularStrength(float newStrength);
         void setSpecularValue(int newSpec);
 

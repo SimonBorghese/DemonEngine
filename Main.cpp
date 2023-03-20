@@ -34,8 +34,10 @@ float destroyWorld = 0;
 std::string newWorld;
 int totalFrames = 0;
 
-void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
-    enum BSP_ENTITIES{
+DGL::Light *spotLight;
+
+void bspCallback(DemonEngine::BSP_EntityCreateInfo _info) {
+    enum BSP_ENTITIES {
         INFO_PLAYER_START,
         INFO_POINT_LIGHT,
         INFO_DIRECTIONAL_LIGHT,
@@ -126,23 +128,29 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info){
                 break;
 
             case INFO_SPOT_LIGHT: {
+
                 auto distance = (float) strtod(CBSP_getKeyFromEntity(_info.currentEntity, "distance"), nullptr);
                 auto intensity =
                         (float) strtol(CBSP_getKeyFromEntity(_info.currentEntity, "intensity"), nullptr, 10) / 100.0f;
                 auto angle = (float) strtod(CBSP_getKeyFromEntity(_info.currentEntity, "angle"), nullptr);
-                float pitch = 0.0f;
-                float yaw = angle + 90.0f;
-                yaw = glm::radians(yaw);
-                pitch = glm::radians(pitch);
-                glm::vec3 direction = (glm::vec3(glm::cos(pitch) * glm::sin(yaw), glm::sin(pitch),
-                                                 glm::cos(yaw) * glm::cos(pitch)));
-                if (angle <= -2.0f) {
-                    direction = glm::vec3(0.0f, -1.0f, 0.0f);
-                } else if (angle <= -1.0f) {
-                    direction = glm::vec3(0.0f, 1.0f, 0.0f);
-                }
 
-                engine->createEasySpotLight(realPos, direction, glm::radians(45.0f), distance, intensity);
+                float y = 0.0f;
+                if (angle <= -2.0f) {
+                    y = -90.0f;
+                } else if (angle <= -1.0f) {
+                    y = 90.0f;
+                }
+                float x = angle;
+
+                glm::vec3 cameraFront = glm::vec3(0.0f);
+                cameraFront.x = cos(glm::radians(x)) * cos(glm::radians(y));
+                cameraFront.y = sin(glm::radians(y));
+                cameraFront.z = sin(glm::radians(x)) * cos(glm::radians(y));
+                cameraFront = glm::normalize(cameraFront);
+
+
+                spotLight = engine->createEasySpotLight(realPos, cameraFront, glm::radians(45.0f), distance, intensity);
+
             }
                 break;
             case INFO_SCRIPTED_PROP: {
@@ -235,7 +243,7 @@ void init() {
     // Init Engine
     engine = new DemonEngine::Engine(1600, 900);
     engine->createEngine();
-    engine->getWindow()->setMouseGrab(0);
+    engine->getWindow()->setMouseGrab(-1);
 
     // Init BSP Loader
     bspLoader = new DemonEngine::BSPLoader(engine);
@@ -267,7 +275,6 @@ void init() {
 
 int  loop(){
     //printf("State: %d\n", engine->getGameState("secret_key_active"));
-
 
     if (destroyWorld >= 1.0f){
         engine->destroyScene();

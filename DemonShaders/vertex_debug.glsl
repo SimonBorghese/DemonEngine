@@ -26,12 +26,14 @@ out vec3 vertex;
 out vec3 iNormal;
 out vec3 iFragPos;
 out vec2 iTextCord;
+flat out mat4 iModel;
+flat out vec3 rawPos;
 
 
 
 vec3 qrot(vec4 q, vec3 v)
 {
-    return v + 2.0*cross(q.xyz, cross(q.xyz,v) + q.w*v);
+    return v + 2.0*cross(q.xyz, cross(q.xyz, v) + q.w*v);
 }
 
 void main(){
@@ -57,6 +59,9 @@ void main(){
         vec3 localNormal = mat3(bodyTransforms[body][boneIds[i]]) * aNormal;
         totalNormal += localNormal * weights[i];
     }
+    rawPos = aPos;
+    iModel = model;
+
 
     //if (boneIds.x < 0){
     //    totalPosition = vec4(aPos, 1.0f);

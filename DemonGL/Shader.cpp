@@ -210,7 +210,7 @@ namespace DGL {
 
     void Shader::uniformMat4(std::string location, glm::mat4 target){
         useShader();
-        glUniformMatrix4fv((int) getUniformLocation(location), 1, GL_FALSE, glm::value_ptr(target));
+        glUniformMatrix4fv((int) getUniformLocation(location), 1, GL_FALSE, &target[0][0]);
     }
     void Shader::uniformInt(std::string location, glm::int32 target){
         useShader();
