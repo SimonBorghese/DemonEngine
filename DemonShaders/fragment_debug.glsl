@@ -36,6 +36,7 @@ layout (std430, binding=1) readonly buffer dynamicLights {
     float specularStrength[20];
     int  specValue[20];
     int enableShadow[20];
+    int lightType[20];
 };
 
 layout (std140, binding=2) uniform Textures{
@@ -46,20 +47,26 @@ layout (std140, binding=2) uniform Textures{
 uniform sampler2D _diffuse;
 uniform sampler2D _normal;
 uniform samplerCube _shadowMap[20];
+uniform sampler2D _shadowSpotMaps[5];
+uniform mat4 _lightProjections[20];
+uniform mat4 _lightViews[20];
 
 in vec3 iNormal;
 in vec3 iFragPos;
 in vec2 iTextCord;
+
+in mat4 iModel;
+in vec3 rawPos;
 
 vec3 viewPos;
 
 uint samples = 20;
 vec3 samplerOffsets[20] = vec3[]
 (
-vec3( 1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1,  1,  1),
-vec3( 1,  1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1,  1, -1),
-vec3( 1,  1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1,  1,  0),
-vec3( 1,  0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1,  0, -1),
+vec3(1, 1, 1), vec3(1, -1, 1), vec3(-1, -1, 1), vec3(-1, 1, 1),
+vec3(1, 1, -1), vec3(1, -1, -1), vec3(-1, -1, -1), vec3(-1, 1, -1),
+vec3(1, 1, 0), vec3(1, -1, 0), vec3(-1, -1, 0), vec3(-1, 1, 0),
+vec3(1, 0, 1), vec3(-1, 0, 1), vec3(1, 0, -1), vec3(-1, 0, -1),
 vec3( 0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0,  1, -1)
 );
 /*
@@ -94,10 +101,67 @@ float ShadowCalculation(vec3 fragPos, vec3 lightPos, float planarCutOff, sampler
     depth *= planarCutOff;
     if ((length(fragPos - lightPos) - shadow_bias > depth) || (length(fragPos - lightPos) >= planarCutOff)){
         shadow += 1.0f;
-    } else{
+    } else {
         shadow -= 1.0f;
     }
     return shadow;
+}
+
+float near_plane = 1.0f;
+float far_plane = 50.0f;
+
+float LinearizeDepth(float depth)
+{
+    float z = depth * 2.0 - 1.0;// Back to NDC
+    return (2.0 * near_plane * far_plane) / (far_plane + near_plane - z * (far_plane - near_plane));
+}
+
+float ShadowCalculationSpot(vec3 fragPos, vec3 lightPos, float planarCutOff, sampler2D targetShadow, mat4 lightSpace)
+{
+    /*
+    vec4 lightSpacePos = lightSpace * vec4(fragPos, 1.0f);
+    //vec4 lightSpacePos = lightSpace * iModel * vec4(rawPos, 1.0f);
+
+    // perform perspective divide
+    vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
+    // transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    //float closestDepth = (textureProj(targetShadow, lightSpacePos.xyw, 0.005f).r);
+    float closestDepth = (texture(targetShadow, projCoords.xy).r);
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    // check whether current frag pos is in shadow
+
+    float shadow = 0.0f;
+    if (currentDepth > closestDepth){
+        shadow += 1.0f;
+    } else{
+        shadow -= 1.0f;
+    }
+
+    return shadow;
+    */
+    vec4 lightSpacePos = lightSpace * vec4(fragPos, 1.0f);
+    // perform perspective divide
+    vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
+    // transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = (texture(targetShadow, projCoords.xy).r);
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    // check whether current frag pos is in shadow
+    float shadow = 0.0f;
+    if (currentDepth > closestDepth){
+        shadow += 1.0f;
+    } else {
+        shadow -= 1.0f;
+    }
+
+    return shadow;
+
+
 }
 
 
@@ -178,7 +242,11 @@ void main(){
             float shadow = 0.0;
             if (enableShadow[l] == 1){
                 //shadowSum += ShadowCalculation(iFragPos, cPositon, distance[l], _shadowMap[l]);
-                shadow = ShadowCalculation(iFragPos, cPositon, distance[l], _shadowMap[l]);
+                //if (lightType[l] == 0){
+                shadow += ShadowCalculation(iFragPos, cPositon, distance[l], _shadowMap[l]);
+                //} else {
+                //    shadow += ShadowCalculationSpot(iFragPos, cPositon, distance[l], _shadowSpotMaps[l], _lightProjections[l] * _lightViews[l]);
+                //}
             }
             //shadow *= attenuation;
             //if (shadowSum <= 0.0){
@@ -208,7 +276,7 @@ void main(){
 
 
     if (_enableDiffuse == 1){
-        outputText = vec4( (ambient + diffuse + specular) , 1.0f) * texture(_diffuse, iTextCord);
+        outputText = vec4(((ambient) + diffuse + specular), 1.0f) * texture(_diffuse, iTextCord);
         //outputText = vec4(normalize(viewPos) * normalize(iFragPos), 1.0f);
     } else {
         outputText = vec4(normalize(viewPos) * normalize(iFragPos), 1.0f);
@@ -218,5 +286,19 @@ void main(){
     FragColor = outputText;
     //FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f)
 
+    /*
+    vec4 lightSpacePos = _lightSpaceSpotTransforms[0] * vec4(iFragPos, 1.0f);
+
+    // perform perspective divide
+    vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
+    // transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = (texture(_shadowSpotMaps[0], projCoords.xy).r);
+
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    FragColor = vec4(closestDepth, currentDepth, 0.0f, 1.0f);
+    */
 
 }

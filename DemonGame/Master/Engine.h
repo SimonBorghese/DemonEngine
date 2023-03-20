@@ -194,6 +194,7 @@ namespace DemonEngine {
 
         std::vector<DGL::Light*> _lightEntities;
         DGL::Shader *_shadowShader;
+        DGL::Shader *_shadowShaderSpotLight;
 
         // T h e   g a m e
         World *_world;

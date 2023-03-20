@@ -17,8 +17,14 @@ namespace DemonEngine {
         _debugShader = new DGL::Shader(GAME_DEBUG_SHADER_VERTEX, GAME_DEBUG_SHADER_FRAGMENT);
         _debugShader->createShader();
 
-        _shadowShader = new DGL::Shader("vertex_lightspace.glsl", "geometry_lightspace.glsl", "fragment_empty.glsl");
+        _shadowShader = new DGL::Shader("Lights/vertex_lightspace_animated.glsl", "Lights/geometry_lightspace.glsl",
+                                        "Lights/fragment_omnidir.glsl");
         _shadowShader->createShader();
+
+
+        _shadowShaderSpotLight = new DGL::Shader("Lights/vertex_lightspace_spot.glsl",
+                                                 "Lights/fragment_spotlight.glsl");
+        _shadowShaderSpotLight->createShader();
 
         _mainPhysicsManager->createPhysics(glm::vec3(0.0f, -9.81f * 3.0f, 0.0f));
         _mainPhysicsManager->getScene()->setSimulationEventCallback(new DemonGame::DG_EXT_PhysicsCallback);
@@ -51,9 +57,18 @@ namespace DemonEngine {
             DemonBench::Benchmark("Shadows", [this]() {
                 DGL::Mesh::_enableOcculusion = 0;
                 for (auto light: _lightEntities) {
-                    light->renderShadowBuffer(_shadowShader, [this]() {
-                        _world->updateAll(_shadowShader, glm::mat4(1.0f), glm::mat4(1.0f), DGL::MeshRenderer::MESH_FLAGS::MESH_RENDER_SHADOW);
-                    });
+                    if (light->getCutoff() <= 0.0f) {
+                        light->renderShadowBuffer(_shadowShader, [this]() {
+                            _world->updateAll(_shadowShader, glm::mat4(1.0f), glm::mat4(1.0f),
+                                              DGL::MeshRenderer::MESH_FLAGS::MESH_RENDER_SHADOW);
+                        });
+                    } else {
+                        light->renderShadowBuffer(_shadowShaderSpotLight, [this, light]() {
+                            _world->updateAll(_shadowShaderSpotLight, light->getLightView(),
+                                              light->getLightProjection(),
+                                              DGL::MeshRenderer::MESH_FLAGS::MESH_RENDER_SHADOW);
+                        });
+                    }
                 }
             });
 
@@ -63,15 +78,38 @@ namespace DemonEngine {
             _debugShader->useShader();
             //glActiveTexture(GL_TEXTURE2);
             //glBindTexture(GL_TEXTURE_CUBE_MAP, depthTexture);
-            for (uint s = 0; s < 20; s++){
-                _debugShader->uniformInt(fmt::format("_shadowMap[{}]", s), 2+s);
+            // _shadowSpotMaps
+
+            for (uint s = 0; s < 20; s++) {
+                _debugShader->uniformInt(fmt::format("_shadowMap[{}]", s), 2 + s);
+                _debugShader->uniformInt(fmt::format("_shadowSpotMaps[{}]", s), 2 + s);
             }
+            /*
+            int lightNum = 0;
+            for (auto light: _lightEntities) {
+                if (light->getShadowHeight() > 0) {
+
+                    _debugShader->uniformMat4(fmt::format("_lightProjections[{}]", lightNum),
+                                              light->getLightProjection());
+                    _debugShader->uniformMat4(fmt::format("_lightViews[{}]", lightNum), light->getLightView());
+                    if (light->getCutoff() > 0.0f) {
+                        _debugShader->uniformInt(fmt::format("_shadowSpotMaps[{}]", lightNum), 4 + lightNum);
+                    } else {
+                        _debugShader->uniformInt(fmt::format("_shadowMap[{}]", lightNum), 4 + lightNum);
+                    }
+                }
+                lightNum++;
+            }
+             */
+
+
             _defaultCamera->setMatrix();
             DGL::Mesh::_enableOcculusion = 1;
 
             //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-            DemonBench::Benchmark("Final Render", [this](){
-                _world->updateAll(_debugShader, glm::mat4(0.0f), glm::mat4(0.0f), DGL::MeshRenderer::MESH_FLAGS::MESH_RENDERED);
+            DemonBench::Benchmark("Final Render", [this]() {
+                _world->updateAll(_debugShader, glm::mat4(0.0f), glm::mat4(0.0f),
+                                  DGL::MeshRenderer::MESH_FLAGS::MESH_RENDERED);
                 midRenderFunc();
                 _mainOverlay->render();
             });
@@ -194,6 +232,7 @@ namespace DemonEngine {
         newLight->setCutoff(info.cutOffDegree);
         newLight->setOuterCutoff(info.outerCutOffDegree);
         newLight->setColor(info.colour);
+        _lightEntities.push_back(newLight);
         return newLight;
     }
     DGL::Light* Engine::createDirectionalLight(DIRECTIONAL_LIGHT_INFO info){
