@@ -85,7 +85,7 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info) {
     if (lookingEntity != entityList.end()) {
         switch (lookingEntity->second) {
             case INFO_PLAYER_START: {
-                player = new Protal::cl_player(glm::vec3(0.0f, 100.0f, 0.0f), 6.0f, 1.0f, engine);
+                player = new Protal::cl_player(glm::vec3(0.0f, 100.0f, 0.0f), 9.0f, 1.0f, engine);
                 player->init();
                 engine->addClient(player);
                 player->getController()->translate(realPos);
@@ -121,8 +121,10 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info) {
 
 #define SHADOW_HELL 1.0f
 #define SHADOW_RES 512
-                engine->createEasyPointLight(realPos, distance, intensity)->createShadowBuffer(
-                        SHADOW_RES * SHADOW_HELL, SHADOW_RES * SHADOW_HELL);
+                auto theLight = engine->createEasyPointLight(realPos, distance, intensity);
+                theLight->createShadowBuffer(SHADOW_HELL * SHADOW_RES, SHADOW_HELL * SHADOW_RES);
+
+
                 //engine->createEasyPointLight(realPos, distance, intensity);
             }
                 break;
@@ -133,13 +135,9 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info) {
                 auto intensity =
                         (float) strtol(CBSP_getKeyFromEntity(_info.currentEntity, "intensity"), nullptr, 10) / 100.0f;
                 auto angle = (float) strtod(CBSP_getKeyFromEntity(_info.currentEntity, "angle"), nullptr);
+                auto cutOff = (float) strtod(CBSP_getKeyFromEntity(_info.currentEntity, "cutOff"), nullptr);
 
                 float y = 0.0f;
-                if (angle <= -2.0f) {
-                    y = -90.0f;
-                } else if (angle <= -1.0f) {
-                    y = 90.0f;
-                }
                 float x = angle;
 
                 glm::vec3 cameraFront = glm::vec3(0.0f);
@@ -148,8 +146,14 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info) {
                 cameraFront.z = sin(glm::radians(x)) * cos(glm::radians(y));
                 cameraFront = glm::normalize(cameraFront);
 
+                if (angle <= -2.0f) {
+                    cameraFront = glm::vec3(0.0f, -1.0f, 0.0f);
+                } else if (angle <= -1.0f) {
+                    cameraFront = glm::vec3(0.0f, 1.0f, 0.0f);
+                }
 
-                spotLight = engine->createEasySpotLight(realPos, cameraFront, glm::radians(45.0f), distance, intensity);
+
+                engine->createEasySpotLight(realPos, cameraFront, glm::radians(90.0f - cutOff), distance, intensity);
 
             }
                 break;
@@ -243,7 +247,7 @@ void init() {
     // Init Engine
     engine = new DemonEngine::Engine(1600, 900);
     engine->createEngine();
-    engine->getWindow()->setMouseGrab(-1);
+    engine->getWindow()->setMouseGrab(0);
 
     // Init BSP Loader
     bspLoader = new DemonEngine::BSPLoader(engine);
@@ -265,7 +269,7 @@ void init() {
     bspLoader->setBSPCreationCallback([](DemonEngine::BSP_EntityCreateInfo _info) {
         bspCallback(_info);
     });
-    bspLoader->loadBSP("level99");
+    bspLoader->loadBSP("tutorial");
 
     //engine->addClient(new Protal::npc_knight(glm::vec3(0.0f, 5.0f, 0.0f), nullptr, engine));
 
@@ -275,6 +279,7 @@ void init() {
 
 int  loop(){
     //printf("State: %d\n", engine->getGameState("secret_key_active"));
+    //spotLight->setDistance( 90.0f * glm::sin(SDL_GetTicks()));
 
     if (destroyWorld >= 1.0f){
         engine->destroyScene();

@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <fmt/format.h>
 #include <string>
+#include <unistd.h>
 /*
  * DFS: Provides a wrapper for loading in data from game directories.
  * Directory hard coded in game binary

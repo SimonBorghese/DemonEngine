@@ -11,7 +11,7 @@
 #include <DemonGL/Light.h>
 
 #define PL_GRAVITY -9.81f
-#define DUCK_MULTIPLIER 0.3f
+#define DUCK_MULTIPLIER 0.2f
 #define FLASHLIGHT_VAR "pl_flashlight"
 #define NOCLIP_VAR "noclip"
 

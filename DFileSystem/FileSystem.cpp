@@ -42,7 +42,13 @@ namespace DFS {
     }
 
     std::string FileSystem::getTexturePath(std::string modelName, std::string textureName) {
-        return fmt::format("{}/Models/{}/{}", _gamePrefix, modelName, textureName);
+        std::string targetFile = fmt::format("{}/Models/{}/{}", _gamePrefix, modelName, textureName);
+
+        if (!access(targetFile.c_str(), F_OK)) {
+            return targetFile;
+        } else {
+            return fmt::format("{}/Models/{}/{}", _gamePrefix, "level0", textureName);
+        }
     }
 
     FileSystem *FileSystem::getFS() {
