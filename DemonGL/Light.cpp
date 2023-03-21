@@ -104,11 +104,10 @@ namespace DGL {
 
     void Light::renderShadowBuffer(DGL::Shader *shadowShader, std::function<void()> renderFunction){
         if (*_lightConfig.enableShadow && !enableShadows) {
-            if (!*_lightConfig.lightType) {
-                glActiveTexture(GL_TEXTURE2 + _lightNumber + 2);
+            glActiveTexture(GL_TEXTURE2 + _lightNumber);
+            if (*_lightConfig.lightType == POINT) {
                 glBindTexture(GL_TEXTURE_CUBE_MAP, _shadowTexture);
             } else {
-                glActiveTexture(GL_TEXTURE2 + _lightNumber + (20 * *_lightConfig.lightType));
                 glBindTexture(GL_TEXTURE_2D, _shadowTexture);
             }
             return;
@@ -175,7 +174,7 @@ namespace DGL {
         } else {
             glBindTexture(GL_TEXTURE_2D, _shadowTexture);
         }
-        *_lightConfig.enableShadow = 1;
+        //*_lightConfig.enableShadow = 1;
         //enableShadows = 0;
     }
 

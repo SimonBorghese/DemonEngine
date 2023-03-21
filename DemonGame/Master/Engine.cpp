@@ -101,7 +101,19 @@ namespace DemonEngine {
                 lightNum++;
             }
              */
+            for (auto light: _lightEntities) {
+                if (*light->getConfig()->lightType == DGL::POINT) {
 
+                    //printf("Light Dot: %f\n", glm::dot(getCamera()->getCameraFront(), light->getPosition()));
+                    glm::vec3 lightPos = light->getPosition() - getCamera()->getPosition();
+                    if (glm::distance(getCamera()->getPosition(), light->getPosition()) > light->getDistance() &&
+                        glm::dot(getCamera()->getCameraFront(), lightPos) < 0.0f) {
+                        light->setShadowEnable(0);
+                    } else {
+                        light->setShadowEnable(1);
+                    }
+                }
+            }
 
             _defaultCamera->setMatrix();
             DGL::Mesh::_enableOcculusion = 1;

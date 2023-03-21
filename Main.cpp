@@ -247,7 +247,7 @@ void init() {
     // Init Engine
     engine = new DemonEngine::Engine(1600, 900);
     engine->createEngine();
-    engine->getWindow()->setMouseGrab(0);
+    engine->getWindow()->setMouseGrab(-1);
 
     // Init BSP Loader
     bspLoader = new DemonEngine::BSPLoader(engine);

@@ -64,6 +64,7 @@ namespace DGL {
 
         glm::mat4 getLightView();
 
+        float getShadowEnabled() { return enableShadows; } // TODO: Move to cpp file
 
         void setPosition(glm::vec3 newPos);
 
@@ -80,12 +81,17 @@ namespace DGL {
         void setAmbient(float newAmbient);
 
         void setSpecularStrength(float newStrength);
+
         void setSpecularValue(int newSpec);
 
-        _lightSpec* getConfig();
+        void setShadowEnable(int enable) { enableShadows = enable; } // TODO: Move to cpp file
+
+        _lightSpec *getConfig();
 
         void setShadowResolution(uint32_t width, uint32_t height);
+
         void destroyLight();
+
         static void resetAllLights();
 
     private:

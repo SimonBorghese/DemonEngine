@@ -122,7 +122,7 @@ namespace Protal {
         // Move currently held object
         if (_heldObject) {
             glm::vec3 targetPosition =
-                    _engine->getCamera()->getPosition() + (_engine->getCamera()->getCameraFront() * 5.0f);
+                    _engine->getCamera()->getPosition() + (_engine->getCamera()->getCameraFront() * 10.0f);
             glm::vec3 currentPositon = _heldObject->getActor()->getPosition();
             _heldObject->getActor()->setVelocity(
                     ((targetPosition - currentPositon) * (glm::distance(targetPosition, currentPositon) * 1.0f)));
