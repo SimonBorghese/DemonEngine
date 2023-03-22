@@ -11,6 +11,7 @@
 #include <GameClients/Protal/npc_charger.h>
 #include <GameClients/Protal/npc_knight.h>
 #include <GameClients/Protal/door_bars.h>
+#include <GameClients/Protal/weapon_zapper.h>
 
 #include <PathFinder.h>
 #include <DemonNPC/Level.h>
@@ -272,7 +273,11 @@ void init() {
     bspLoader->loadBSP("tutorial");
 
     //engine->addClient(new Protal::npc_knight(glm::vec3(0.0f, 5.0f, 0.0f), nullptr, engine));
+    engine->createEasyDirectionalLight(glm::vec3(0.0f, -1.0f, 0.0f), 0.5f);
 
+    Protal::weapon_zapper *zapper = new Protal::weapon_zapper(engine, player->getController());
+    zapper->init();
+    engine->addClient(zapper);
 
 
 }
@@ -283,6 +288,7 @@ int  loop(){
 
     if (destroyWorld >= 1.0f){
         engine->destroyScene();
+        //player->destroy();
         delete player;
         bspLoader->loadBSP(newWorld.c_str());
         destroyWorld = 0.0f;

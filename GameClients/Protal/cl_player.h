@@ -46,7 +46,7 @@ namespace Protal {
         float gravity = PL_GRAVITY;
         float pl_height = 0.0f;
 
-        int pl_flashlight = 0;
+        int pl_flashlight = 1;
         int pl_noclip = 0;
 
     };

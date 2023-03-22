@@ -11,8 +11,7 @@ namespace Protal {
 
     void cl_player::init(){
         _controller = _engine->createFPSController(_startPosition, _height, _radius);
-        _personalLight = _engine->createEasySpotLight(_startPosition, _engine->getCamera()->getCameraFront(),
-                                                      glm::radians(45.0f), 50.0f, 1.0f);
+        _personalLight = _engine->createEasyPointLight(_startPosition, 1000.0f, 0.5f);
         //_personalLight->createShadowBuffer(500,500);
         _controller->setName("character");
         _keyCallback = _engine->getEvent()->addKeyCallback([this](int scancode){
@@ -60,8 +59,8 @@ namespace Protal {
                 case SDL_SCANCODE_R: {
                     auto projectile = _engine->createWorldEntity();
                     projectile->createEntityFromMesh("block", _controller->getPosition() +
-                                                              (_engine->getCamera()->getCameraFront() * 5.0f),
-                                                     glm::vec3(0.0f), glm::vec3(0.2f));
+                                                              (_engine->getCamera()->getCameraFront() * 8.0f),
+                                                     glm::vec3(0.0f), glm::vec3(1.0f));
                     projectile->setMass(1.0f);
                     projectile->getActor()->applyForce(_engine->getCamera()->getCameraFront() * 2000.0f);
                 }

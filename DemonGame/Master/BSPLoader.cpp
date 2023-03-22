@@ -18,9 +18,9 @@ namespace DemonEngine {
         //std::fill(entityBrushes.begin(), entityBrushes.end() + bspFile->nEntityCount, 0);
         for (uint m = 0; m < numMesh; m++) {
             DemonBase::b_Mesh *mesh = objMeshes[m];
-            int entityNum = -1;
+            int entityNum = 0;
             sscanf(mesh->getModelName(), "entity%d", &entityNum);
-            assert(entityNum >= 0);
+            //assert(entityNum >= 0);
 
             entityBrushes.at(entityNum).push_back(mesh);
             //printf("Pushing back mesh: %s at point: %d\n", mesh->getModelName(), entityNum);

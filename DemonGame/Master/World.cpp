@@ -34,9 +34,6 @@ namespace DemonEngine {
 
         if (flagCheck == DGL::MeshRenderer::MESH_FLAGS::NO_FLAG) {
             // Update Generics
-            for (unsigned int g = 0; g < _genericEntites.size(); g++) {
-                _genericEntites.at(g)->update(overrideShader);
-            }
 
             for (unsigned int g = 0; g < _worldObjects.size(); g++) {
                 _worldObjects.at(g)->update(overrideShader);
@@ -45,25 +42,28 @@ namespace DemonEngine {
             for (unsigned int g = 0; g < _worldEntites.size(); g++) {
                 _worldEntites.at(g)->update(overrideShader);
             }
+            for (unsigned int g = 0; g < _genericEntites.size(); g++) {
+                _genericEntites.at(g)->update(overrideShader);
+            }
         } else{
             // Update Generics
-            for (unsigned int g = 0; g < _genericEntites.size(); g++) {
-                if (_genericEntites.at(g)->getRender()) {
-                    if (_genericEntites.at(g)->getMeshRenderer()->compareFlag(flagCheck)) {
-                        _genericEntites.at(g)->update(overrideShader);
-                    }
-                }
-            }
 
             for (unsigned int g = 0; g < _worldObjects.size(); g++) {
-                if  (_worldObjects.at(g)->getMeshRenderer()->compareFlag(flagCheck)) {
+                if (_worldObjects.at(g)->getMeshRenderer()->compareFlag(flagCheck)) {
                     _worldObjects.at(g)->update(overrideShader);
                 }
             }
 
             for (unsigned int g = 0; g < _worldEntites.size(); g++) {
-                if  (_worldEntites.at(g)->getMeshRenderer()->compareFlag(flagCheck)) {
+                if (_worldEntites.at(g)->getMeshRenderer()->compareFlag(flagCheck)) {
                     _worldEntites.at(g)->update(overrideShader);
+                }
+            }
+            for (unsigned int g = 0; g < _genericEntites.size(); g++) {
+                if (_genericEntites.at(g)->getRender()) {
+                    if (_genericEntites.at(g)->getMeshRenderer()->compareFlag(flagCheck)) {
+                        _genericEntites.at(g)->update(overrideShader);
+                    }
                 }
             }
         }
