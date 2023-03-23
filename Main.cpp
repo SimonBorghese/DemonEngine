@@ -90,6 +90,13 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info) {
                 player->init();
                 engine->addClient(player);
                 player->getController()->translate(realPos);
+
+                auto enableZapper = atoi(CBSP_getKeyFromEntity(_info.currentEntity, "hasZapper"));
+                if (enableZapper) {
+                    Protal::weapon_zapper *zapper = new Protal::weapon_zapper(engine, player->getController());
+                    zapper->init();
+                    engine->addClient(zapper);
+                }
             }
                 break;
             case INFO_BRUSHPROP: {
@@ -275,9 +282,9 @@ void init() {
     //engine->addClient(new Protal::npc_knight(glm::vec3(0.0f, 5.0f, 0.0f), nullptr, engine));
     engine->createEasyDirectionalLight(glm::vec3(0.0f, -1.0f, 0.0f), 0.5f);
 
-    Protal::weapon_zapper *zapper = new Protal::weapon_zapper(engine, player->getController());
-    zapper->init();
-    engine->addClient(zapper);
+    //Protal::weapon_zapper *zapper = new Protal::weapon_zapper(engine, player->getController());
+    //zapper->init();
+    //engine->addClient(zapper);
 
 
 }
