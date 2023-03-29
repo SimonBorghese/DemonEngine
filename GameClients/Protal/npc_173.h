@@ -4,12 +4,13 @@
 
 #ifndef DEMONENGINE_NPC_173_H
 #define DEMONENGINE_NPC_173_H
-#include <GameClients/GameClient.h>
 #include <DemonPhysics/DP_CharacterController.h>
 #include <DemonGame/Shared/DG_Entity.h>
+#include <GameClients/GameClient.h>
 #include <DemonGame/Master/Engine.h>
 #include <DemonNPC/Level.h>
 #include <DemonNPC/Path.h>
+
 
 namespace Protal {
 
@@ -21,7 +22,7 @@ namespace Protal {
         void loop();
         void destroy();
     private:
-        DG_Entity *_entity;
+        DemonGame::DG_Entity *_entity;
         DemonPhysics::DP_CharacterController *_controller;
         DNPC::Level *_level;
         DNPC::Path *_path;

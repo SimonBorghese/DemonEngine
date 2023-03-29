@@ -10,8 +10,8 @@ namespace Protal {
         _entity->createEntityFromMesh("knight", startPosition, glm::vec3(0.0f), glm::vec3(1.0));
         _entity->getTransform()->setScale(glm::vec3(0.005));
         _entity->setAnimation(5);
-        _entity->setUpdateFunc([this](DG_Entity *aChicken){
-            DG_AnimatedEntity *realChicken = (DG_AnimatedEntity*) aChicken;
+        _entity->setUpdateFunc([this](DemonGame::DG_Entity *aChicken) {
+            DemonGame::DG_AnimatedEntity *realChicken = (DemonGame::DG_AnimatedEntity *) aChicken;
             if (!dead || (dead && !realChicken->isAnimationFinished(GET_SECONDS()))) {
                 realChicken->playAnimation(GET_SECONDS());
             }

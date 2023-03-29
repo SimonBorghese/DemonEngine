@@ -133,10 +133,13 @@ namespace Protal {
                         _engine->getCamera()->getPosition() + (_engine->getCamera()->getCameraFront() * 2.0f),
                         _engine->getCamera()->getCameraFront(), 30.0f);
                 if (rayCastCall.numberHits > 0) {
-                    auto firstHit = rayCastCall.hits[0];
+                    //auto firstHit = rayCastCall.hits[0];
+                    // TODO: Fix this to use new callback and raycast client system
+                    /*
                     if (firstHit.object && firstHit.object->type == DemonGame::DYNAMIC) {
                         _heldObject = firstHit.object->physObj;
                     }
+                     */
                 }
             } else {
                 if (_heldObject) { _heldObject->enableGravity(); }

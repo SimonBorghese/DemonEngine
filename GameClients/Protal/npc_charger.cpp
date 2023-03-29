@@ -8,9 +8,10 @@ namespace Protal {
     npc_charger::npc_charger(DemonEngine::Engine *engine, glm::vec3 startingPosition, float *health) : _engine(engine), _health(health){
         _controller = _engine->createWorldEntity();
         _controller->createEntityFromMesh("spike", startingPosition);
-        _controller->setName("Charger");
+        //_controller->setName("Charger");
 
 
+        /*
         _controller->setContactCallback([this](DemonGame::DG_PhysicsObject *, DG_Object *obj){
             if (obj->type == DemonGame::DYNAMIC && strcmp(obj->physObj->getName().c_str(), "Charger")) {
                 float velocity = obj->physObj->getActor()->getRealActor()->getLinearVelocity().magnitude();
@@ -20,6 +21,7 @@ namespace Protal {
                 enemyHealth = fmax(enemyHealth, 0.0f);
             }
         });
+         */
 
 
         _camera = _engine->getCamera();

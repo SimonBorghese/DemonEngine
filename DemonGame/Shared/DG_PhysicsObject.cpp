@@ -29,7 +29,7 @@ namespace DemonGame {
         // Bind our transform to the actor & mesh renderer
         rigidActor->setTransform(*mainTransform);
         // Set the user data
-        rigidActor->setEmbedData(&generalStruct);
+        rigidActor->setEmbedData(&clientInfo);
 
         //mainTransform.setPosition(rigidActor->getTransform()->getPosition());
         //mainTransform.setRotation(rigidActor->getTransform()->getRotation());
@@ -59,7 +59,7 @@ namespace DemonGame {
         // Bind our transform to the actor & mesh renderer
         rigidActor->setTransform(*mainTransform);
         // Set the user data
-        rigidActor->setEmbedData(&generalStruct);
+        rigidActor->setEmbedData(&clientInfo);
     }
 
     void DG_PhysicsObject::destroyEntity() {

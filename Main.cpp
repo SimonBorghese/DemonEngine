@@ -110,7 +110,7 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info) {
 
                     newProp->createEntityFromExistingMesh(_info.brushMeshes, _info.numBrushMesh, _info.origin,
                                                           glm::vec3(0.0f, glm::radians(_info.angle), 0.0f));
-                    newProp->setName("UNNAMED BUSH PROP");
+                    //newProp->setName("UNNAMED BUSH PROP");
                     if (mass > 0.0f) {
                         //newProp->setMass(mass);
                     }
@@ -197,13 +197,14 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info) {
                 engine->addClient(charger);
             }
                 break;
-            case TRIGGER_LEVELCHANGE:
-            {
+            case TRIGGER_LEVELCHANGE: {
                 destroyWorld = 0.0f;
                 auto newTrigger = engine->createTrigger();
                 newTrigger->createEntityFromExistingMesh(_info.brushMeshes, _info.numBrushMesh, _info.origin);
                 newTrigger->toggleRender(0);
                 std::string newLevel = CBSP_getKeyFromEntity(_info.currentEntity, "level");
+                // TODO: Fix this callback to use new client system
+                /*
                 newTrigger->setCallback([newLevel](DG_Object *, bool isPlayer) {
                     // In order to prevent premature activation, 5 frames must render before it can be triggered
                     if (isPlayer && totalFrames > 5) {
@@ -211,6 +212,7 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info) {
                         newWorld = newLevel;
                     }
                 });
+                 */
             }
                 break;
             case INFO_KEY: {
@@ -218,7 +220,9 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info) {
                 newTrigger->createEntityFromMesh("block", realPos, glm::vec3(0.0f), glm::vec3(2.0f));
                 newTrigger->toggleRender(0);
                 std::string newKey = CBSP_getKeyFromEntity(_info.currentEntity, "key");
-                int *activated = new int(0);
+                //int *activated = new int(0);
+                // TODO: Fix this callback to use new client system
+                /*
                 newTrigger->setCallback([newKey, activated](DG_Object *, bool isPlayer) {
                     // In order to prevent premature activation, 5 frames must render before it can be triggered
                     if (!(*activated) && isPlayer && totalFrames > 5) {
@@ -226,6 +230,7 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info) {
                         *activated = 1;
                     }
                 });
+                 */
             }
                 break;
             case DOOR_BARS: {
@@ -258,7 +263,7 @@ void init() {
     // Init Engine
     engine = new DemonEngine::Engine(1600, 900);
     engine->createEngine();
-    engine->getWindow()->setMouseGrab(-1);
+    engine->getWindow()->setMouseGrab(0);
 
     // Init BSP Loader
     bspLoader = new DemonEngine::BSPLoader(engine);

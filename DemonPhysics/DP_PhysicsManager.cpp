@@ -169,27 +169,13 @@ namespace DemonPhysics {
             dHit.numberHits = hit.getNbAnyHits();
             dHit.hits = (RayCastHit *) malloc(sizeof(RayCastHit) * dHit.numberHits);
             for (uint h = 0; h < hit.getNbAnyHits(); h++) {
-                DemonBase::DemonUserData::generalStruct *touchedActorDesc =
-                        (DemonBase::DemonUserData::generalStruct *) hit.getAnyHit(h).actor->userData;
+                auto *touchedActorDesc =
+                        (DemonGame::ClientInfo *) hit.getAnyHit(h).actor->userData;
                 dHit.hits[h].position = glm::vec3(DemonWorld::DW_Transform::PhysToGlm(hit.getAnyHit(h).position));
                 dHit.hits[h].normal = glm::vec3(DemonWorld::DW_Transform::PhysToGlm(hit.getAnyHit(h).normal));
                 dHit.hits[h].distance = hit.getAnyHit(h).distance;
                 if (!strncmp(touchedActorDesc->magicString, "IOBJ", 4)) {
-                    DG_Object *hitObject = new DG_Object;
-                    hitObject->type = touchedActorDesc->type;
-                    if (hitObject->type == DemonGame::DYNAMIC) {
-                        DemonBase::DemonUserData::DP_PHYSICS_OBJ_DESC *physicsObjDesc =
-                                (DemonBase::DemonUserData::DP_PHYSICS_OBJ_DESC *) touchedActorDesc->structReference;
-                        hitObject->physObj = physicsObjDesc->reference;
-                        dHit.hits[h].object = hitObject;
-                    } else if (hitObject->type == DemonGame::STATIC) {
-                        DemonBase::DemonUserData::DP_RIGID_OBJ_DESC *rigidObjDesc =
-                                (DemonBase::DemonUserData::DP_RIGID_OBJ_DESC *) touchedActorDesc->structReference;
-                        hitObject->rigidObj = rigidObjDesc->reference;
-                        dHit.hits[h].object = hitObject;
-                    } else {
-                        dHit.hits[h].object = nullptr;
-                    }
+                    dHit.hits[h].object = touchedActorDesc->client;
                 } else {
                     dHit.hits[h].object = nullptr;
                 }

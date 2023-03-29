@@ -43,16 +43,7 @@ namespace DemonPhysics {
             pMainController = controllerManager->createController(desc);
             pMainController->getActor()->setName("character");
 
-            generalStruct.type = DemonGame::CHARACTER;
-            generalStruct.name = "UNNAMED";
-            strncpy(&generalStruct.magicString[0], "IOBJ", sizeof(char) * 5);
-            generalStruct.originalObject = nullptr;
-            generalStruct.structReference = &objDesc;
-
-            strncpy(&objDesc.magicString[0], "IOBJ", sizeof(char) * 5);
-            objDesc.characterCallback = nullptr;
-
-            pMainController->getActor()->userData = &generalStruct;
+            pMainController->getActor()->userData = pMainController->getUserData();
         }
 
         void setHeight(float height){

@@ -81,19 +81,18 @@ namespace DemonBase {
 
         void setName(const char *newName) {
             pMainController->getActor()->setName(newName);
-            generalStruct.name = std::string(newName);
             name = newName;
         }
 
-        void setUserPointer(void *target){
-            generalStruct.originalObject = target;
+        void setClient(void *target) {
+            strcpy(&clientInfo.magicString[0], MAGIC_STRING);
+            clientInfo.client = (GameClient *) target;
+            pMainController->setUserData((void *) &clientInfo);
         }
 
-        void setContactCallback(std::function<void(DG_Object*)> callback){
-            objDesc.characterCallback = callback;
-        }
 
         const char *getName() { return name; }
+
     protected:
         physx::PxMaterial *pMainMat;
         const char *name;
@@ -104,8 +103,7 @@ namespace DemonBase {
         glm::vec3 realTarget = glm::vec3(0.0f);
         glm::vec3 forceTarget = glm::vec3(0.0f);
 
-        DemonBase::DemonUserData::generalStruct generalStruct;
-        DemonBase::DemonUserData::DP_CHARACTER_OBJ_DESC objDesc;
+        DemonGame::ClientInfo clientInfo;
     };
 }
 

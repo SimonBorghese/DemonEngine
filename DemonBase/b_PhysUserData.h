@@ -6,8 +6,9 @@
 #define DEMONENGINE_B_PHYSUSERDATA_H
 #include <string>
 #include <functional>
+#include <GameClients/GameClient.h>
 
-
+/*
 namespace DemonGame{
     class DG_PhysicsObject;
     class DG_RigidEntity;
@@ -28,10 +29,15 @@ namespace DemonGame{
     // If type = STATIC then the reference is to a DG_RigidEntity
     // If type = DYNAMIC then the reference is to a DG_PhysicsObject
     // Always assume that the other reference is null
+    // Any physics type can have a Client attached
+    // ClientType dummy pointer that tells the receiver what kind of client it is
+    // ClientPointer may point to the necessary client
     typedef struct{
         DG_OBJ_TYPE type;
         DG_PhysicsObject *physObj;
         DG_RigidEntity *rigidObj;
+        std::string ClientType;
+        void *ClientPointer;
     } DG_Object;
 }
 using namespace DemonGame;
@@ -53,6 +59,8 @@ namespace DemonBase{
             DG_OBJ_TYPE type;
             void *originalObject; // Pointing to a GameClient, mostly useless
             void *structReference;
+            std::string ClientType;
+            void *ClientPointer;
         } generalStruct;
 
         // All DG_PhysicsObjects should have this struct even if they don't have contact functions
@@ -84,6 +92,15 @@ namespace DemonBase{
             // so no originating object
         } DP_CHARACTER_OBJ_DESC;
     }
+}
+ */
+#define MAGIC_STRING "IOBJ"
+
+namespace DemonGame {
+    typedef struct {
+        char magicString[5];
+        GameClient *client;
+    } ClientInfo;
 }
 
 #endif //DEMONENGINE_B_PHYSUSERDATA_H

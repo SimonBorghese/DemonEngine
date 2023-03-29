@@ -28,7 +28,7 @@ namespace DemonGame {
         rigidActor->createActor(physicsManager->getPhysics(), mainMaterial->getMaterial());
         physicsManager->addActor(rigidActor);
         rigidActor->setTransform(*mainTransform);
-        rigidActor->setEmbedData(&generalStruct);
+        rigidActor->setEmbedData(&clientInfo);
     }
 
     void DG_RigidEntity::createEntityFromExistingMesh(DemonBase::b_Mesh **meshes, uint32_t numMesh,
@@ -52,7 +52,7 @@ namespace DemonGame {
         rigidActor->createActor(physicsManager->getPhysics(), mainMaterial->getMaterial());
         physicsManager->addActor(rigidActor);
         rigidActor->setTransform(*mainTransform);
-        rigidActor->setEmbedData(&generalStruct);
+        rigidActor->setEmbedData(&clientInfo);
 
     }
 

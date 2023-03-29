@@ -20,19 +20,10 @@ namespace DemonGame {
         DG_RigidEntity(DGL::Shader *targetShader,
                        DemonPhysics::DP_PhysicsManager *targetManager) : DG_Entity(targetShader),
                                                                          physicsManager(targetManager) {
-            //rigidActor = new DemonPhysics::DP_RigidActor(rigidMesh);
-            generalStruct.name = "UNNAMED";
-            strncpy(&generalStruct.magicString[0], "IOBJ", sizeof(char) * 5);
-            generalStruct.type = DemonGame::STATIC;
-            generalStruct.structReference = &objDesc;
-
-            objDesc.reference = (DG_RigidEntity*) this;
-            strncpy(&objDesc.magicString[0], "IOBJ", sizeof(char) * 5);
+            strcpy(&clientInfo.magicString[0], MAGIC_STRING);
+            clientInfo.client = nullptr;
 
         }
-
-        void setName(const char * name) { generalStruct.name = std::string(name); }
-        std::string getName() { return generalStruct.name; }
 
         void createEntityFromMesh(const char *meshFile,
                                   glm::vec3 pos = glm::vec3(0.0f),
@@ -48,7 +39,10 @@ namespace DemonGame {
 
         void update(DGL::Shader *overrideShader);
 
-        PxSweepBuffer sweepCast(glm::vec3 origin, glm::vec3 direction, float distance, DemonPhysics::DP_PhysicsManager *manager);
+        PxSweepBuffer
+        sweepCast(glm::vec3 origin, glm::vec3 direction, float distance, DemonPhysics::DP_PhysicsManager *manager);
+
+        void setClient(GameClient *client) { clientInfo.client = client; }
 
         DemonPhysics::DP_RigidActor *getActor() { return rigidActor; }
 
@@ -58,8 +52,7 @@ namespace DemonGame {
         DemonPhysics::DP_RigidConvexMesh *rigidMesh;
         DemonPhysics::DP_PhysicsMaterial *mainMaterial = nullptr;
 
-        DemonBase::DemonUserData::generalStruct generalStruct;
-        DemonBase::DemonUserData::DP_RIGID_OBJ_DESC objDesc;
+        DemonGame::ClientInfo clientInfo;
     };
 
 } // DemonGame

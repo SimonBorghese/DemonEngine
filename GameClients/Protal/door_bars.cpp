@@ -5,10 +5,11 @@
 #include "door_bars.h"
 
 namespace Protal {
-    door_bars::door_bars(DemonEngine::Engine *engine, DG_RigidEntity *bars, float openHeight) : _engine(engine),
-                                                                                                _bars(bars),
-                                                                                                _openHeight(
-                                                                                                        openHeight) {}
+    door_bars::door_bars(DemonEngine::Engine *engine, DemonGame::DG_RigidEntity *bars, float openHeight) : _engine(
+            engine),
+                                                                                                           _bars(bars),
+                                                                                                           _openHeight(
+                                                                                                                   openHeight) {}
 
     void door_bars::init() {
 

@@ -20,18 +20,9 @@ namespace DemonGame {
         DG_Trigger(DGL::Shader *targetShader,
                 DemonPhysics::DP_PhysicsManager *targetManager) : DG_Entity(targetShader),
         physicsManager(targetManager) {
-
-            generalStruct.name = "UNNAMED";
-            strncpy(&generalStruct.magicString[0], "IOBJ", sizeof(char) * 5);
-            generalStruct.type = DemonGame::TRIGGER;
-            generalStruct.structReference = &objDesc;
-
-            strncpy(&objDesc.magicString[0], "IOBJ", sizeof(char) * 5);
-            objDesc.triggerActivate = nullptr;
+            strcpy(&clientInfo.magicString[0], MAGIC_STRING);
+            clientInfo.client = nullptr;
         }
-
-        void setName(const char * name) { generalStruct.name = std::string(name); }
-        std::string getName() { return generalStruct.name; }
 
         void createEntityFromMesh(const char *meshFile,
                                   glm::vec3 pos = glm::vec3(0.0f),
@@ -46,7 +37,7 @@ namespace DemonGame {
 
         void update();
 
-        void setCallback(std::function<void(DG_Object*, bool)> callback) { objDesc.triggerActivate =  callback;}
+        void setClient(GameClient *client) { clientInfo.client = client; }
 
         DemonPhysics::DP_RigidActor *getActor() { return rigidActor; }
     protected:
@@ -55,8 +46,7 @@ namespace DemonGame {
         DemonPhysics::DP_RigidConvexMesh *rigidMesh;
         DemonPhysics::DP_PhysicsMaterial *mainMaterial;
 
-        DemonBase::DemonUserData::generalStruct generalStruct;
-        DemonBase::DemonUserData::DP_TRIGGER_OBJ_DESC objDesc;
+        DemonGame::ClientInfo clientInfo;
     };
 
 } // DemonGame

@@ -42,7 +42,7 @@ namespace DemonGame {
         rigidActor->setTransform(*mainTransform);
         //mainMeshRenderer->bindTransform(&mainTransform);
 
-        rigidActor->setEmbedData(&generalStruct);
+        rigidActor->setEmbedData(&clientInfo);
     }
 
     void DG_Trigger::createEntityFromExistingMesh(DemonBase::b_Mesh **meshes, uint32_t numMesh,
@@ -76,7 +76,7 @@ namespace DemonGame {
         rigidActor->setTransform(*mainTransform);
         //mainMeshRenderer->bindTransform(&mainTransform);
 
-        rigidActor->setEmbedData(&generalStruct);
+        rigidActor->setEmbedData(&clientInfo);
     }
 
     void DG_Trigger::destroyEntity() {

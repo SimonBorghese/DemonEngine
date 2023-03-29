@@ -24,21 +24,10 @@ namespace DemonGame {
                          DemonPhysics::DP_PhysicsManager *targetManager) :
                 DG_Entity(targetShader),
                 physicsManager(targetManager) {
-
-            generalStruct.name = "UNNAMED";
-            strncpy(&generalStruct.magicString[0], "IOBJ", sizeof(char) * 5);
-            generalStruct.type = DemonGame::DYNAMIC;
-            generalStruct.structReference = &objDesc;
-
-            objDesc.reference = (DG_PhysicsObject*) this;
-            objDesc.onContact = nullptr;
-            strncpy(&objDesc.magicString[0], "IOBJ", sizeof(char) * 5);
+            strcpy(&clientInfo.magicString[0], MAGIC_STRING);
+            clientInfo.client = nullptr;
         }
 
-        void setName(const char * name) { generalStruct.name = std::string(name); }
-        std::string getName() { return generalStruct.name; }
-
-        void setContactCallback(std::function<void(DG_PhysicsObject*, DG_Object*)> callback) { objDesc.onContact = callback; }
 
         void createEntityFromMesh(const char *meshFile,
                                   glm::vec3 pos = glm::vec3(0.0f),
@@ -75,14 +64,17 @@ namespace DemonGame {
             rigidActor->getRealActor()->setMassSpaceInertiaTensor(physx::PxVec3(tensor.x, tensor.y, tensor.z));
         }
 
-        void updateMassInertia(float desnity){
+        void updateMassInertia(float desnity) {
             rigidActor->updateMassInteria(desnity);
         }
 
-        void setPosition(glm::vec3 newPos){
+        void setPosition(glm::vec3 newPos) {
             rigidActor->setPosition(newPos);
         }
+
         void setMaterial(DemonPhysics::DP_PhysicsMaterial *newMat) { mainMaterial = newMat; }
+
+        void setClient(GameClient *client) { clientInfo.client = client; }
 
     protected:
         DemonPhysics::DP_PhysicsManager *physicsManager;
@@ -90,8 +82,7 @@ namespace DemonGame {
         DemonPhysics::DP_RigidConvexMesh *rigidMesh;
         DemonPhysics::DP_PhysicsMaterial *mainMaterial = nullptr;
 
-        DemonBase::DemonUserData::generalStruct generalStruct;
-        DemonBase::DemonUserData::DP_PHYSICS_OBJ_DESC objDesc;
+        DemonGame::ClientInfo clientInfo;
     };
 } // DemonGame
 

@@ -17,7 +17,7 @@
 #define BSP_SCALE glm::vec3(1.0f/8.0f)
 
 namespace DemonEngine {
-    typedef struct{
+    typedef struct {
         char name[64];
         glm::vec3 pos;
 
@@ -27,7 +27,7 @@ namespace DemonEngine {
         CBSP_Entity *currentEntity;
         uint32_t entityNumber;
 
-        DG_RigidEntity *worldBrush; // ONLY FOR WORLD SPAWM!!!!
+        DemonGame::DG_RigidEntity *worldBrush; // ONLY FOR WORLD SPAWM!!!!
 
         DemonBase::b_Mesh **brushMeshes;
         uint32_t numBrushMesh;
