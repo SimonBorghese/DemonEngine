@@ -25,6 +25,7 @@ namespace DemonGame {
                                              std::string(animMeshes[m]->getTextureNormal().C_Str()));
             currentMesh->createMesh();
             _renderMesh[m] = currentMesh;
+            animMeshes[m]->setShader(_shader);
         }
 
         _primaryMesh = new DGL::MeshRenderer(_shader, _renderMesh, numMeshes);

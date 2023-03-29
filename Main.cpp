@@ -251,6 +251,9 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info) {
     }
 }
 
+
+DemonGame::DG_AnimatedEntity *slime;
+
 void init() {
     // Init Engine
     engine = new DemonEngine::Engine(1600, 900);
@@ -277,23 +280,37 @@ void init() {
     bspLoader->setBSPCreationCallback([](DemonEngine::BSP_EntityCreateInfo _info) {
         bspCallback(_info);
     });
-    bspLoader->loadBSP("tutorial");
+    bspLoader->loadBSP("level0");
 
     //engine->addClient(new Protal::npc_knight(glm::vec3(0.0f, 5.0f, 0.0f), nullptr, engine));
-    engine->createEasyDirectionalLight(glm::vec3(0.0f, -1.0f, 0.0f), 0.5f);
+    //engine->createEasyDirectionalLight(glm::vec3(0.0f, -1.0f, 0.0f), 0.5f);
 
     //Protal::weapon_zapper *zapper = new Protal::weapon_zapper(engine, player->getController());
     //zapper->init();
     //engine->addClient(zapper);
+    slime = engine->createAnimatedEntity();
+    slime->createEntityFromMesh("Slime", glm::vec3(0.0f, 2.0f, 0.0f));
+    slime->setAnimation(0);
+    slime->getTransform()->setScale(glm::vec3(0.01));
 
 
 }
 
-int  loop(){
+int slimeAnimation = 0;
+
+int loop() {
+
+    slime->playAnimation(GET_SECONDS());
+    if (slime->isAnimationFinished(GET_SECONDS())) {
+        if (slime->getAnimationIndex() != slimeAnimation) {
+            slime->setAnimation(slimeAnimation);
+        }
+        slime->playOnce(GET_SECONDS());
+    }
     //printf("State: %d\n", engine->getGameState("secret_key_active"));
     //spotLight->setDistance( 90.0f * glm::sin(SDL_GetTicks()));
 
-    if (destroyWorld >= 1.0f){
+    if (destroyWorld >= 1.0f) {
         engine->destroyScene();
         //player->destroy();
         delete player;
@@ -315,6 +332,7 @@ int  loop(){
     ImGui::Text("FPS: %f\n", ImGui::GetIO().Framerate);
     ImGui::Text("Health: %f\n", health);
     ImGui::Text("Frames: %d\n", totalFrames);
+    ImGui::InputInt("Slime Anim", &slimeAnimation);
     ImGui::End();
     totalFrames++;
     return !engine->gameLoop((float) fmin(engine->getDeltaTime(), 0.016f));
