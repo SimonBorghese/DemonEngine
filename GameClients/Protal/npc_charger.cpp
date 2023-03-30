@@ -8,20 +8,7 @@ namespace Protal {
     npc_charger::npc_charger(DemonEngine::Engine *engine, glm::vec3 startingPosition, float *health) : _engine(engine), _health(health){
         _controller = _engine->createWorldEntity();
         _controller->createEntityFromMesh("spike", startingPosition);
-        //_controller->setName("Charger");
-
-
-        /*
-        _controller->setContactCallback([this](DemonGame::DG_PhysicsObject *, DG_Object *obj){
-            if (obj->type == DemonGame::DYNAMIC && strcmp(obj->physObj->getName().c_str(), "Charger")) {
-                float velocity = obj->physObj->getActor()->getRealActor()->getLinearVelocity().magnitude();
-                float mass = obj->physObj->getMass();
-                printf("Got Force: %f\n", velocity * mass);
-                enemyHealth -= (velocity * mass) * 10.0f;
-                enemyHealth = fmax(enemyHealth, 0.0f);
-            }
-        });
-         */
+        _controller->setClient(this);
 
 
         _camera = _engine->getCamera();
@@ -39,7 +26,19 @@ namespace Protal {
             *_health -= 20.0f * _engine->getDeltaTime();
         }
     }
-    void npc_charger::destroy(){
+
+    void npc_charger::destroy() {
         //_controller->destroyEntity();
+    }
+
+    void npc_charger::onContact(GameClient *client) {
+        if (client->isType("Prop")) {
+            auto prop = (prop_block *) client;
+            float velocity = prop->getPhysicsObject()->getActor()->getRealActor()->getLinearVelocity().magnitude();
+            float mass = prop->getPhysicsObject()->getMass();
+            printf("Got Force: %f\n", velocity * mass);
+            enemyHealth -= (velocity * mass) * 10.0f;
+            enemyHealth = fmax(enemyHealth, 0.0f);
+        }
     }
 } // Protal

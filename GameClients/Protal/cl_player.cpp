@@ -57,12 +57,18 @@ namespace Protal {
         _keyDownCallback = _engine->getEvent()->addKeyDownCallback([this](int scancode){
             switch (scancode) {
                 case SDL_SCANCODE_R: {
+                    /*
                     auto projectile = _engine->createWorldEntity();
                     projectile->createEntityFromMesh("block", _controller->getPosition() +
                                                               (_engine->getCamera()->getCameraFront() * 8.0f),
                                                      glm::vec3(0.0f), glm::vec3(1.0f));
                     projectile->setMass(1.0f);
                     projectile->getActor()->applyForce(_engine->getCamera()->getCameraFront() * 2000.0f);
+                     */
+                    auto block = new prop_block(_engine, "block", _controller->getPosition() +
+                                                                  (_engine->getCamera()->getCameraFront() * 8.0f),
+                                                _engine->getCamera()->getCameraFront() * 20.0f);
+                    _engine->addClient(block);
                 }
                     break;
                 case SDL_SCANCODE_SPACE: {
@@ -133,13 +139,11 @@ namespace Protal {
                         _engine->getCamera()->getPosition() + (_engine->getCamera()->getCameraFront() * 2.0f),
                         _engine->getCamera()->getCameraFront(), 30.0f);
                 if (rayCastCall.numberHits > 0) {
-                    //auto firstHit = rayCastCall.hits[0];
-                    // TODO: Fix this to use new callback and raycast client system
-                    /*
-                    if (firstHit.object && firstHit.object->type == DemonGame::DYNAMIC) {
-                        _heldObject = firstHit.object->physObj;
+                    auto rayHit = rayCastCall.hits[0];
+                    if (rayHit.object && rayHit.object->isType("Prop")) {
+                        auto prop = (prop_block *) rayHit.object;
+                        _heldObject = prop->getPhysicsObject();
                     }
-                     */
                 }
             } else {
                 if (_heldObject) { _heldObject->enableGravity(); }

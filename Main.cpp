@@ -197,42 +197,6 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info) {
                 engine->addClient(charger);
             }
                 break;
-            case TRIGGER_LEVELCHANGE: {
-                destroyWorld = 0.0f;
-                auto newTrigger = engine->createTrigger();
-                newTrigger->createEntityFromExistingMesh(_info.brushMeshes, _info.numBrushMesh, _info.origin);
-                newTrigger->toggleRender(0);
-                std::string newLevel = CBSP_getKeyFromEntity(_info.currentEntity, "level");
-                // TODO: Fix this callback to use new client system
-                /*
-                newTrigger->setCallback([newLevel](DG_Object *, bool isPlayer) {
-                    // In order to prevent premature activation, 5 frames must render before it can be triggered
-                    if (isPlayer && totalFrames > 5) {
-                        destroyWorld += 1.0;
-                        newWorld = newLevel;
-                    }
-                });
-                 */
-            }
-                break;
-            case INFO_KEY: {
-                auto newTrigger = engine->createTrigger();
-                newTrigger->createEntityFromMesh("block", realPos, glm::vec3(0.0f), glm::vec3(2.0f));
-                newTrigger->toggleRender(0);
-                std::string newKey = CBSP_getKeyFromEntity(_info.currentEntity, "key");
-                //int *activated = new int(0);
-                // TODO: Fix this callback to use new client system
-                /*
-                newTrigger->setCallback([newKey, activated](DG_Object *, bool isPlayer) {
-                    // In order to prevent premature activation, 5 frames must render before it can be triggered
-                    if (!(*activated) && isPlayer && totalFrames > 5) {
-                        ((Protal::door_bars *) engine->getClient(fmt::format("{}_door", newKey)))->openDoor();
-                        *activated = 1;
-                    }
-                });
-                 */
-            }
-                break;
             case DOOR_BARS: {
                 auto theBars = engine->createWorldObject();
                 theBars->createEntityFromExistingMesh(_info.brushMeshes, _info.numBrushMesh, _info.origin);
@@ -251,6 +215,7 @@ void bspCallback(DemonEngine::BSP_EntityCreateInfo _info) {
             }
                 break;
             default:
+                printf("WARNING: UNIDENTIFIED ENTITY, PLS IMPLEMENT: %s\n", _info.name);
                 break;
         }
     }

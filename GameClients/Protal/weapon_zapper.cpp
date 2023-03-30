@@ -12,7 +12,7 @@ namespace Protal {
 
         _zapper->setPrerenderFunc([]() {
             //glDisable(GL_DEPTH_TEST);
-            glClear(GL_DEPTH_BUFFER_BIT);
+            //glClear(GL_DEPTH_BUFFER_BIT);
             //glDepthFunc(GL_ALWAYS);
             //glDepthRange(0.0f, 0.1f);
         });

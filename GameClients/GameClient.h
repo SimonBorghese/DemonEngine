@@ -24,6 +24,8 @@ public:
 
     std::string clientType = DEFAULT_TYPE;
     std::string clientName = DEFAULT_NAME;
+
+    int isType(const char *typeClass) { return !clientType.compare(typeClass); }
 };
 
 #endif //DEMONENGINE_GAMECLIENT_H

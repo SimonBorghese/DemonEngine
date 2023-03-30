@@ -8,18 +8,23 @@
 #include <DemonPhysics/DP_CharacterController.h>
 #include <DemonGame/Shared/DG_Entity.h>
 #include <DemonGame/Master/Engine.h>
+#include "prop_block.h"
 
 namespace Protal {
 
-    class npc_charger : public GameClient{
+    class npc_charger : public GameClient {
     public:
         npc_charger(DemonEngine::Engine *engine, glm::vec3 startingPosition, float *health);
 
         void init();
+
         void loop();
+
         void destroy();
 
         float getHealth() { return enemyHealth; }
+
+        void onContact(GameClient *client);
 
     private:
         DemonGame::DG_PhysicsObject *_controller;

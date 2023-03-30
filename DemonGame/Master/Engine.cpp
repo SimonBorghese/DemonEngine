@@ -54,6 +54,8 @@ namespace DemonEngine {
             _defaultWindow->clearWindow();
 
             _mainEvents->pollEvents();
+
+            //glPolygonOffset(1.0, 1.0);
             DemonBench::Benchmark("Shadows", [this]() {
                 DGL::Mesh::_enableOcculusion = 0;
                 for (auto light: _lightEntities) {
@@ -71,6 +73,7 @@ namespace DemonEngine {
                     }
                 }
             });
+            //glPolygonOffset(0.0, 0.0);
 
             glViewport(0, 0, _defaultWindow->getWidth(), _defaultWindow->getHeight());
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

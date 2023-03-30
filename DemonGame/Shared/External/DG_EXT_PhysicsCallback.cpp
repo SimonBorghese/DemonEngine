@@ -23,10 +23,8 @@ namespace DemonGame {
                 if (clientTwo && !strncmp(MAGIC_STRING, &clientTwo->magicString[0], 4)) {
                     other = clientTwo->client;
                 }
-                if (client) {
+                if (client && other) {
                     client->onContact(other);
-                }
-                if (other) {
                     other->onContact(client);
                 }
             }
@@ -49,7 +47,7 @@ namespace DemonGame {
                 if (clientTwo && !strncmp(MAGIC_STRING, &clientTwo->magicString[0], 4)) {
                     other = clientTwo->client;
                 }
-                if (client) {
+                if (client && other) {
                     client->onTrigger(other);
                 }
 

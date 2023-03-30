@@ -8,6 +8,7 @@
 #include <DemonGame/Master/Engine.h>
 #include <GameClients/GameClient.h>
 #include <DemonPhysics/DP_CharacterController.h>
+#include "prop_block.h"
 #include <DemonGL/Light.h>
 
 #define PL_GRAVITY -9.81f
